@@ -1,4 +1,0 @@
-## YAML Template.
-name: TestPlugin
-main: com.mahn42.anhalter42.testplugin.Testplugin
-version: 0.1
