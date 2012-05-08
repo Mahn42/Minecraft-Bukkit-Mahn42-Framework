@@ -1,0 +1,4 @@
+## YAML Template.
+name: TestPlugin
+main: Testplugin.Testplugin
+version: <Version Number>
