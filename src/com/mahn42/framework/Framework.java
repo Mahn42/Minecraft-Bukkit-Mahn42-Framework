@@ -16,6 +16,7 @@ public class Framework extends JavaPlugin {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+      /* Kommentar von Spielername */
     }
 
     @Override
