@@ -15,7 +15,7 @@ import org.bukkit.Material;
  */
 public class SyncBlockSetter implements Runnable {
 
-    protected Framework plugin;
+    //protected Framework plugin;
     protected int fCount = 0;
     
     protected class SyncBlockSetterItem {
@@ -31,8 +31,13 @@ public class SyncBlockSetter implements Runnable {
     
     protected ArrayList<SyncBlockSetterItem> fItems = new ArrayList<SyncBlockSetterItem>();
     
+    /*
     public SyncBlockSetter(Framework aPlugin) {
         plugin = aPlugin;
+    }
+    */
+
+    public SyncBlockSetter() {
     }
 
     public void setTypeAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {
