@@ -105,4 +105,19 @@ public class BlockPosition {
         y += aY;
         z += aZ;
     }
+
+    public double distance(BlockPosition aPos) {
+        return getVector().distance(aPos.getVector());
+    }
+
+    public void cloneFrom(BlockPosition aPos) {
+        x = aPos.x;
+        y = aPos.y;
+        z = aPos.z;
+    }
+    
+    @Override
+    public BlockPosition clone() {
+        return new BlockPosition(this);
+    }
 }
