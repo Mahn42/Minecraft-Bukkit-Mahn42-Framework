@@ -19,6 +19,7 @@ public class Framework extends JavaPlugin {
     public int configSyncBlockSetterTicks = 2;
     
     protected SyncBlockSetter fSyncBlockSetter;
+    protected BuildingDetector fBuildingDetector;
     
     /**
      * @param args the command line arguments
@@ -29,6 +30,7 @@ public class Framework extends JavaPlugin {
     @Override
     public void onEnable() { 
         plugin = this;
+        fBuildingDetector = new BuildingDetector();
         readFrameworkConfig();
         fSyncBlockSetter = new SyncBlockSetter();
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
@@ -43,6 +45,19 @@ public class Framework extends JavaPlugin {
         fSyncBlockSetter.setTypeAndData(aLocation, aMaterial, aData, aPhysics);
     }
     
+    public BuildingDescription getBuildingDescription(String aName) {
+        for(BuildingDescription lDesc : fBuildingDetector.fDescriptions) {
+            if (aName.equalsIgnoreCase(lDesc.name)) {
+                return lDesc;
+            }
+        }
+        return null;
+    }
+    
+    public BuildingDetector getBuildingDetector() {
+        return fBuildingDetector;
+    }
+
     private void readFrameworkConfig() {
         FileConfiguration lConfig = getConfig();
         configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
