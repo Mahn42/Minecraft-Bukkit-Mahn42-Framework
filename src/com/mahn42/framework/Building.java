@@ -122,6 +122,24 @@ public class Building extends DBRecordWorld {
         return null;
     }
 
+    public BuildingBlock getBlock(BuildingDescription.BlockDescription aDesc) {
+        for(BuildingBlock lBlock : blocks) {
+            if (lBlock.description.equals(aDesc)) {
+                return lBlock;
+            }
+        }
+        return null;
+    }
+
+    public BuildingBlock getBlock(String aBlockName) {
+        for(BuildingBlock lBlock : blocks) {
+            if (lBlock.description.name.equals(aBlockName)) {
+                return lBlock;
+            }
+        }
+        return null;
+    }
+
     public BuildingBlock getNearestBlock(BlockPosition aPos) {
         double lResDist = Double.MAX_VALUE;
         BuildingBlock lResult = null;

@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author andre
  */
 public class DBSet<T extends DBRecord> implements Iterable<T> {
-    protected File fStore;
+    protected File file;
     protected ArrayList<T> fRecords = new ArrayList<T>();
     protected HashMap<String, T> fKeyIndex = new HashMap();
     protected Class<T> fRecordClass;
@@ -27,15 +27,15 @@ public class DBSet<T extends DBRecord> implements Iterable<T> {
     
     public DBSet(Class<T> aRecordClass, File aStore) {
         fRecordClass = aRecordClass;
-        fStore = aStore;
+        file = aStore;
     }
     
     public void load() {
         fRecords.clear();
         fKeyIndex.clear();
-        if (fStore.exists()) {
+        if (file.exists()) {
             try {
-                BufferedReader lReader = new BufferedReader(new FileReader(fStore));
+                BufferedReader lReader = new BufferedReader(new FileReader(file));
                 String lLine;
                 String lHeader = lReader.readLine();
                 while ((lLine = lReader.readLine()) != null) {
@@ -59,11 +59,11 @@ public class DBSet<T extends DBRecord> implements Iterable<T> {
     }
     
     public void save() {
-        if (fStore.exists()) {
-            fStore.delete();
+        if (file.exists()) {
+            file.delete();
         }
         try {
-            BufferedWriter lWriter = new BufferedWriter(new FileWriter(fStore));
+            BufferedWriter lWriter = new BufferedWriter(new FileWriter(file));
             lWriter.write("CSV:1.0");
             lWriter.newLine();
             for (T lRecord : fRecords) {

@@ -134,7 +134,7 @@ public class BuildingDescription {
                 //Logger.getLogger("detect").info("mat " + lMat.name());
                 if (!canFollowRelateds(lExcludes, aBuilding, aWorld, lBlockDesc, lX, lY, lZ)) {
                     Logger.getLogger("detect").info("not ok");
-                    return null;
+                    //return null;
                 } else {
                     if (lExcludes.size() >= blocks.size()) {
                         aBuilding.update();
