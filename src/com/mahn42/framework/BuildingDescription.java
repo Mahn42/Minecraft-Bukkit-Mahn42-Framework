@@ -47,6 +47,7 @@ public class BuildingDescription {
     public class BlockDescription {
         public String name;
         public Material material;
+        public boolean redstoneSensible = false;
         public ArrayList<RelatedTo> relatedTo = new ArrayList<RelatedTo>();
         
         public RelatedTo newRelatedTo() {

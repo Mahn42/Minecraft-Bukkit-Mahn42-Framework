@@ -154,4 +154,30 @@ public class Building extends DBRecordWorld {
         }
         return lResult;
     }
+
+    public BuildingBlock getRedStoneSensibles(BlockPosition aPos) {
+        for(BuildingBlock lBlock : blocks) {
+            if (lBlock.description.redstoneSensible && lBlock.position.nearly(aPos)) {
+                return lBlock;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void cloneFrom(DBRecord aRecord) {
+        super.cloneFrom(aRecord);
+        if (aRecord instanceof Building) {
+            Building lBuilding = (Building)aRecord;
+            name = lBuilding.name;
+            playerName = lBuilding.playerName;
+            description = lBuilding.description;
+            edge1.cloneFrom(lBuilding.edge1);
+            edge2.cloneFrom(lBuilding.edge2);
+            maxHeight = lBuilding.maxHeight;
+            influenceRadius = lBuilding.influenceRadius;
+            blocks.clear();
+            blocks.addAll(lBuilding.blocks);
+        }
+    }
 }

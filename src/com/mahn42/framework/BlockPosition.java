@@ -106,6 +106,12 @@ public class BlockPosition {
         z += aZ;
     }
 
+    public void add(BlockPositionDelta aDelta) {
+        x += aDelta.dx;
+        y += aDelta.dy;
+        z += aDelta.dz;
+    }
+
     public double distance(BlockPosition aPos) {
         return getVector().distance(aPos.getVector());
     }
@@ -119,5 +125,9 @@ public class BlockPosition {
     @Override
     public BlockPosition clone() {
         return new BlockPosition(this);
+    }
+
+    public boolean nearly(BlockPosition aPos) {
+        return (Math.abs(x - aPos.x) + Math.abs(y - aPos.y) + Math.abs(z - aPos.z)) < 2;
     }
 }

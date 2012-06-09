@@ -24,4 +24,12 @@ public class DBRecordWorld extends DBRecord {
             world = ((DBSetWorld)aSet).world;
         }
     }
+
+    @Override
+    public void cloneFrom(DBRecord aRecord) {
+        super.cloneFrom(aRecord);
+        if (aRecord instanceof DBRecordWorld) {
+            world = ((DBRecordWorld)aRecord).world;
+        }
+    }
 }

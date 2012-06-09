@@ -5,13 +5,14 @@
 package com.mahn42.framework;
 
 import java.io.File;
+import java.util.ArrayList;
 import org.bukkit.World;
 
 /**
  *
  * @author andre
  */
-public class BuildingDB<T extends DBRecord> extends DBSetWorld {
+public class BuildingDB<T extends Building> extends DBSetWorld {
 
     public BuildingDB() {
         super(Building.class);
@@ -27,5 +28,27 @@ public class BuildingDB<T extends DBRecord> extends DBSetWorld {
     
     public BuildingDB(Class<T> aRecordClass, World aWorld, File aFile) {
         super(aRecordClass, aFile, aWorld);
-    }    
+    }
+    
+    public ArrayList<T> getBuildings(BlockPosition aPos) {
+        ArrayList<T> lResult = new ArrayList<T>();
+        for(Object lObj : this) {
+            T lBuilding = (T)lObj;
+            if (lBuilding.isInside(aPos)) {
+                lResult.add(lBuilding);
+            }
+        }
+        return lResult;
+    }
+    
+    public ArrayList<T> getRedStoneSensibles(BlockPosition aPos) {
+        ArrayList<T> lResult = new ArrayList<T>();
+        for(Object lObj : this) {
+            T lBuilding = (T)lObj;
+            if (lBuilding.getRedStoneSensibles(aPos) != null) {
+                lResult.add(lBuilding);
+            }
+        }
+        return lResult;
+    }
 }

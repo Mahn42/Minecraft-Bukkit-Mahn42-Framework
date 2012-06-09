@@ -158,4 +158,8 @@ public class DBRecord {
     protected void added(DBSet aSet) {
         
     }
+    
+    public void cloneFrom(DBRecord aRecord) {
+        key = aRecord.key;
+    }
 }

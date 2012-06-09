@@ -67,4 +67,10 @@ public class WorldDBList<T extends DBSetWorld> {
         World lWorld = plugin.getServer().getWorld(aWorldName);
         return getDB(lWorld);
     }
+    
+    public void save() {
+        for(T lDB : fDBs.values()) {
+            lDB.save();
+        }
+    }
 }
