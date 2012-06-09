@@ -70,6 +70,11 @@ public class BuildingDescription {
             lRel.position = aRelPos;
             return lRel;
         }
+        
+        @Override
+        public String toString() {
+            return name;
+        }
     }
     
     public enum Position {

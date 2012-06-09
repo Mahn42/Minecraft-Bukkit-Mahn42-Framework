@@ -34,4 +34,9 @@ public class BuildingBlock {
         position.y = new Integer(lParts[2]).intValue();
         position.z = new Integer(lParts[3]).intValue();
     }
+    
+    @Override
+    public String toString() {
+        return description.toString() + " at " + position.toString();
+    }
 }
