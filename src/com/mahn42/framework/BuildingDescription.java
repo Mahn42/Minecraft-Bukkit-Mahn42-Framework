@@ -159,7 +159,7 @@ public class BuildingDescription {
     private boolean canFollowRelateds(ArrayList<BlockDescription> aExcludes, Building aBuilding, World aWorld, BlockDescription lBlockDesc, int lX, int lY, int lZ) {
         if (!aExcludes.contains(lBlockDesc)) {
             BlockPosition lStartPos = new BlockPosition(lX, lY, lZ);
-            aBuilding.blocks.add(new BuildingBlock(lBlockDesc, lStartPos));
+            aBuilding.blocks.add(new BuildingBlock(lBlockDesc, new BlockPosition(lStartPos)));
             if (lBlockDesc.relatedTo.size() > 0) {
                 Logger.getLogger("detect").info("check desc " + lBlockDesc.name + " at " + lStartPos);
                 ArrayList<RelFollower> lFs = new ArrayList<RelFollower>();
