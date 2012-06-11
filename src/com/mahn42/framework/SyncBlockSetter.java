@@ -29,6 +29,7 @@ public class SyncBlockSetter implements Runnable {
     }
     
     protected ArrayList<SyncBlockSetterItem> fItems = new ArrayList<SyncBlockSetterItem>();
+    protected final Object fsync = new Object();
     
     public SyncBlockSetter() {
     }
@@ -39,15 +40,33 @@ public class SyncBlockSetter implements Runnable {
         lItem.material = aMaterial;
         lItem.data = aData;
         lItem.physics = aPhysics;
-        fItems.add(lItem);
+        synchronized(fsync) {
+            fItems.add(lItem);
+        }
+    }
+    
+    public void addList(SyncBlockList aList) {
+        synchronized(fsync) {
+            for(SyncBlockList.SyncBlockItem lBlock : aList) {
+                SyncBlockSetterItem lItem = new SyncBlockSetterItem();
+                lItem.location = lBlock.pos.getLocation(aList.world);
+                lItem.material = lBlock.material;
+                lItem.data = lBlock.data;
+                lItem.physics = lBlock.physics;
+                fItems.add(lItem);
+            }
+        }
     }
 
     @Override
     public void run() {
         try {
             if (!fItems.isEmpty()) {
-                ArrayList<SyncBlockSetterItem> lWorking = fItems;
-                fItems = new ArrayList<SyncBlockSetterItem>();
+                ArrayList<SyncBlockSetterItem> lWorking;
+                synchronized(fsync) {
+                    lWorking = fItems;
+                    fItems = new ArrayList<SyncBlockSetterItem>();
+                }
                 //Logger.getLogger("SyncBlockSetter").info("count = " + new Integer(lWorking.size()) + " stat = " + new Integer(fCount));
                 while (!lWorking.isEmpty()) {
                     SyncBlockSetterItem lCurrent = lWorking.get(0);
