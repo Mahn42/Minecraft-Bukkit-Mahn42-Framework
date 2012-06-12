@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  *
  * @author andre
  */
-public class DBSet<T extends DBRecord> implements Iterable<T> {
+public class DBSet<T extends DBRecord> implements Iterable<T>, DBSave {
     protected File file;
     protected ArrayList<T> fRecords = new ArrayList<T>();
     protected HashMap<String, T> fKeyIndex = new HashMap();
@@ -58,6 +58,7 @@ public class DBSet<T extends DBRecord> implements Iterable<T> {
         }
     }
     
+    @Override
     public void save() {
         if (file.exists()) {
             file.delete();

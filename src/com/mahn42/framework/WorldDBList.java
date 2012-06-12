@@ -15,7 +15,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author andre
  */
-public class WorldDBList<T extends DBSetWorld> {
+public class WorldDBList<T extends DBSetWorld> implements DBSave {
 
     public Plugin plugin;
     public String name;
@@ -68,6 +68,7 @@ public class WorldDBList<T extends DBSetWorld> {
         return getDB(lWorld);
     }
     
+    @Override
     public void save() {
         for(T lDB : fDBs.values()) {
             lDB.save();

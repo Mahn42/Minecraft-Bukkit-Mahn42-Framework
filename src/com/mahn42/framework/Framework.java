@@ -17,8 +17,10 @@ public class Framework extends JavaPlugin {
 
     public static Framework plugin;
     public int configSyncBlockSetterTicks = 2;
+    public int configDBSaverTicks = 18000;
     
     protected SyncBlockSetter fSyncBlockSetter;
+    protected DBSaverTask fSaverTask;
     protected BuildingDetector fBuildingDetector;
     
     /**
@@ -34,10 +36,16 @@ public class Framework extends JavaPlugin {
         readFrameworkConfig();
         fSyncBlockSetter = new SyncBlockSetter();
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
+        fSaverTask = new DBSaverTask();
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSaverTask, 100, configDBSaverTicks);
+
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockListener(), this);
     }
 
     @Override
     public void onDisable() {
+        fSaverTask.run();
         getServer().getScheduler().cancelTasks(this);
     }
 
@@ -58,8 +66,34 @@ public class Framework extends JavaPlugin {
         return fBuildingDetector;
     }
 
+    public void registerSaver(DBSave aSaver) {
+        fSaverTask.registerSaver(aSaver);
+    }
+    
+    public void unregisterSaver(DBSave aSaver) {
+        fSaverTask.unregisterSaver(aSaver);
+    }
+
     private void readFrameworkConfig() {
         FileConfiguration lConfig = getConfig();
         configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
+    }
+    
+    public static boolean isSpade(Material aMaterial) {
+        return aMaterial != null
+                && (aMaterial.equals(Material.STONE_SPADE)
+                || aMaterial.equals(Material.WOOD_SPADE)
+                || aMaterial.equals(Material.IRON_SPADE)
+                || aMaterial.equals(Material.DIAMOND_SPADE)
+                || aMaterial.equals(Material.GOLD_SPADE));
+    }
+
+    public static boolean isAxe(Material aMaterial) {
+        return aMaterial != null
+                && (aMaterial.equals(Material.STONE_AXE)
+                || aMaterial.equals(Material.WOOD_AXE)
+                || aMaterial.equals(Material.IRON_AXE)
+                || aMaterial.equals(Material.DIAMOND_AXE)
+                || aMaterial.equals(Material.GOLD_AXE));
     }
 }

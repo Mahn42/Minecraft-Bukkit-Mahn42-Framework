@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import org.bukkit.util.Vector;
 
 /**
@@ -22,7 +23,7 @@ public class Building extends DBRecordWorld {
     public ArrayList<BuildingBlock> blocks = new ArrayList<BuildingBlock>();
 
     public String getName() {
-        return name == null ? description.name + "(" + playerName + ")" : name;
+        return name == null ? description.getName() + "(" + playerName + ")" : name;
     }
     
     @Override
@@ -62,7 +63,7 @@ public class Building extends DBRecordWorld {
         edge2.y = aCols.popInt();
         edge2.z = aCols.popInt();
         String lBlocks = aCols.pop();
-        String lBlockStr[] = lBlocks.split("|");
+        String lBlockStr[] = lBlocks.split("\\|");
         for(String lCSVValue : lBlockStr ) {
             BuildingBlock lBlock = new BuildingBlock();
             lBlock.fromCSVValue(description, lCSVValue);

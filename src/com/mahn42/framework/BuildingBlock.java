@@ -12,7 +12,7 @@ import com.mahn42.framework.BuildingDescription.BlockDescription;
  */
 public class BuildingBlock {
     public BuildingDescription.BlockDescription description;
-    public BlockPosition position;
+    public BlockPosition position = new BlockPosition();
 
     public BuildingBlock(BlockDescription aBlockDesc, BlockPosition aBlockPosition) {
         description = aBlockDesc;
@@ -27,7 +27,7 @@ public class BuildingBlock {
     }
     
     public void fromCSVValue(BuildingDescription aDesc, String aValue) {
-        String[] lParts = aValue.split(",");
+        String[] lParts = aValue.split("\\,");
         String lDescName = lParts[0];
         description = aDesc.getBlock(lDescName);
         position.x = new Integer(lParts[1]).intValue();

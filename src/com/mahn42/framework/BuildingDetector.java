@@ -32,6 +32,7 @@ public class BuildingDetector {
             for(int lX = aPos1.x; lX <= aPos2.x; lX+=dx) {
                 for(int lY = aPos1.y; lY <= aPos2.y; lY+=dy) {
                     for(int lZ = aPos1.z; lZ <= aPos2.z; lZ+=dz) {
+                        //TODO check if pos in building of any DB
                         //Logger.getLogger("detect").info("teste " + new Integer(lX) + "," + new Integer(lY) + "," + new Integer(lZ));
                         Building aBuilding = matchDescription(lDesc, aWorld, lX, lY, lZ);
                         if (aBuilding != null) {
@@ -48,9 +49,26 @@ public class BuildingDetector {
         return lDesc.matchDescription(aWorld, lX, lY, lZ);
     }
 
+    protected boolean fShouldUpdateHandlers = false;
+    
     public BuildingDescription newDescription(String aName) {
         BuildingDescription lDesc = new BuildingDescription(aName);
         fDescriptions.add(lDesc);
+        fShouldUpdateHandlers = true;
         return lDesc;
+    }
+    
+    protected ArrayList<BuildingHandler> fHandlers = new ArrayList<BuildingHandler>();
+    
+    public ArrayList<BuildingHandler> getHandlers() {
+        if (fShouldUpdateHandlers) {
+            fHandlers.clear();
+            for(BuildingDescription lDesc : fDescriptions) {
+                if (!fHandlers.contains(lDesc.handler)) {
+                    fHandlers.add(lDesc.handler);
+                }
+            }
+        }
+        return fHandlers;
     }
 }

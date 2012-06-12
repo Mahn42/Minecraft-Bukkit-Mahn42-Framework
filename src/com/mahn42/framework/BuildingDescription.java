@@ -83,11 +83,13 @@ public class BuildingDescription {
         everywhere
     }
     
+    public String typeName;
     public String name;
     public Position position = Position.onGround;
     public ArrayList<BlockDescription> blocks = new ArrayList<BlockDescription>();
     public boolean active;
     public double influenceRadiusFactor = 0;
+    public BuildingHandler handler = null;
     
     public BuildingDescription() {
     }
@@ -96,6 +98,10 @@ public class BuildingDescription {
         name = aName;
     }
     
+    public String getName() {
+        return typeName != null ? typeName : name;
+    }
+
     public BlockDescription getBlock(String lDescName) {
         for(BlockDescription lBlock : blocks) {
             if (lDescName.equalsIgnoreCase(lBlock.name)) {

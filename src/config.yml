@@ -2,4 +2,6 @@
 ---
 SyncBlockSetter:
   Ticks: 2
+DBSaver:
+  Ticks: 18000
   
