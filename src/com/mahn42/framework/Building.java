@@ -5,7 +5,6 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 import org.bukkit.util.Vector;
 
 /**
@@ -63,10 +62,15 @@ public class Building extends DBRecordWorld {
         edge2.y = aCols.popInt();
         edge2.z = aCols.popInt();
         String lBlocks = aCols.pop();
-        String lBlockStr[] = lBlocks.split("\\|");
-        for(String lCSVValue : lBlockStr ) {
-            BuildingBlock lBlock = new BuildingBlock();
-            lBlock.fromCSVValue(description, lCSVValue);
+        if (!lBlocks.isEmpty()) {
+            String lBlockStr[] = lBlocks.split("\\|");
+            for(String lCSVValue : lBlockStr ) {
+                if (!lCSVValue.isEmpty()) {
+                    BuildingBlock lBlock = new BuildingBlock();
+                    lBlock.fromCSVValue(description, lCSVValue);
+                    blocks.add(lBlock);
+                }
+            }
         }
     }
     
@@ -157,6 +161,7 @@ public class Building extends DBRecordWorld {
     }
 
     public BuildingBlock getRedStoneSensibles(BlockPosition aPos) {
+        //Logger.getLogger("getRedStoneSensibles").info("blocks " + blocks.size());
         for(BuildingBlock lBlock : blocks) {
             if (lBlock.description.redstoneSensible && lBlock.position.nearly(aPos)) {
                 return lBlock;

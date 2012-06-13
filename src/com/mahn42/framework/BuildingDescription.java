@@ -27,6 +27,8 @@ public class BuildingDescription {
         public RelatedPosition position = RelatedPosition.Vector;
         public String block;
         public BlockDescription description;
+        public int minDistance = 0;
+        public ArrayList<Material> materials = new ArrayList<Material>();
         
         public RelatedTo() {
         }
@@ -145,7 +147,7 @@ public class BuildingDescription {
                 aBuilding.setWorld(aWorld);
                 //Logger.getLogger("detect").info("mat " + lMat.name());
                 if (!canFollowRelateds(lExcludes, aBuilding, aWorld, lBlockDesc, lX, lY, lZ)) {
-                    Logger.getLogger("detect").info("not ok");
+                    //Logger.getLogger("detect").info("not ok");
                     //return null;
                 } else {
                     if (lExcludes.size() >= blocks.size()) {
@@ -167,7 +169,7 @@ public class BuildingDescription {
             BlockPosition lStartPos = new BlockPosition(lX, lY, lZ);
             aBuilding.blocks.add(new BuildingBlock(lBlockDesc, new BlockPosition(lStartPos)));
             if (lBlockDesc.relatedTo.size() > 0) {
-                Logger.getLogger("detect").info("check desc " + lBlockDesc.name + " at " + lStartPos);
+                //Logger.getLogger("detect").info("check desc " + lBlockDesc.name + " at " + lStartPos);
                 ArrayList<RelFollower> lFs = new ArrayList<RelFollower>();
                 for(RelatedTo lRel : lBlockDesc.relatedTo) {
                     boolean lRelated = false;
@@ -175,18 +177,31 @@ public class BuildingDescription {
                     BlockPosition lRelatedPos = null;
                     switch(lRel.position) {
                         case Vector:
+                            int lSkip = lRel.minDistance;
                             for(BlockPosition lPos : new WorldLineWalk(
                                     lStartPos,
                                     new BlockPosition(lX + lRel.direction.getBlockX(), lY + lRel.direction.getBlockY(), lZ + lRel.direction.getBlockZ()))) {
                                 if (lFirst) {
                                     lFirst = false;
                                 } else {
-                                    //Logger.getLogger("detect").info("rel " + lRel.description.name + " at " + lPos + " mat " + lPos.getBlockType(aWorld).name());
-                                    if (lPos.getBlockType(aWorld).equals(lRel.description.material)) {
-                                        //Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
-                                        lRelatedPos = lPos;
-                                        lRelated = true;
-                                        break;
+                                    Material lMat = lPos.getBlockType(aWorld);
+                                    if (lSkip >= 0) {
+                                        //Logger.getLogger("detect").info("rel " + lRel.description.name + " at " + lPos + " mat " + lPos.getBlockType(aWorld).name());
+                                        if (lMat.equals(lRel.description.material)) {
+                                            //Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
+                                            lRelatedPos = lPos;
+                                            lRelated = true;
+                                            break;
+                                        } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lMat)) {
+                                            //Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lMat.toString());
+                                            break;
+                                        }
+                                    } else {
+                                        lSkip--;
+                                        if (!lRel.materials.isEmpty() && !lRel.materials.contains(lMat)) {
+                                            //Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lMat.toString());
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -211,7 +226,7 @@ public class BuildingDescription {
                             break;
                     }
                     if (!lRelated) {
-                        Logger.getLogger("detect").info("rel1 " + lRel.description.name + " not match");
+                        //Logger.getLogger("detect").info("rel1 " + lRel.description.name + " not match");
                         return false;
                     }
                     if (!aExcludes.contains(lRel.description)) {
@@ -219,17 +234,17 @@ public class BuildingDescription {
                         lF.pos = lRelatedPos;
                         lF.desc = lRel.description;
                         lFs.add(lF);
-                        Logger.getLogger("detect").info("found rel2 " + lF.desc.name);
+                        //Logger.getLogger("detect").info("found rel2 " + lF.desc.name);
                     }
                 }
                 if (!aExcludes.contains(lBlockDesc)) {
-                    Logger.getLogger("detect").info("excluded add " + lBlockDesc.name);
+                    //Logger.getLogger("detect").info("excluded add " + lBlockDesc.name);
                     aExcludes.add(lBlockDesc);
                 }
                 for(RelFollower lF : lFs) {
-                    Logger.getLogger("detect").info("follow rel " + lF.desc.name);
+                    //Logger.getLogger("detect").info("follow rel " + lF.desc.name);
                     if (!canFollowRelateds(aExcludes, aBuilding, aWorld, lF.desc, lF.pos.x, lF.pos.y, lF.pos.z)) {
-                        Logger.getLogger("detect").info("rel2 " + lF.desc.name + " not match");
+                        //Logger.getLogger("detect").info("rel2 " + lF.desc.name + " not match");
                         return false;
                     }
                 }

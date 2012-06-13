@@ -25,10 +25,10 @@ public class BuildingDetector {
         int dx = aPos1.x > aPos2.x ? -1 : 1;
         int dy = aPos1.y > aPos2.y ? -1 : 1;
         int dz = aPos1.z > aPos2.z ? -1 : 1;
-        Logger.getLogger("detect").info("count " + new Integer(fDescriptions.size()));
-        Logger.getLogger("detect").info(aPos1.toString() + " - " + aPos2.toString());
+        //Logger.getLogger("detect").info("count " + new Integer(fDescriptions.size()));
+        //Logger.getLogger("detect").info(aPos1.toString() + " - " + aPos2.toString());
         for(BuildingDescription lDesc : fDescriptions) {
-            Logger.getLogger("detect").info("teste " + lDesc.name);
+            //Logger.getLogger("detect").info("teste " + lDesc.name);
             for(int lX = aPos1.x; lX <= aPos2.x; lX+=dx) {
                 for(int lY = aPos1.y; lY <= aPos2.y; lY+=dy) {
                     for(int lZ = aPos1.z; lZ <= aPos2.z; lZ+=dz) {

@@ -41,6 +41,19 @@ public class BuildingDB<T extends Building> extends DBSetWorld {
         return lResult;
     }
     
+    public ArrayList<T> getBuildingsWithBlock(BlockPosition aPos) {
+        ArrayList<T> lResult = new ArrayList<T>();
+        for(Object lObj : this) {
+            T lBuilding = (T)lObj;
+            if (lBuilding.isInside(aPos)) {
+                if (lBuilding.getBlock(aPos) != null) {
+                    lResult.add(lBuilding);
+                }
+            }
+        }
+        return lResult;
+    }
+    
     public ArrayList<T> getRedStoneSensibles(BlockPosition aPos) {
         ArrayList<T> lResult = new ArrayList<T>();
         for(Object lObj : this) {
