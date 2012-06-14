@@ -80,6 +80,17 @@ public class BlockPosition {
         return new Integer(x).toString() + ";" + new Integer(y).toString() + ";" + new Integer(z).toString();
     }
     
+    public String toCSV(String aSep) {
+        return new Integer(x).toString() + aSep + new Integer(y).toString() + aSep + new Integer(z).toString();
+    }
+
+    public void fromCSV(String aValue, String aSep) {
+        String[] lVals = aValue.split(aSep);
+        x = Integer.parseInt(lVals[0]);
+        y = Integer.parseInt(lVals[1]);
+        z = Integer.parseInt(lVals[2]);
+    }
+
     public boolean isAt(int aX, int aY, int aZ) {
         return (x == aX) && (y == aY) && (z == aZ);
     }

@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import org.bukkit.util.Vector;
 
 /**
@@ -22,7 +23,7 @@ public class Building extends DBRecordWorld {
     public ArrayList<BuildingBlock> blocks = new ArrayList<BuildingBlock>();
 
     public String getName() {
-        return name == null ? description.getName() + "(" + playerName + ")" : name;
+        return (name == null || name.isEmpty()) ? description.getName() + "(" + playerName + ")" : name;
     }
     
     @Override
@@ -163,6 +164,7 @@ public class Building extends DBRecordWorld {
     public BuildingBlock getRedStoneSensibles(BlockPosition aPos) {
         //Logger.getLogger("getRedStoneSensibles").info("blocks " + blocks.size());
         for(BuildingBlock lBlock : blocks) {
+            //Logger.getLogger("getRedStoneSensibles").info("b: " + lBlock);
             if (lBlock.description.redstoneSensible && lBlock.position.nearly(aPos)) {
                 return lBlock;
             }

@@ -48,7 +48,7 @@ public class BuildingDescription {
     
     public class BlockDescription {
         public String name;
-        public Material material;
+        public ArrayList<Material> materials = new ArrayList<Material>();
         public boolean redstoneSensible = false;
         public ArrayList<RelatedTo> relatedTo = new ArrayList<RelatedTo>();
         
@@ -139,20 +139,23 @@ public class BuildingDescription {
     public Building matchDescription(World aWorld, int lX, int lY, int lZ) {
         Material lMat = aWorld.getBlockAt(lX, lY, lZ).getType();
         ArrayList<BlockDescription> lExcludes = new ArrayList<BlockDescription>();
+        Logger.getLogger("detect").info(this.name);
         for(BlockDescription lBlockDesc : blocks) {
-            if (lBlockDesc.material.equals(lMat)) {
+            if (lBlockDesc.materials.contains(lMat)) {
                 lExcludes.clear();
                 Building aBuilding = new Building();
                 aBuilding.description = this;
                 aBuilding.setWorld(aWorld);
                 //Logger.getLogger("detect").info("mat " + lMat.name());
                 if (!canFollowRelateds(lExcludes, aBuilding, aWorld, lBlockDesc, lX, lY, lZ)) {
-                    //Logger.getLogger("detect").info("not ok");
+                    Logger.getLogger("detect").info("not ok");
                     //return null;
                 } else {
                     if (lExcludes.size() >= blocks.size()) {
                         aBuilding.update();
                         return aBuilding;
+                    } else {
+                        Logger.getLogger("detect").info("not enough matches (excluder)");
                     }
                 }
             }
@@ -169,7 +172,7 @@ public class BuildingDescription {
             BlockPosition lStartPos = new BlockPosition(lX, lY, lZ);
             aBuilding.blocks.add(new BuildingBlock(lBlockDesc, new BlockPosition(lStartPos)));
             if (lBlockDesc.relatedTo.size() > 0) {
-                //Logger.getLogger("detect").info("check desc " + lBlockDesc.name + " at " + lStartPos);
+                Logger.getLogger("detect").info("check desc " + lBlockDesc.name + " at " + lStartPos);
                 ArrayList<RelFollower> lFs = new ArrayList<RelFollower>();
                 for(RelatedTo lRel : lBlockDesc.relatedTo) {
                     boolean lRelated = false;
@@ -186,20 +189,20 @@ public class BuildingDescription {
                                 } else {
                                     Material lMat = lPos.getBlockType(aWorld);
                                     if (lSkip >= 0) {
-                                        //Logger.getLogger("detect").info("rel " + lRel.description.name + " at " + lPos + " mat " + lPos.getBlockType(aWorld).name());
-                                        if (lMat.equals(lRel.description.material)) {
-                                            //Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
+                                        Logger.getLogger("detect").info("rel " + lRel.description.name + " at " + lPos + " mat " + lPos.getBlockType(aWorld).name());
+                                        if (lRel.description.materials.contains(lMat)) {
+                                            Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
                                             lRelatedPos = lPos;
                                             lRelated = true;
                                             break;
                                         } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lMat)) {
-                                            //Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lMat.toString());
+                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lMat.toString());
                                             break;
                                         }
                                     } else {
                                         lSkip--;
                                         if (!lRel.materials.isEmpty() && !lRel.materials.contains(lMat)) {
-                                            //Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lMat.toString());
+                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lMat.toString());
                                             break;
                                         }
                                     }
@@ -212,7 +215,7 @@ public class BuildingDescription {
                                 for(int dy = -lLength; dy >= lLength; dy++) {
                                     for(int dz = -lLength; dz >= lLength; dz++) {
                                         if (dx != 0 && dy != 0 && dz != 0) {
-                                            if (lStartPos.getBlockAt(aWorld, dx, dy, dz).getType().equals(lRel.description.material)) {
+                                            if (lRel.description.materials.contains(lStartPos.getBlockAt(aWorld, dx, dy, dz).getType())) {
                                                 lRelated = true;
                                                 lRelatedPos = new BlockPosition(lX + dx, lY + dy, lZ + dz);
                                                 break;
@@ -226,7 +229,7 @@ public class BuildingDescription {
                             break;
                     }
                     if (!lRelated) {
-                        //Logger.getLogger("detect").info("rel1 " + lRel.description.name + " not match");
+                        Logger.getLogger("detect").info("rel1 " + lRel.description.name + " not match");
                         return false;
                     }
                     if (!aExcludes.contains(lRel.description)) {
@@ -238,18 +241,19 @@ public class BuildingDescription {
                     }
                 }
                 if (!aExcludes.contains(lBlockDesc)) {
-                    //Logger.getLogger("detect").info("excluded add " + lBlockDesc.name);
+                    Logger.getLogger("detect").info("excluded add " + lBlockDesc.name);
                     aExcludes.add(lBlockDesc);
                 }
                 for(RelFollower lF : lFs) {
-                    //Logger.getLogger("detect").info("follow rel " + lF.desc.name);
+                    Logger.getLogger("detect").info("follow rel " + lF.desc.name);
                     if (!canFollowRelateds(aExcludes, aBuilding, aWorld, lF.desc, lF.pos.x, lF.pos.y, lF.pos.z)) {
-                        //Logger.getLogger("detect").info("rel2 " + lF.desc.name + " not match");
+                        Logger.getLogger("detect").info("rel2 " + lF.desc.name + " not match");
                         return false;
                     }
                 }
                 return true;
             } else {
+                Logger.getLogger("detect").info("excluded add " + lBlockDesc.name);
                 aExcludes.add(lBlockDesc);
                 return true;
             }

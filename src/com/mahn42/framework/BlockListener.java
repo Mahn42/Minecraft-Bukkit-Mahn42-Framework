@@ -47,13 +47,16 @@ public class BlockListener implements Listener {
         BlockPosition lPos = new BlockPosition(lBlock.getLocation());
         ArrayList<BuildingHandler> lHandlers = Framework.plugin.getBuildingDetector().getHandlers();
         boolean lFound = false;
+        //Framework.plugin.getLogger().info("red stone check handler " + lPos );
         for (BuildingHandler lHandler : lHandlers) {
             BuildingDB lDB = lHandler.getDB(lWorld);
+            //Framework.plugin.getLogger().info("red stone check DB " + lDB.getClass().getSimpleName() + " c:" + lDB.size() );
             ArrayList<Building> lBuildings = lDB.getRedStoneSensibles(lPos);
             for(Building lBuilding : lBuildings) {
                 //Framework.plugin.getLogger().info("Cur: " + aEvent.getNewCurrent());
                 //Framework.plugin.getLogger().info("B:" + lBuilding.toCSV());
                 //Framework.plugin.getLogger().info("BB:" + lBuilding.getRedStoneSensibles(lPos));
+                //Framework.plugin.getLogger().info("B:" + lBuilding.getName() + " BB:" + lBuilding.getRedStoneSensibles(lPos));
                 if (lBuilding.description.handler != null) {
                     lFound = lBuilding.description.handler.redstoneChanged(aEvent, lBuilding);
                 }
