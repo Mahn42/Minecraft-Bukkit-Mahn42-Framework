@@ -162,10 +162,26 @@ public class Building extends DBRecordWorld {
     }
 
     public BuildingBlock getRedStoneSensibles(BlockPosition aPos) {
-        //Logger.getLogger("getRedStoneSensibles").info("blocks " + blocks.size());
         for(BuildingBlock lBlock : blocks) {
-            //Logger.getLogger("getRedStoneSensibles").info("b: " + lBlock);
             if (lBlock.description.redstoneSensible && lBlock.position.nearly(aPos)) {
+                return lBlock;
+            }
+        }
+        return null;
+    }
+
+    public BuildingBlock getNameSensibles(BlockPosition aPos) {
+        for(BuildingBlock lBlock : blocks) {
+            if (lBlock.description.nameSensible && lBlock.position.nearly(aPos)) {
+                return lBlock;
+            }
+        }
+        return null;
+    }
+
+    public BuildingBlock getSignSensibles(BlockPosition aPos) {
+        for(BuildingBlock lBlock : blocks) {
+            if (lBlock.description.signSensible && lBlock.position.nearly(aPos)) {
                 return lBlock;
             }
         }

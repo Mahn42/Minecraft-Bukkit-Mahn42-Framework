@@ -50,6 +50,8 @@ public class BuildingDescription {
         public String name;
         public ArrayList<Material> materials = new ArrayList<Material>();
         public boolean redstoneSensible = false;
+        public boolean nameSensible = false;
+        public boolean signSensible = false;
         public ArrayList<RelatedTo> relatedTo = new ArrayList<RelatedTo>();
         
         public RelatedTo newRelatedTo() {

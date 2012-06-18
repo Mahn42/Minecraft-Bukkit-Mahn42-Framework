@@ -64,4 +64,26 @@ public class BuildingDB<T extends Building> extends DBSetWorld {
         }
         return lResult;
     }
+
+    public ArrayList<T> getNameSensibles(BlockPosition aPos) {
+        ArrayList<T> lResult = new ArrayList<T>();
+        for(Object lObj : this) {
+            T lBuilding = (T)lObj;
+            if (lBuilding.getNameSensibles(aPos) != null) {
+                lResult.add(lBuilding);
+            }
+        }
+        return lResult;
+    }
+
+    public ArrayList<T> getSignSensibles(BlockPosition aPos) {
+        ArrayList<T> lResult = new ArrayList<T>();
+        for(Object lObj : this) {
+            T lBuilding = (T)lObj;
+            if (lBuilding.getSignSensibles(aPos) != null) {
+                lResult.add(lBuilding);
+            }
+        }
+        return lResult;
+    }
 }

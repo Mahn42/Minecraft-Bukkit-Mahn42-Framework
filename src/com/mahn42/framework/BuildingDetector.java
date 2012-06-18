@@ -58,6 +58,11 @@ public class BuildingDetector {
         return lDesc;
     }
     
+    public void addDescription(BuildingDescription aDesc) {
+        fDescriptions.add(aDesc);
+        fShouldUpdateHandlers = true;
+    }
+    
     protected ArrayList<BuildingHandler> fHandlers = new ArrayList<BuildingHandler>();
     
     public ArrayList<BuildingHandler> getHandlers() {
