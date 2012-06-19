@@ -44,6 +44,20 @@ public class BuildingDescription {
             block = aBlock;
             position = aRelPos;
         }
+
+        public void cloneFrom(RelatedTo aRel) {
+            direction = aRel.direction.clone();
+            position = aRel.position;
+            block = aRel.block;
+            description = aRel.description;
+            minDistance = aRel.minDistance;
+            materials.clear();
+            materials.addAll(aRel.materials);
+        }
+
+        public void multiply(Vector aVector) {
+            direction.multiply(aVector);
+        }
     }
     
     public class BlockDescription {
@@ -79,6 +93,27 @@ public class BuildingDescription {
         public String toString() {
             return name;
         }
+
+        public void cloneFrom(BlockDescription aDesc) {
+            name = aDesc.name;
+            redstoneSensible = aDesc.redstoneSensible;
+            nameSensible = aDesc.nameSensible;
+            signSensible = aDesc.signSensible;
+            materials.clear();
+            materials.addAll(aDesc.materials);
+            relatedTo.clear();
+            for(RelatedTo lRel : aDesc.relatedTo) {
+                RelatedTo lNew = new RelatedTo();
+                lNew.cloneFrom(lRel);
+                relatedTo.add(lNew);
+            }
+        }
+
+        public void multiply(Vector aVector) {
+            for(RelatedTo lRel : relatedTo) {
+                lRel.multiply(aVector);
+            }
+        }
     }
     
     public enum Position {
@@ -106,6 +141,24 @@ public class BuildingDescription {
         return typeName != null ? typeName : name;
     }
 
+    public void cloneFrom(BuildingDescription aDesc) {
+        typeName = aDesc.typeName;
+        name = aDesc.name;
+        position = aDesc.position;
+        blocks.clear();
+        for(BlockDescription lBDesc : aDesc.blocks) {
+            BlockDescription lNew = new BlockDescription();
+            lNew.cloneFrom(lBDesc);
+            blocks.add(lNew);
+        }
+    }
+    
+    public void multiply(Vector aVector) {
+        for(BlockDescription lBDesc : blocks) {
+            lBDesc.multiply(aVector);
+        }
+    }
+    
     public BlockDescription getBlock(String lDescName) {
         for(BlockDescription lBlock : blocks) {
             if (lDescName.equalsIgnoreCase(lBlock.name)) {
