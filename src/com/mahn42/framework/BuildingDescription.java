@@ -58,6 +58,27 @@ public class BuildingDescription {
         public void multiply(Vector aVector) {
             direction.multiply(aVector);
         }
+
+        public void swapXYZ(SwapType aType) {
+            int lSwap;
+            switch (aType) {
+                case XZ:
+                    lSwap = direction.getBlockX();
+                    direction.setX(direction.getBlockZ());
+                    direction.setZ(lSwap);
+                    break;
+                case XY:
+                    lSwap = direction.getBlockX();
+                    direction.setX(direction.getBlockY());
+                    direction.setY(lSwap);
+                    break;
+                case YZ:
+                    lSwap = direction.getBlockY();
+                    direction.setY(direction.getBlockZ());
+                    direction.setZ(lSwap);
+                    break;
+            }
+        }
     }
     
     public class BlockDescription {
@@ -114,6 +135,12 @@ public class BuildingDescription {
                 lRel.multiply(aVector);
             }
         }
+
+        public void swapXYZ(SwapType aType) {
+            for(RelatedTo lRel : relatedTo) {
+                lRel.swapXYZ(aType);
+            }
+        }
     }
     
     public enum Position {
@@ -143,7 +170,9 @@ public class BuildingDescription {
 
     public void cloneFrom(BuildingDescription aDesc) {
         typeName = aDesc.typeName;
-        name = aDesc.name;
+        if (name == null || name.isEmpty()) {
+            name = aDesc.name;
+        }
         position = aDesc.position;
         blocks.clear();
         for(BlockDescription lBDesc : aDesc.blocks) {
@@ -151,11 +180,25 @@ public class BuildingDescription {
             lNew.cloneFrom(lBDesc);
             blocks.add(lNew);
         }
+        influenceRadiusFactor = aDesc.influenceRadiusFactor;
+        handler = aDesc.handler;
     }
     
     public void multiply(Vector aVector) {
         for(BlockDescription lBDesc : blocks) {
             lBDesc.multiply(aVector);
+        }
+    }
+    
+    public enum SwapType {
+        XZ,
+        XY,
+        YZ
+    }
+    
+    public void swapXYZ(SwapType aType) {
+        for(BlockDescription lBDesc : blocks) {
+            lBDesc.swapXYZ(aType);
         }
     }
     
@@ -208,6 +251,7 @@ public class BuildingDescription {
                 } else {
                     if (lExcludes.size() >= blocks.size()) {
                         aBuilding.update();
+                        Logger.getLogger("detect").info("found: " + this.name);
                         return aBuilding;
                     } else {
                         Logger.getLogger("detect").info("not enough matches (excluder)");
@@ -215,6 +259,7 @@ public class BuildingDescription {
                 }
             }
         }
+        Logger.getLogger("detect").info(this.name + " does not match!");
         return null;
     }
     

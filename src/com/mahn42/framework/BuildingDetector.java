@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.World;
 
@@ -34,9 +35,14 @@ public class BuildingDetector {
                     for(int lZ = aPos1.z; lZ <= aPos2.z; lZ+=dz) {
                         //TODO check if pos in building of any DB
                         //Logger.getLogger("detect").info("teste " + new Integer(lX) + "," + new Integer(lY) + "," + new Integer(lZ));
-                        Building aBuilding = matchDescription(lDesc, aWorld, lX, lY, lZ);
-                        if (aBuilding != null) {
-                            lResult.add(aBuilding);
+                        if (getBuildings(new BlockPosition(lX, lY, lZ)).isEmpty()) {
+                            Building aBuilding = matchDescription(lDesc, aWorld, lX, lY, lZ);
+                            if (aBuilding != null) {
+                                lResult.add(aBuilding);
+                                Logger.getLogger("detect").info("add " + aBuilding.getName());
+                            }
+                        } else {
+                            // there are always buildings
                         }
                     }
                 }
@@ -64,6 +70,7 @@ public class BuildingDetector {
     }
     
     protected ArrayList<BuildingHandler> fHandlers = new ArrayList<BuildingHandler>();
+    protected ArrayList<BuildingDB> fDBs = new ArrayList<BuildingDB>();
     
     public ArrayList<BuildingHandler> getHandlers() {
         if (fShouldUpdateHandlers) {
@@ -73,7 +80,34 @@ public class BuildingDetector {
                     fHandlers.add(lDesc.handler);
                 }
             }
+            fDBs.clear();
+            List<World> lWorlds = Framework.plugin.getServer().getWorlds();
+            for(BuildingHandler lHandler : fHandlers) {
+                for(World lWorld : lWorlds) {
+                    BuildingDB lDB = lHandler.getDB(lWorld);
+                    if (!fDBs.contains(lDB)) {
+                        fDBs.add(lDB);
+                    }
+                }
+            }
         }
         return fHandlers;
+    }
+    
+    public ArrayList<BuildingDB> getDBs() {
+        getHandlers();
+        return fDBs;
+    }
+    
+    public ArrayList<Building> getBuildings(BlockPosition aPos) {
+        ArrayList<Building> lResult = new ArrayList<Building>();
+        ArrayList<BuildingDB> lDBs = getDBs();
+        for(BuildingDB lDB : lDBs) {
+            ArrayList<Building> lBuildings = lDB.getBuildings(aPos);
+            if (!lBuildings.isEmpty()) {
+                lResult.addAll(lBuildings);
+            }
+        }
+        return lResult;
     }
 }

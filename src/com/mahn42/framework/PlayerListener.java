@@ -34,20 +34,26 @@ public class PlayerListener implements Listener {
                 && aEvent.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && aEvent.hasItem()
                 && lInHand.equals(Material.BOOK)) {
-            ArrayList<Building> lBuildings = Framework.plugin.getBuildingDetector().detect(
-                    lWorld,
-                    new BlockPosition(lBlock.getLocation()),
-                    new BlockPosition(lBlock.getLocation()));
-            boolean lFound = false;
-            for(Building lBuilding : lBuildings) {
-                if (lBuilding.description.handler != null) {
-                    if (lBuilding.description.handler.playerInteract(aEvent, lBuilding)) {
-                      lFound = true;
+            ArrayList<Building> lBuildings;
+            BlockPosition lPos = new BlockPosition(lBlock.getLocation());
+            lBuildings = Framework.plugin.getBuildingDetector().getBuildings(lPos);
+            if (lBuildings.isEmpty()) {
+                lBuildings = Framework.plugin.getBuildingDetector().detect(lWorld, lPos, lPos);
+                boolean lFound = false;
+                for(Building lBuilding : lBuildings) {
+                    if (lBuilding.description.handler != null) {
+                        if (lBuilding.description.handler.playerInteract(aEvent, lBuilding)) {
+                        lFound = true;
+                        }
                     }
                 }
-            }
-            if (!lFound) {
-                lPlayer.sendMessage("No building found!");
+                if (!lFound) {
+                    lPlayer.sendMessage("No building found!");
+                }
+            } else {
+                for(Building lBuilding : lBuildings) {
+                    lPlayer.sendMessage("Here is always the building " + lBuilding.getName());
+                }
             }
         }
     }

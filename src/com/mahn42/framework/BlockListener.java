@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -13,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.block.BlockFadeEvent;
 
 /**
  *
@@ -20,6 +22,28 @@ import org.bukkit.event.block.SignChangeEvent;
  */
 public class BlockListener implements Listener {
     
+    /*
+    @EventHandler
+    public void fadeBlock(BlockFadeEvent aEvent) {
+        if (aEvent.getNewState().getType().equals(Material.AIR)) {
+            Block lBlock = aEvent.getBlock();
+            World lWorld = lBlock.getWorld();
+            Framework.plugin.getLogger().info("BlockFadeEvent " + lBlock);
+            ArrayList<BuildingHandler> lHandlers = Framework.plugin.getBuildingDetector().getHandlers();
+            for (BuildingHandler lHandler : lHandlers) {
+                BuildingDB lDB = lHandler.getDB(lWorld);
+                ArrayList<Building> lBuildings = lDB.getBuildingsWithBlock(new BlockPosition(lBlock.getLocation()));
+                for(Building lBuilding : lBuildings) {
+                    Framework.plugin.getLogger().info("Building destroyed " + lBuilding.getName());
+                    lDB.remove(lBuilding);
+                    if (lBuilding.description.handler != null) {
+                    }
+                }
+            }
+        }
+    }
+    */
+
     @EventHandler
     public void breakBlock(BlockBreakEvent aEvent) {
         Player lPlayer = aEvent.getPlayer();

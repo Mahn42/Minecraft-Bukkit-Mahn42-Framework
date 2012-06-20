@@ -37,6 +37,7 @@ public class DBSet<T extends DBRecord> implements Iterable<T>, DBSave {
             try {
                 BufferedReader lReader = new BufferedReader(new FileReader(file));
                 String lLine;
+                int lLineNum = 1;
                 String lHeader = lReader.readLine();
                 while ((lLine = lReader.readLine()) != null) {
                     T lRecord = null;
@@ -48,8 +49,17 @@ public class DBSet<T extends DBRecord> implements Iterable<T>, DBSave {
                         Logger.getLogger(DBSet.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     if (lRecord != null) {
-                        lRecord.fromCSV(lHeader, lLine);
-                        addRecordInternal(lRecord);
+                        boolean lOK = false;
+                        try {
+                            lRecord.fromCSV(lHeader, lLine);
+                            lOK = true;
+                        } catch (Exception ex) {
+                            Logger.getLogger(DBSet.class.getName()).log(Level.SEVERE, "line " + lLineNum, ex);
+                        }
+                        lLineNum++;
+                        if (lOK) {
+                            addRecordInternal(lRecord);
+                        }
                     }
                 }
             } catch (IOException ex) {
