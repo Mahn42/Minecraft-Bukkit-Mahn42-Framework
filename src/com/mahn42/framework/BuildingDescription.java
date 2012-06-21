@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
 /**
@@ -81,9 +82,67 @@ public class BuildingDescription {
         }
     }
     
+    public class BlockMaterial {
+        public Material material;
+        public boolean withData = false;
+        public byte data = 0;
+
+        public BlockMaterial() {
+        }
+        
+        public BlockMaterial(Material aMaterial) {
+            material = aMaterial;
+        }
+        
+        public BlockMaterial(Material aMaterial, byte aData) {
+            material = aMaterial;
+            withData = true;
+            data = aData;
+        }
+        
+        @Override
+        public boolean equals(Object aObject) {
+            if (aObject instanceof BlockMaterial) {
+                BlockMaterial lMat = (BlockMaterial)aObject;
+                return material.equals(lMat.material) 
+                        && ((withData && lMat.withData && (data == lMat.data))
+                        || (!withData && !lMat.withData));
+            } else if (aObject instanceof Material) {
+                return material.equals(aObject) && !withData;
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 61 * hash + (this.material != null ? this.material.hashCode() : 0);
+            hash = 61 * hash + this.data;
+            return hash;
+        }
+    }
+    
+    public class BlockMaterialArray extends ArrayList<BlockMaterial> {
+        public boolean add(Material aMaterial) {
+            return add(new BlockMaterial(aMaterial));
+        }
+        public boolean add(Material aMaterial, byte aData) {
+            return add(new BlockMaterial(aMaterial, aData));
+        }
+        public boolean contains(Material aMaterial) {
+            return contains(new BlockMaterial(aMaterial));
+        }
+        public boolean contains(Material aMaterial, byte aData) {
+            return contains(new BlockMaterial(aMaterial, aData));
+        }
+        public boolean contains(Block aBlock) {
+            return contains(new BlockMaterial(aBlock.getType(), aBlock.getData()));
+        }
+    }
+    
     public class BlockDescription {
         public String name;
-        public ArrayList<Material> materials = new ArrayList<Material>();
+        public BlockMaterialArray materials = new BlockMaterialArray();
         public boolean redstoneSensible = false;
         public boolean nameSensible = false;
         public boolean signSensible = false;
@@ -105,6 +164,14 @@ public class BuildingDescription {
         public RelatedTo newRelatedTo(Vector aDirection, String aBlock, RelatedPosition aRelPos) {
             RelatedTo lRel = newRelatedTo();
             lRel.direction = aDirection;
+            lRel.block = aBlock;
+            lRel.position = aRelPos;
+            return lRel;
+        }
+        
+        public RelatedTo newRelatedTo(String aBlock, RelatedPosition aRelPos, int aLength) {
+            RelatedTo lRel = newRelatedTo();
+            lRel.direction = new Vector(aLength,0,0);
             lRel.block = aBlock;
             lRel.position = aRelPos;
             return lRel;
@@ -310,15 +377,31 @@ public class BuildingDescription {
                             }
                             break;
                         case Nearby:
+                            for(BlockPosition lPos : new BlockPositionWalkAround(lStartPos, BlockPositionDelta.HorizontalAndVertical)) {
+                                Block lBlock = lPos.getBlock(aWorld);
+                                if (lRel.description.materials.contains(lBlock.getType())) {
+                                    Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
+                                    lRelated = true;
+                                    lRelatedPos = lPos.clone();
+                                    break;
+                                } else {
+                                    Logger.getLogger("detect").info("break rel nearby " + lRel.description.name + " mat " + lBlock);
+                                }
+                            }
+                            /*
                             int lLength = (int)Math.round(lRel.direction.length());
-                            for(int dx = -lLength; dx >= lLength; dx++) {
-                                for(int dy = -lLength; dy >= lLength; dy++) {
-                                    for(int dz = -lLength; dz >= lLength; dz++) {
-                                        if (dx != 0 && dy != 0 && dz != 0) {
-                                            if (lRel.description.materials.contains(lStartPos.getBlockAt(aWorld, dx, dy, dz).getType())) {
+                            Logger.getLogger("detect").info("rel nearby " + lRel.description.name + " length " + lLength);
+                            for(int dx = -lLength; dx <= lLength; dx++) {
+                                for(int dy = -lLength; dy <= lLength; dy++) {
+                                    for(int dz = -lLength; dz <= lLength; dz++) {
+                                        if ((dx != 0) && (dy != 0) && (dz != 0)) {
+                                            Block lBlock = lStartPos.getBlockAt(aWorld, dx, dy, dz);
+                                            if (lRel.description.materials.contains(lBlock.getType())) {
                                                 lRelated = true;
                                                 lRelatedPos = new BlockPosition(lX + dx, lY + dy, lZ + dz);
                                                 break;
+                                            } else {
+                                                Logger.getLogger("detect").info("break rel nearby " + lRel.description.name + " mat " + lBlock);
                                             }
                                         }
                                     }
@@ -326,6 +409,7 @@ public class BuildingDescription {
                                 }
                                 if (lRelated) break;
                             }
+                            */
                             break;
                     }
                     if (!lRelated) {
