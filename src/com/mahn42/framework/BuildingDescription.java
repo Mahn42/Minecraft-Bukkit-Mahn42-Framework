@@ -269,6 +269,26 @@ public class BuildingDescription {
         }
     }
     
+    public void createAndActivateXZ() {
+        BuildingDescription lDesc, lDesc2;
+        lDesc2 = Framework.plugin.getBuildingDetector().newDescription(this.name + ".X2");
+        lDesc2.cloneFrom(this);
+        lDesc2.multiply(new Vector(-1,1,1));
+        lDesc2.activate();
+
+        lDesc = Framework.plugin.getBuildingDetector().newDescription(this.name + ".Z1");
+        lDesc.cloneFrom(this);
+        lDesc.swapXYZ(BuildingDescription.SwapType.XZ);
+        lDesc.activate();
+
+        lDesc2 = Framework.plugin.getBuildingDetector().newDescription(this.name + ".Z2");
+        lDesc2.cloneFrom(lDesc);
+        lDesc2.multiply(new Vector(1,1,-1));
+        lDesc2.activate();
+
+        this.name = this.name + ".X1";
+    }
+    
     public BlockDescription getBlock(String lDescName) {
         for(BlockDescription lBlock : blocks) {
             if (lDescName.equalsIgnoreCase(lBlock.name)) {

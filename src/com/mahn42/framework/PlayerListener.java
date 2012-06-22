@@ -41,9 +41,10 @@ public class PlayerListener implements Listener {
                 lBuildings = Framework.plugin.getBuildingDetector().detect(lWorld, lPos, lPos);
                 boolean lFound = false;
                 for(Building lBuilding : lBuildings) {
+                    lBuilding.playerName = lPlayer.getName();
                     if (lBuilding.description.handler != null) {
                         if (lBuilding.description.handler.playerInteract(aEvent, lBuilding)) {
-                        lFound = true;
+                            lFound = true;
                         }
                     }
                 }

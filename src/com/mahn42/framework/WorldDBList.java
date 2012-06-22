@@ -5,7 +5,9 @@
 package com.mahn42.framework;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.World;
@@ -15,7 +17,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author andre
  */
-public class WorldDBList<T extends DBSetWorld> implements DBSave {
+public class WorldDBList<T extends DBSetWorld> implements DBSave, Iterable<T> {
 
     public Plugin plugin;
     public String name;
@@ -68,10 +70,24 @@ public class WorldDBList<T extends DBSetWorld> implements DBSave {
         return getDB(lWorld);
     }
     
+    public ArrayList<World> getWorlds() {
+        ArrayList<World> lResult = new ArrayList<World>();
+        for (String lName : fDBs.keySet()) {
+            World lWorld = Framework.plugin.getServer().getWorld(lName);
+            lResult.add(lWorld);
+        }
+        return lResult;
+    }
+    
     @Override
     public void save() {
         for(T lDB : fDBs.values()) {
             lDB.save();
         }
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return fDBs.values().iterator();
     }
 }
