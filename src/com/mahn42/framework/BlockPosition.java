@@ -123,6 +123,12 @@ public class BlockPosition {
         z += aDelta.dz;
     }
 
+    public void add(Vector aVector) {
+        x += aVector.getBlockX();
+        y += aVector.getBlockY();
+        z += aVector.getBlockZ();
+    }
+
     public double distance(BlockPosition aPos) {
         return getVector().distance(aPos.getVector());
     }

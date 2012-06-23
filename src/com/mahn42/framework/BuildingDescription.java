@@ -29,7 +29,7 @@ public class BuildingDescription {
         public String block;
         public BlockDescription description;
         public int minDistance = 0;
-        public ArrayList<Material> materials = new ArrayList<Material>();
+        public BlockMaterialArray materials = new BlockMaterialArray();
         
         public RelatedTo() {
         }
@@ -104,9 +104,11 @@ public class BuildingDescription {
         public boolean equals(Object aObject) {
             if (aObject instanceof BlockMaterial) {
                 BlockMaterial lMat = (BlockMaterial)aObject;
-                return material.equals(lMat.material) 
-                        && ((withData && lMat.withData && (data == lMat.data))
-                        || (!withData && !lMat.withData));
+                if (withData) {
+                    return material.equals(lMat.material) && (data == lMat.data);
+                } else {
+                    return material.equals(lMat.material);
+                }
             } else if (aObject instanceof Material) {
                 return material.equals(aObject) && !withData;
             }
@@ -271,22 +273,24 @@ public class BuildingDescription {
     
     public void createAndActivateXZ() {
         BuildingDescription lDesc, lDesc2;
-        lDesc2 = Framework.plugin.getBuildingDetector().newDescription(this.name + ".X2");
+        String lName = new String(name);
+        this.name = this.name + ".X1";
+        activate();
+
+        lDesc2 = Framework.plugin.getBuildingDetector().newDescription(lName + ".X2");
         lDesc2.cloneFrom(this);
         lDesc2.multiply(new Vector(-1,1,1));
         lDesc2.activate();
 
-        lDesc = Framework.plugin.getBuildingDetector().newDescription(this.name + ".Z1");
+        lDesc = Framework.plugin.getBuildingDetector().newDescription(lName + ".Z1");
         lDesc.cloneFrom(this);
         lDesc.swapXYZ(BuildingDescription.SwapType.XZ);
         lDesc.activate();
 
-        lDesc2 = Framework.plugin.getBuildingDetector().newDescription(this.name + ".Z2");
+        lDesc2 = Framework.plugin.getBuildingDetector().newDescription(lName + ".Z2");
         lDesc2.cloneFrom(lDesc);
         lDesc2.multiply(new Vector(1,1,-1));
         lDesc2.activate();
-
-        this.name = this.name + ".X1";
     }
     
     public BlockDescription getBlock(String lDescName) {
@@ -309,6 +313,9 @@ public class BuildingDescription {
         HashMap<String, BlockDescription> lHash = new HashMap<String, BlockDescription>();
         for(BlockDescription lBDesc : blocks) {
             lHash.put(lBDesc.name, lBDesc);
+            if (lBDesc.materials.isEmpty()) {
+                Framework.plugin.getLogger().info("no materials on block " + lBDesc.name + " of " + name + "!");
+            }
         }
         for(BlockDescription lBDesc : blocks) {
             for(RelatedTo lRel : lBDesc.relatedTo) {
@@ -322,11 +329,11 @@ public class BuildingDescription {
     }
 
     public Building matchDescription(World aWorld, int lX, int lY, int lZ) {
-        Material lMat = aWorld.getBlockAt(lX, lY, lZ).getType();
+        Block lBlock = aWorld.getBlockAt(lX, lY, lZ);
         ArrayList<BlockDescription> lExcludes = new ArrayList<BlockDescription>();
         Logger.getLogger("detect").info(this.name);
         for(BlockDescription lBlockDesc : blocks) {
-            if (lBlockDesc.materials.contains(lMat)) {
+            if (lBlockDesc.materials.contains(lBlock)) {
                 lExcludes.clear();
                 Building aBuilding = new Building();
                 aBuilding.description = this;
@@ -374,22 +381,23 @@ public class BuildingDescription {
                                 if (lFirst) {
                                     lFirst = false;
                                 } else {
-                                    Material lMat = lPos.getBlockType(aWorld);
+                                    Block lBlock = lPos.getBlock(aWorld);
+                                    //Material lMat = lPos.getBlockType(aWorld);
                                     if (lSkip >= 0) {
                                         Logger.getLogger("detect").info("rel " + lRel.description.name + " at " + lPos + " mat " + lPos.getBlockType(aWorld).name());
-                                        if (lRel.description.materials.contains(lMat)) {
+                                        if (lRel.description.materials.contains(lBlock)) {
                                             Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
                                             lRelatedPos = lPos;
                                             lRelated = true;
                                             break;
-                                        } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lMat)) {
-                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lMat.toString());
+                                        } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
+                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lBlock.toString());
                                             break;
                                         }
                                     } else {
                                         lSkip--;
-                                        if (!lRel.materials.isEmpty() && !lRel.materials.contains(lMat)) {
-                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lMat.toString());
+                                        if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
+                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lBlock.toString());
                                             break;
                                         }
                                     }
@@ -399,7 +407,7 @@ public class BuildingDescription {
                         case Nearby:
                             for(BlockPosition lPos : new BlockPositionWalkAround(lStartPos, BlockPositionDelta.HorizontalAndVertical)) {
                                 Block lBlock = lPos.getBlock(aWorld);
-                                if (lRel.description.materials.contains(lBlock.getType())) {
+                                if (lRel.description.materials.contains(lBlock)) {
                                     Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
                                     lRelated = true;
                                     lRelatedPos = lPos.clone();
