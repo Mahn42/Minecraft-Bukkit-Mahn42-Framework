@@ -382,8 +382,7 @@ public class BuildingDescription {
                                     lFirst = false;
                                 } else {
                                     Block lBlock = lPos.getBlock(aWorld);
-                                    //Material lMat = lPos.getBlockType(aWorld);
-                                    if (lSkip >= 0) {
+                                    if (lSkip == 0) {
                                         Logger.getLogger("detect").info("rel " + lRel.description.name + " at " + lPos + " mat " + lPos.getBlockType(aWorld).name());
                                         if (lRel.description.materials.contains(lBlock)) {
                                             Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
