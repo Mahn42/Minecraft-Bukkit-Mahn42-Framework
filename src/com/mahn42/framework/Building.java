@@ -23,7 +23,7 @@ public class Building extends DBRecordWorld {
     public ArrayList<BuildingBlock> blocks = new ArrayList<BuildingBlock>();
 
     public String getName() {
-        return (name == null || name.isEmpty()) ? description.getName() + "(" + playerName + ")" : name;
+        return (name == null || name.isEmpty()) ? description.getName() + " (" + playerName + ")" : name + " (" + playerName + ")";
     }
     
     @Override

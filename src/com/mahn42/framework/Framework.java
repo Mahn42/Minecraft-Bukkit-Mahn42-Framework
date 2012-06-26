@@ -21,6 +21,7 @@ public class Framework extends JavaPlugin {
     
     protected SyncBlockSetter fSyncBlockSetter;
     protected DBSaverTask fSaverTask;
+    protected DynMapBuildingRenderer fDynMapTask;
     protected BuildingDetector fBuildingDetector;
     
     /**
@@ -38,6 +39,9 @@ public class Framework extends JavaPlugin {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
         fSaverTask = new DBSaverTask();
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSaverTask, 100, configDBSaverTicks);
+        fDynMapTask = new DynMapBuildingRenderer();
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, 20);
+        
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);

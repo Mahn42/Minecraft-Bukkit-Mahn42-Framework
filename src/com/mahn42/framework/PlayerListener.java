@@ -93,19 +93,29 @@ public class PlayerListener implements Listener {
                 aPos.getBlock(aWorld).setData(aBDesc.materials.get(0).data);
             }
             for(BuildingDescription.RelatedTo lRel : aBDesc.relatedTo) {
-                BlockPosition lRelPos = aPos.clone();
-                lRelPos.add(lRel.direction);
-                if (!lRel.materials.isEmpty()) {
-                    for(BlockPosition lPos : new WorldLineWalk(aPos, lRelPos)) {
-                        if (!lPos.equals(aPos) && !lPos.equals(lRelPos)) {
-                            lPos.getBlock(aWorld).setType(lRel.materials.get(0).material);
-                            if (lRel.materials.get(0).withData) {
-                                aPos.getBlock(aWorld).setData(lRel.materials.get(0).data);
+                BlockPosition lRelPos;
+                switch(lRel.position) {
+                    case Vector:
+                        lRelPos = aPos.clone();
+                        lRelPos.add(lRel.direction);
+                        if (!lRel.materials.isEmpty()) {
+                            for(BlockPosition lPos : new WorldLineWalk(aPos, lRelPos)) {
+                                if (!lPos.equals(aPos) && !lPos.equals(lRelPos)) {
+                                    lPos.getBlock(aWorld).setType(lRel.materials.get(0).material);
+                                    if (lRel.materials.get(0).withData) {
+                                        aPos.getBlock(aWorld).setData(lRel.materials.get(0).data);
+                                    }
+                                }
                             }
                         }
-                    }
+                        debugDesc(aDones, lRelPos, lRel.description, aWorld);
+                        break;
+                    case Nearby:
+                        lRelPos = aPos.clone();
+                        lRelPos.add(lRel.direction);
+                        debugDesc(aDones, lRelPos, lRel.description, aWorld);
+                        break;
                 }
-                debugDesc(aDones, lRelPos, lRel.description, aWorld);
             }
         }
     }

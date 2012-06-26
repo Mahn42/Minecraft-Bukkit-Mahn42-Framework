@@ -122,6 +122,15 @@ public class BuildingDescription {
             hash = 61 * hash + this.data;
             return hash;
         }
+        
+        @Override
+        public String toString() {
+            String lResult = material.toString();
+            if (withData) {
+                lResult += "(" + data + ")";
+            }
+            return lResult;
+        }
     }
     
     public class BlockMaterialArray extends ArrayList<BlockMaterial> {
@@ -131,14 +140,21 @@ public class BuildingDescription {
         public boolean add(Material aMaterial, byte aData) {
             return add(new BlockMaterial(aMaterial, aData));
         }
-        public boolean contains(Material aMaterial) {
-            return contains(new BlockMaterial(aMaterial));
-        }
-        public boolean contains(Material aMaterial, byte aData) {
-            return contains(new BlockMaterial(aMaterial, aData));
-        }
+        //public boolean contains(Material aMaterial) {
+        //    return contains(new BlockMaterial(aMaterial));
+        //}
+        //public boolean contains(Material aMaterial, byte aData) {
+        //    return contains(new BlockMaterial(aMaterial, aData));
+        //}
         public boolean contains(Block aBlock) {
-            return contains(new BlockMaterial(aBlock.getType(), aBlock.getData()));
+            BlockMaterial lMat = new BlockMaterial(aBlock.getType(), aBlock.getData());
+            for(BlockMaterial lItem : this) {
+                if (lItem.equals(lMat)) {
+                    return true;
+                }
+            }
+            return false;
+            //return contains(new BlockMaterial(aBlock.getType(), aBlock.getData()));
         }
     }
     
@@ -173,7 +189,7 @@ public class BuildingDescription {
         
         public RelatedTo newRelatedTo(String aBlock, RelatedPosition aRelPos, int aLength) {
             RelatedTo lRel = newRelatedTo();
-            lRel.direction = new Vector(aLength,0,0);
+            lRel.direction = new Vector(0,aLength,0);
             lRel.block = aBlock;
             lRel.position = aRelPos;
             return lRel;
@@ -271,23 +287,27 @@ public class BuildingDescription {
         }
     }
     
+    protected BuildingDescription create(String aName) {
+        return Framework.plugin.getBuildingDetector().newDescription(aName);
+    }
+    
     public void createAndActivateXZ() {
         BuildingDescription lDesc, lDesc2;
         String lName = new String(name);
         this.name = this.name + ".X1";
         activate();
 
-        lDesc2 = Framework.plugin.getBuildingDetector().newDescription(lName + ".X2");
+        lDesc2 = create(lName + ".X2");
         lDesc2.cloneFrom(this);
         lDesc2.multiply(new Vector(-1,1,1));
         lDesc2.activate();
 
-        lDesc = Framework.plugin.getBuildingDetector().newDescription(lName + ".Z1");
+        lDesc = create(lName + ".Z1");
         lDesc.cloneFrom(this);
         lDesc.swapXYZ(BuildingDescription.SwapType.XZ);
         lDesc.activate();
 
-        lDesc2 = Framework.plugin.getBuildingDetector().newDescription(lName + ".Z2");
+        lDesc2 = create(lName + ".Z2");
         lDesc2.cloneFrom(lDesc);
         lDesc2.multiply(new Vector(1,1,-1));
         lDesc2.activate();
@@ -383,20 +403,20 @@ public class BuildingDescription {
                                 } else {
                                     Block lBlock = lPos.getBlock(aWorld);
                                     if (lSkip == 0) {
-                                        Logger.getLogger("detect").info("rel " + lRel.description.name + " at " + lPos + " mat " + lPos.getBlockType(aWorld).name());
+                                        Logger.getLogger("detect").info("check rel " + lRel.description.name + " at " + lPos + " mat " + lBlock.getType() + " " + lBlock.getData() + " -> " + lRel.description.materials.get(0));
                                         if (lRel.description.materials.contains(lBlock)) {
-                                            Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
+                                            Logger.getLogger("detect").info("found rel " + lRel.description.name);
                                             lRelatedPos = lPos;
                                             lRelated = true;
                                             break;
                                         } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lBlock.toString());
+                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lBlock.getType() + " " + lRel.materials.get(0));
                                             break;
                                         }
                                     } else {
                                         lSkip--;
                                         if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lBlock.toString());
+                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lBlock.getType());
                                             break;
                                         }
                                     }
@@ -407,12 +427,12 @@ public class BuildingDescription {
                             for(BlockPosition lPos : new BlockPositionWalkAround(lStartPos, BlockPositionDelta.HorizontalAndVertical)) {
                                 Block lBlock = lPos.getBlock(aWorld);
                                 if (lRel.description.materials.contains(lBlock)) {
-                                    Logger.getLogger("detect").info("found rel1 " + lRel.description.name);
+                                    Logger.getLogger("detect").info("found rel nearby " + lRel.description.name);
                                     lRelated = true;
                                     lRelatedPos = lPos.clone();
                                     break;
                                 } else {
-                                    Logger.getLogger("detect").info("break rel nearby " + lRel.description.name + " mat " + lBlock);
+                                    Logger.getLogger("detect").info("break rel nearby " + lRel.description.name + " mat " + lBlock.getType());
                                 }
                             }
                             /*
@@ -440,7 +460,7 @@ public class BuildingDescription {
                             break;
                     }
                     if (!lRelated) {
-                        Logger.getLogger("detect").info("rel1 " + lRel.description.name + " not match");
+                        Logger.getLogger("detect").info("rel " + lRel.description.name + " not match");
                         return false;
                     }
                     if (!aExcludes.contains(lRel.description)) {
