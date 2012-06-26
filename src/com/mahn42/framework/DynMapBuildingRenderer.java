@@ -49,27 +49,39 @@ public class DynMapBuildingRenderer implements Runnable {
             return;
         }
         ArrayList<BuildingDB> lDBs = Framework.plugin.getBuildingDetector().getDBs();
-        double[] lXs = new double[5];
-        double[] lYs = new double[5];
-        double[] lZs = new double[5];
+        double[] lXs = new double[9];
+        double[] lYs = new double[9];
+        double[] lZs = new double[9];
         int lCount = 0;
         for(BuildingDB<Building> lDB : lDBs) {
             for(Building lBuilding : lDB) {
                 lXs[0] = lBuilding.edge1.x;
-                lYs[0] = lBuilding.edge1.y;
+                lYs[0] = lBuilding.edge2.y;
                 lZs[0] = lBuilding.edge1.z;
-                lXs[1] = lBuilding.edge2.x;
-                lYs[1] = lBuilding.edge2.y;
+                lXs[1] = lBuilding.edge1.x;
+                lYs[1] = lBuilding.edge1.y;
                 lZs[1] = lBuilding.edge1.z;
                 lXs[2] = lBuilding.edge2.x;
-                lYs[2] = lBuilding.edge2.y;
-                lZs[2] = lBuilding.edge2.z;
-                lXs[3] = lBuilding.edge1.x;
-                lYs[3] = lBuilding.edge1.y;
-                lZs[3] = lBuilding.edge2.z;
-                lXs[4] = lBuilding.edge1.x;
-                lYs[4] = lBuilding.edge1.y;
-                lZs[4] = lBuilding.edge1.z;
+                lYs[2] = lBuilding.edge1.y;
+                lZs[2] = lBuilding.edge1.z;
+                lXs[3] = lBuilding.edge2.x;
+                lYs[3] = lBuilding.edge2.y;
+                lZs[3] = lBuilding.edge1.z;
+                lXs[4] = lBuilding.edge2.x;
+                lYs[4] = lBuilding.edge2.y;
+                lZs[4] = lBuilding.edge2.z;
+                lXs[5] = lBuilding.edge2.x;
+                lYs[5] = lBuilding.edge1.y;
+                lZs[5] = lBuilding.edge2.z;
+                lXs[6] = lBuilding.edge1.x;
+                lYs[6] = lBuilding.edge1.y;
+                lZs[6] = lBuilding.edge2.z;
+                lXs[7] = lBuilding.edge1.x;
+                lYs[7] = lBuilding.edge2.y;
+                lZs[7] = lBuilding.edge2.z;
+                lXs[8] = lBuilding.edge1.x;
+                lYs[8] = lBuilding.edge2.y;
+                lZs[8] = lBuilding.edge1.z;
                 PolyLineMarker lRect = lMarkerSet.createPolyLineMarker(lBuilding.key, lBuilding.getName(), true, lDB.world.getName(), lXs, lYs, lZs, false);
                 if (lRect != null) {
                     lRect.setLineStyle(3, 0.75, 0xF0A0A0);
