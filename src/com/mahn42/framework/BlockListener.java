@@ -5,7 +5,6 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -14,7 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.block.BlockFadeEvent;
 
 /**
  *

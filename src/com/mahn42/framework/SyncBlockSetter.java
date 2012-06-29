@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
+import org.bukkit.material.MaterialData;
 
 /**
  *
@@ -22,9 +24,14 @@ public class SyncBlockSetter implements Runnable {
         public Material material;
         public byte data;
         public boolean physics;
+        public int skipCount = 0;
 
         protected void execute() {
-            location.getBlock().setTypeIdAndData(material.getId(), data, physics);
+            BlockState lState = location.getBlock().getState();
+            lState.setType(material);
+            lState.setRawData(data);
+            lState.update(true);
+            //location.getBlock().setTypeIdAndData(material.getId(), data, physics);
         }
     }
     
@@ -40,6 +47,7 @@ public class SyncBlockSetter implements Runnable {
         lItem.material = aMaterial;
         lItem.data = aData;
         lItem.physics = aPhysics;
+        lItem.skipCount = 0;
         synchronized(fsync) {
             fItems.add(lItem);
         }
@@ -53,6 +61,7 @@ public class SyncBlockSetter implements Runnable {
                 lItem.material = lBlock.material;
                 lItem.data = lBlock.data;
                 lItem.physics = lBlock.physics;
+                lItem.skipCount = lBlock.skipCount;
                 fItems.add(lItem);
             }
         }
@@ -68,11 +77,22 @@ public class SyncBlockSetter implements Runnable {
                     fItems = new ArrayList<SyncBlockSetterItem>();
                 }
                 //Logger.getLogger("SyncBlockSetter").info("count = " + new Integer(lWorking.size()) + " stat = " + new Integer(fCount));
+                ArrayList<SyncBlockSetterItem> lNext = new ArrayList<SyncBlockSetterItem>();
                 while (!lWorking.isEmpty()) {
                     SyncBlockSetterItem lCurrent = lWorking.get(0);
-                    lCurrent.execute();
+                    if (lCurrent.skipCount <= 0) {
+                        lCurrent.execute();
+                        fCount++;
+                    } else {
+                        lCurrent.skipCount--;
+                        lNext.add(lCurrent);
+                    }
                     lWorking.remove(0);
-                    fCount++;
+                }
+                if (lNext.size() > 0) {
+                    synchronized(fsync) {
+                        fItems.addAll(lNext);
+                    }
                 }
             }
         } catch(Exception lEx) {
