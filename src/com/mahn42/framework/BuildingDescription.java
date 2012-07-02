@@ -80,6 +80,15 @@ public class BuildingDescription {
                     break;
             }
         }
+
+        private void dump(Logger aLogger) {
+            aLogger.info("direction = " + direction);
+            aLogger.info("position = " + position);
+            aLogger.info("block = " + block);
+            aLogger.info("description = " + description == null ? "no" : description.name);
+            aLogger.info("minDistance = " + minDistance);
+            materials.dump(aLogger);
+        }
     }
     
     public class BlockMaterial {
@@ -131,6 +140,10 @@ public class BuildingDescription {
             }
             return lResult;
         }
+
+        private void dump(Logger aLogger) {
+            aLogger.info("material = " + material + (withData ? " " + data : " no data"));
+        }
     }
     
     public class BlockMaterialArray extends ArrayList<BlockMaterial> {
@@ -156,11 +169,26 @@ public class BuildingDescription {
             return false;
             //return contains(new BlockMaterial(aBlock.getType(), aBlock.getData()));
         }
+
+        private void dump(Logger aLogger) {
+            if (size() == 0) {
+                aLogger.info("no materials");
+            } else if (size() == 1) {
+                get(0).dump(aLogger);
+            } else {
+                aLogger.info("materials { // count = " + size());
+                for(BlockMaterial lMat : this) {
+                    lMat.dump(aLogger);
+                }
+                aLogger.info("}");
+            }
+        }
     }
     
     public class BlockDescription {
         public String name;
         public BlockMaterialArray materials = new BlockMaterialArray();
+        public boolean detectSensible = false;
         public boolean redstoneSensible = false;
         public boolean nameSensible = false;
         public boolean signSensible = false;
@@ -202,6 +230,7 @@ public class BuildingDescription {
 
         public void cloneFrom(BlockDescription aDesc) {
             name = aDesc.name;
+            detectSensible = aDesc.detectSensible;
             redstoneSensible = aDesc.redstoneSensible;
             nameSensible = aDesc.nameSensible;
             signSensible = aDesc.signSensible;
@@ -225,6 +254,20 @@ public class BuildingDescription {
             for(RelatedTo lRel : relatedTo) {
                 lRel.swapXYZ(aType);
             }
+        }
+
+        private void dump(Logger aLogger) {
+            aLogger.info("name = " + name);
+            aLogger.info("detectSensible = " + detectSensible);
+            aLogger.info("redstoneSensible = " + redstoneSensible);
+            aLogger.info("nameSensible = " + nameSensible);
+            aLogger.info("signSensible = " + signSensible);
+            materials.dump(aLogger);
+            aLogger.info("relations { // count = " + relatedTo.size());
+            for(RelatedTo lRel : relatedTo) {
+                lRel.dump(aLogger);
+            }
+            aLogger.info("}");
         }
     }
     
@@ -251,6 +294,20 @@ public class BuildingDescription {
     
     public String getName() {
         return typeName != null ? typeName : name;
+    }
+
+    public void dump(Logger aLogger) {
+        aLogger.info("name = " + name);
+        aLogger.info("typeName = " + typeName);
+        aLogger.info("position = " + position);
+        aLogger.info("active = " + active);
+        aLogger.info("influenceRadiusFactor = " + influenceRadiusFactor);
+        aLogger.info("handler = " + handler == null ? "no" : handler.getClass().getName());
+        aLogger.info("blocks { // count = " + blocks.size());
+        for(BlockDescription lB : blocks) {
+            lB.dump(aLogger);
+        }
+        aLogger.info("}");
     }
 
     public void cloneFrom(BuildingDescription aDesc) {
@@ -353,22 +410,25 @@ public class BuildingDescription {
         ArrayList<BlockDescription> lExcludes = new ArrayList<BlockDescription>();
         Logger.getLogger("detect").info(this.name);
         for(BlockDescription lBlockDesc : blocks) {
-            if (lBlockDesc.materials.contains(lBlock)) {
-                lExcludes.clear();
-                Building aBuilding = new Building();
-                aBuilding.description = this;
-                aBuilding.setWorld(aWorld);
-                //Logger.getLogger("detect").info("mat " + lMat.name());
-                if (!canFollowRelateds(lExcludes, aBuilding, aWorld, lBlockDesc, lX, lY, lZ)) {
-                    Logger.getLogger("detect").info("not ok");
-                    //return null;
-                } else {
-                    if (lExcludes.size() >= blocks.size()) {
-                        aBuilding.update();
-                        Logger.getLogger("detect").info("found: " + this.name);
-                        return aBuilding;
+// TODO detect only sensible blocks
+            if (lBlockDesc.detectSensible) {
+                if (lBlockDesc.materials.contains(lBlock)) {
+                    lExcludes.clear();
+                    Building aBuilding = new Building();
+                    aBuilding.description = this;
+                    aBuilding.setWorld(aWorld);
+                    //Logger.getLogger("detect").info("mat " + lMat.name());
+                    if (!canFollowRelateds(lExcludes, aBuilding, aWorld, lBlockDesc, lX, lY, lZ)) {
+                        Logger.getLogger("detect").info("not ok, excludes " + lExcludes.size());
+                        //return null;
                     } else {
-                        Logger.getLogger("detect").info("not enough matches (excluder)");
+                        if (lExcludes.size() >= blocks.size()) {
+                            aBuilding.update();
+                            Logger.getLogger("detect").info("found: " + this.name);
+                            return aBuilding;
+                        } else {
+                            Logger.getLogger("detect").info("not enough matches (excluder " + lExcludes.size() + " )");
+                        }
                     }
                 }
             }
@@ -410,13 +470,13 @@ public class BuildingDescription {
                                             lRelated = true;
                                             break;
                                         } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lBlock.getType() + " " + lRel.materials.get(0));
+                                            Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType() + " " + lRel.materials.get(0));
                                             break;
                                         }
                                     } else {
                                         lSkip--;
                                         if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                            Logger.getLogger("detect").info("break rel1 " + lRel.description.name + " mat " + lBlock.getType());
+                                            Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType());
                                             break;
                                         }
                                     }
@@ -472,8 +532,8 @@ public class BuildingDescription {
                     }
                 }
                 if (!aExcludes.contains(lBlockDesc)) {
-                    Logger.getLogger("detect").info("excluded add " + lBlockDesc.name);
                     aExcludes.add(lBlockDesc);
+                    Logger.getLogger("detect").info("excluded add " + lBlockDesc.name + " " + aExcludes.size());
                 }
                 for(RelFollower lF : lFs) {
                     Logger.getLogger("detect").info("follow rel " + lF.desc.name);
@@ -484,8 +544,8 @@ public class BuildingDescription {
                 }
                 return true;
             } else {
-                Logger.getLogger("detect").info("excluded add " + lBlockDesc.name);
                 aExcludes.add(lBlockDesc);
+                Logger.getLogger("detect").info("excluded add " + lBlockDesc.name + " " + aExcludes.size());
                 return true;
             }
         } else {

@@ -5,16 +5,20 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 /**
  *
@@ -22,6 +26,21 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class PlayerListener implements Listener {
 
+    static Block lLastBlock;
+    
+    @EventHandler
+    public void playerMove(PlayerMoveEvent aEvent) {
+        Player lPlayer = aEvent.getPlayer();
+        List<Block> aLineOfSight = lPlayer.getLastTwoTargetBlocks(null, 100);
+        if (aLineOfSight.size() > 0) {
+            Block lBlock = aLineOfSight.get(aLineOfSight.size()-1);
+            if (!lBlock.equals(lLastBlock)) {
+                //lPlayer.sendMessage("Block " + lBlock);
+                lLastBlock = lBlock;
+            }
+        }
+    }
+    
     @EventHandler
     public void playerInteract(PlayerInteractEvent aEvent) {
         Player lPlayer = aEvent.getPlayer();
@@ -75,9 +94,19 @@ public class PlayerListener implements Listener {
                 BuildingDescription lDesc = Framework.plugin.getBuildingDescription(lName);
                 if (lDesc != null) {
                     lPlayer.sendMessage(lDesc.name);
-                    BuildingDescription.BlockDescription lBDesc = lDesc.blocks.get(0);
-                    BlockPosition lPos = new BlockPosition(lBlock.getLocation());
-                    debugDesc(lDones, lPos, lBDesc, lWorld);
+                    BuildingDescription.BlockDescription lBDesc = null;
+                    for (BuildingDescription.BlockDescription lBD : lDesc.blocks) {
+                        if (lBD.detectSensible) {
+                            lBDesc = lBD;
+                            break;
+                        }
+                    }
+                    if (lBDesc != null) {
+                        BlockPosition lPos = new BlockPosition(lBlock.getLocation());
+                        debugDesc(lDones, lPos, lBDesc, lWorld);
+                    } else {
+                        lPlayer.sendMessage("'" + lName + "' has no detect seinsible block!");
+                    }
                 } else {
                     lPlayer.sendMessage("'" + lName + "' desc unkown");
                 }
@@ -88,10 +117,12 @@ public class PlayerListener implements Listener {
     protected void debugDesc(ArrayList<BuildingDescription.BlockDescription> aDones, BlockPosition aPos, BuildingDescription.BlockDescription aBDesc, World aWorld) {
         if (!aDones.contains(aBDesc)) {
             aDones.add(aBDesc);
-            aPos.getBlock(aWorld).setType(aBDesc.materials.get(0).material);
+            BlockState lState = aPos.getBlock(aWorld).getState();
+            lState.setType(aBDesc.materials.get(0).material);
             if (aBDesc.materials.get(0).withData) {
-                aPos.getBlock(aWorld).setData(aBDesc.materials.get(0).data);
+                lState.setRawData(aBDesc.materials.get(0).data);
             }
+            lState.update(true);
             for(BuildingDescription.RelatedTo lRel : aBDesc.relatedTo) {
                 BlockPosition lRelPos;
                 switch(lRel.position) {
@@ -101,10 +132,12 @@ public class PlayerListener implements Listener {
                         if (!lRel.materials.isEmpty()) {
                             for(BlockPosition lPos : new WorldLineWalk(aPos, lRelPos)) {
                                 if (!lPos.equals(aPos) && !lPos.equals(lRelPos)) {
-                                    lPos.getBlock(aWorld).setType(lRel.materials.get(0).material);
+                                    lState = lPos.getBlock(aWorld).getState();
+                                    lState.setType(lRel.materials.get(0).material);
                                     if (lRel.materials.get(0).withData) {
-                                        aPos.getBlock(aWorld).setData(lRel.materials.get(0).data);
+                                        lState.setRawData(lRel.materials.get(0).data);
                                     }
+                                    lState.update(true);
                                 }
                             }
                         }

@@ -2,4 +2,18 @@
 name: MAHN42-Framework
 main: com.mahn42.framework.Framework
 version: 0.45
+commands:
+   fw_bd_dump:
+      description: only for testing building descriptions.
+      usage: /fw_bd_dump descname
+      permission: fw.bd_dump
+      permission-message: You don't have permission
+permissions:
+    fw.*:
+        description: Gives access to all framework commands
+        children:
+            fw.bd_dump: true
+    fw.bd_dump:
+        description: Allows you to dump building descriptions
+        default: true
 

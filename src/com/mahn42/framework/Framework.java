@@ -42,6 +42,7 @@ public class Framework extends JavaPlugin {
         fDynMapTask = new DynMapBuildingRenderer();
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, 20);
         
+        getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
