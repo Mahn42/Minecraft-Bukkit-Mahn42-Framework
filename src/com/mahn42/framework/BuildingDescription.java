@@ -349,25 +349,53 @@ public class BuildingDescription {
     }
     
     public void createAndActivateXZ() {
-        BuildingDescription lDesc, lDesc2;
+        createAndActivateXZ(false);
+    }
+    
+    public void createAndActivateXZ(boolean aWithMirror) {
+        BuildingDescription lDesc, lDesc2, lDesc3;
         String lName = new String(name);
         this.name = this.name + ".X1";
         activate();
 
-        lDesc2 = create(lName + ".X2");
-        lDesc2.cloneFrom(this);
-        lDesc2.multiply(new Vector(-1,1,1));
-        lDesc2.activate();
+        lDesc = create(lName + ".X3");
+        lDesc.cloneFrom(this);
+        lDesc.multiply(new Vector(-1, 1, -1));
+        lDesc.activate();
+
+        if (aWithMirror) {
+            lDesc2 = create(lName + ".X2");
+            lDesc2.cloneFrom(this);
+            lDesc2.multiply(new Vector(-1, 1, 1));
+            lDesc2.activate();
+            
+            lDesc2 = create(lName + ".X4");
+            lDesc2.cloneFrom(lDesc);
+            lDesc2.multiply(new Vector(-1, 1, 1));
+            lDesc2.activate();
+        }
 
         lDesc = create(lName + ".Z1");
         lDesc.cloneFrom(this);
         lDesc.swapXYZ(BuildingDescription.SwapType.XZ);
         lDesc.activate();
 
-        lDesc2 = create(lName + ".Z2");
-        lDesc2.cloneFrom(lDesc);
-        lDesc2.multiply(new Vector(1,1,-1));
+        lDesc2 = create(lName + ".Z3");
+        lDesc2.cloneFrom(this);
+        lDesc2.multiply(new Vector(-1, 1, -1));
         lDesc2.activate();
+
+        if (aWithMirror) {
+            lDesc3 = create(lName + ".Z2");
+            lDesc3.cloneFrom(lDesc);
+            lDesc3.multiply(new Vector( 1, 1,-1));
+            lDesc3.activate();
+
+            lDesc3 = create(lName + ".Z4");
+            lDesc3.cloneFrom(lDesc2);
+            lDesc3.multiply(new Vector( 1, 1,-1));
+            lDesc3.activate();
+        }
     }
     
     public BlockDescription getBlock(String lDescName) {

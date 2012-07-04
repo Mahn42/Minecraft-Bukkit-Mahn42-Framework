@@ -67,6 +67,14 @@ public class WorldCircleWalk implements Iterable<BlockPosition> {
                 d=d+dxy; dx=dx+2; dxy=dxy+4; x++; y--;
             }
         }
+        //if (lOkt1.size()>1) lOkt1.remove(lOkt1.size()-1);
+        if (lOkt2.size()>1) lOkt2.remove(lOkt2.size()-1);
+        //if (lOkt3.size()>1) lOkt3.remove(lOkt3.size()-1);
+        if (lOkt4.size()>1) lOkt4.remove(lOkt4.size()-1);
+        //if (lOkt5.size()>1) lOkt5.remove(lOkt5.size()-1);
+        if (lOkt6.size()>1) lOkt6.remove(lOkt6.size()-1);
+        //if (lOkt7.size()>1) lOkt7.remove(lOkt7.size()-1);
+        if (lOkt8.size()>1) lOkt8.remove(lOkt8.size()-1);
         for(BlockPosition lPos : lOkt1) { positions.add(lPos); }
         for(BlockPosition lPos : lOkt2) { positions.add(lPos); }
         for(BlockPosition lPos : lOkt3) { positions.add(lPos); }
