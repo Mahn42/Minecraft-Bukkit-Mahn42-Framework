@@ -20,7 +20,10 @@ public class BuildingDescription {
 
     public enum RelatedPosition {
         Vector,
-        Nearby
+        Nearby,
+        AreaXZ,
+        AreaYX,
+        AreaYZ
     }
     
     public class RelatedTo {
@@ -221,6 +224,15 @@ public class BuildingDescription {
             lRel.block = aBlock;
             lRel.position = aRelPos;
             return lRel;
+        }
+        
+        public RelatedTo getRelation(String aDestBlock) {
+            for(RelatedTo lRel : relatedTo) {
+                if (lRel.block.equals(aDestBlock)) {
+                    return lRel;
+                }
+            }
+            return null;
         }
         
         @Override
@@ -480,6 +492,10 @@ public class BuildingDescription {
                     boolean lRelated = false;
                     boolean lFirst = true;
                     BlockPosition lRelatedPos = null;
+                    BlockPosition lPos1 = lStartPos.clone();
+                    BlockPosition lPos2 = lStartPos.clone();
+                    int lCount = 0;
+                    lPos2.add(lRel.direction);
                     switch(lRel.position) {
                         case Vector:
                             int lSkip = lRel.minDistance;
@@ -511,6 +527,68 @@ public class BuildingDescription {
                                 }
                             }
                             break;
+                        case AreaYX:
+                        case AreaYZ:
+                        case AreaXZ:
+                            switch (lRel.position) {
+                                case AreaYX:
+                                    lCount = lPos2.z - lPos1.z;
+                                    lPos2.z = lPos1.z;
+                                    break;
+                                case AreaYZ:
+                                    lCount = lPos2.x - lPos1.x;
+                                    lPos2.x = lPos1.x;
+                                    break;
+                                case AreaXZ:
+                                    lCount = lPos2.y - lPos1.y;
+                                    lPos2.y = lPos1.y;
+                                    break;
+                            }
+                            for(int lStep = 0; lStep <= Math.abs(lCount); lStep++) {
+                                lSkip = lRel.minDistance;
+                                for(BlockPosition lPos : new WorldLineWalk(lPos1, lPos2)) {
+                                    if (lFirst) {
+                                        lFirst = false;
+                                    } else {
+                                        Block lBlock = lPos.getBlock(aWorld);
+                                        if (lSkip == 0) {
+                                            Logger.getLogger("detect").info("check rel " + lRel.description.name + " at " + lPos + " mat " + lBlock.getType() + " " + lBlock.getData() + " -> " + lRel.description.materials.get(0));
+                                            if (lRel.description.materials.contains(lBlock)) {
+                                                Logger.getLogger("detect").info("found rel " + lRel.description.name);
+                                                lRelatedPos = lPos;
+                                                lRelated = true;
+                                                break;
+                                            } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
+                                                Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType() + " " + lRel.materials.get(0));
+                                                break;
+                                            }
+                                        } else {
+                                            lSkip--;
+                                            if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
+                                                Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType());
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (lRelated)
+                                    break;
+                                switch (lRel.position) {
+                                    case AreaYX:
+                                        lPos1.z += lCount >= 0 ? 1 : -1;
+                                        lPos2.z += lCount >= 0 ? 1 : -1;
+                                        break;
+                                    case AreaYZ:
+                                        lPos1.x += lCount >= 0 ? 1 : -1;
+                                        lPos2.x += lCount >= 0 ? 1 : -1;
+                                        break;
+                                    case AreaXZ:
+                                        lPos1.y += lCount >= 0 ? 1 : -1;
+                                        lPos2.y += lCount >= 0 ? 1 : -1;
+                                        break;
+                                }
+                            }
+                            break;
                         case Nearby:
                             for(BlockPosition lPos : new BlockPositionWalkAround(lStartPos, BlockPositionDelta.HorizontalAndVertical)) {
                                 Block lBlock = lPos.getBlock(aWorld);
@@ -523,28 +601,6 @@ public class BuildingDescription {
                                     Logger.getLogger("detect").info("break rel nearby " + lRel.description.name + " mat " + lBlock.getType());
                                 }
                             }
-                            /*
-                            int lLength = (int)Math.round(lRel.direction.length());
-                            Logger.getLogger("detect").info("rel nearby " + lRel.description.name + " length " + lLength);
-                            for(int dx = -lLength; dx <= lLength; dx++) {
-                                for(int dy = -lLength; dy <= lLength; dy++) {
-                                    for(int dz = -lLength; dz <= lLength; dz++) {
-                                        if ((dx != 0) && (dy != 0) && (dz != 0)) {
-                                            Block lBlock = lStartPos.getBlockAt(aWorld, dx, dy, dz);
-                                            if (lRel.description.materials.contains(lBlock.getType())) {
-                                                lRelated = true;
-                                                lRelatedPos = new BlockPosition(lX + dx, lY + dy, lZ + dz);
-                                                break;
-                                            } else {
-                                                Logger.getLogger("detect").info("break rel nearby " + lRel.description.name + " mat " + lBlock);
-                                            }
-                                        }
-                                    }
-                                    if (lRelated) break;
-                                }
-                                if (lRelated) break;
-                            }
-                            */
                             break;
                     }
                     if (!lRelated) {

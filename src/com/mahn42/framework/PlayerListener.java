@@ -143,6 +143,58 @@ public class PlayerListener implements Listener {
                         }
                         debugDesc(aDones, lRelPos, lRel.description, aWorld);
                         break;
+                    case AreaXZ:
+                    case AreaYX:
+                    case AreaYZ:
+                        lRelPos = aPos.clone();
+                        lRelPos.add(lRel.direction);
+                        if (!lRel.materials.isEmpty()) {
+                            BlockPosition lPos1 = aPos.clone();
+                            BlockPosition lPos2 = lRelPos.clone();
+                            int lCount = 0;
+                            switch (lRel.position) {
+                                case AreaYX:
+                                    lCount = lPos2.z - lPos1.z;
+                                    lPos2.z = lPos1.z;
+                                    break;
+                                case AreaYZ:
+                                    lCount = lPos2.x - lPos1.x;
+                                    lPos2.x = lPos1.x;
+                                    break;
+                                case AreaXZ:
+                                    lCount = lPos2.y - lPos1.y;
+                                    lPos2.y = lPos1.y;
+                                    break;
+                            }
+                            for(int lStep = 0; lStep <= Math.abs(lCount); lStep++) {
+                                for(BlockPosition lPos : new WorldLineWalk(lPos1, lPos2)) {
+                                    if (!lPos.equals(aPos) && !lPos.equals(lRelPos)) {
+                                        lState = lPos.getBlock(aWorld).getState();
+                                        lState.setType(lRel.materials.get(0).material);
+                                        if (lRel.materials.get(0).withData) {
+                                            lState.setRawData(lRel.materials.get(0).data);
+                                        }
+                                        lState.update(true);
+                                    }
+                                }
+                                switch (lRel.position) {
+                                    case AreaYX:
+                                        lPos1.z += lCount >= 0 ? 1 : -1;
+                                        lPos2.z += lCount >= 0 ? 1 : -1;
+                                        break;
+                                    case AreaYZ:
+                                        lPos1.x += lCount >= 0 ? 1 : -1;
+                                        lPos2.x += lCount >= 0 ? 1 : -1;
+                                        break;
+                                    case AreaXZ:
+                                        lPos1.y += lCount >= 0 ? 1 : -1;
+                                        lPos2.y += lCount >= 0 ? 1 : -1;
+                                        break;
+                                }
+                            }
+                        }
+                        debugDesc(aDones, lRelPos, lRel.description, aWorld);
+                        break;
                     case Nearby:
                         lRelPos = aPos.clone();
                         lRelPos.add(lRel.direction);
