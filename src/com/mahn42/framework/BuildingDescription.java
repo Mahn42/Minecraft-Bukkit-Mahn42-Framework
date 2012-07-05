@@ -394,7 +394,7 @@ public class BuildingDescription {
         lDesc.activate();
 
         lDesc2 = create(lName + ".Z3");
-        lDesc2.cloneFrom(this);
+        lDesc2.cloneFrom(lDesc);
         lDesc2.multiply(new Vector(-1, 1, -1));
         lDesc2.activate();
 
