@@ -390,6 +390,7 @@ public class BuildingDescription {
         lDesc = create(lName + ".Z1");
         lDesc.cloneFrom(this);
         lDesc.swapXYZ(BuildingDescription.SwapType.XZ);
+        lDesc.multiply(new Vector( 1, 1, -1));
         lDesc.activate();
 
         lDesc2 = create(lName + ".Z3");
