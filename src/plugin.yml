@@ -4,16 +4,33 @@ main: com.mahn42.framework.Framework
 version: 0.45
 commands:
    fw_bd_dump:
-      description: only for testing building descriptions.
+      description: only for testing, dumps building descriptions.
       usage: /fw_bd_dump descname
       permission: fw.bd_dump
+      permission-message: You don't have permission
+   fw_bd_create:
+      description: only for testing, create a building for a given building description.
+      usage: /fw_bd_create descname
+      permission: fw.bd_create
+      permission-message: You don't have permission
+   fw_set_spawn:
+      description: set the worlds spawn point to the player location.
+      usage: /fw_set_sawn
+      permission: fw.set_spawn
       permission-message: You don't have permission
 permissions:
     fw.*:
         description: Gives access to all framework commands
         children:
             fw.bd_dump: true
+            fw.bd_create: true
+            fw.set_spawn: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
-        default: true
-
+        default: false
+    fw.bd_create:
+        description: Allows you to create a building based on a building description
+        default: false
+    fw.set_spawn:
+        description: Allows you to set the spawn point of the world
+        default: false

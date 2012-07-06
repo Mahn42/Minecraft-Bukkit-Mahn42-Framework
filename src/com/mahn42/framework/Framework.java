@@ -43,6 +43,8 @@ public class Framework extends JavaPlugin {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, 20);
         
         getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
+        getCommand("fw_bd_create").setExecutor(new CommandBD_Create());
+        getCommand("fw_set_spawn").setExecutor(new CommandSetSpawn());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
