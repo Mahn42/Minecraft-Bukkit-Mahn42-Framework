@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.World;
@@ -20,6 +21,15 @@ public class BuildingDetector {
         fDescriptions = new ArrayList<BuildingDescription>();
     }
     
+    public class BuildingDescriptionComparator implements Comparator<BuildingDescription> {
+
+        @Override
+        public int compare(BuildingDescription t, BuildingDescription t1) {
+            return t1.detectPriority - t.detectPriority;
+        }
+        
+    }
+    
     public ArrayList<Building> detect(World aWorld, BlockPosition aPos1, BlockPosition aPos2) {
         //TODO sort desc with most related to first scan
         ArrayList<Building> lResult = new ArrayList<Building>();
@@ -28,6 +38,7 @@ public class BuildingDetector {
         int dz = aPos1.z > aPos2.z ? -1 : 1;
         //Logger.getLogger("detect").info("count " + new Integer(fDescriptions.size()));
         //Logger.getLogger("detect").info(aPos1.toString() + " - " + aPos2.toString());
+        getHandlers();
         for(BuildingDescription lDesc : fDescriptions) {
             //Logger.getLogger("detect").info("teste " + lDesc.name);
             for(int lX = aPos1.x; lX <= aPos2.x; lX+=dx) {
@@ -59,8 +70,7 @@ public class BuildingDetector {
     
     public BuildingDescription newDescription(String aName) {
         BuildingDescription lDesc = new BuildingDescription(aName);
-        fDescriptions.add(lDesc);
-        fShouldUpdateHandlers = true;
+        addDescription(lDesc);
         return lDesc;
     }
     
@@ -74,6 +84,7 @@ public class BuildingDetector {
     
     public ArrayList<BuildingHandler> getHandlers() {
         if (fShouldUpdateHandlers) {
+            java.util.Collections.sort(fDescriptions, new BuildingDescriptionComparator());
             fHandlers.clear();
             for(BuildingDescription lDesc : fDescriptions) {
                 if (!fHandlers.contains(lDesc.handler)) {

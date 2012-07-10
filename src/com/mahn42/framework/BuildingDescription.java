@@ -296,6 +296,7 @@ public class BuildingDescription {
     public boolean active;
     public double influenceRadiusFactor = 0;
     public BuildingHandler handler = null;
+    public int detectPriority = -1;
     
     public BuildingDescription() {
     }
@@ -335,6 +336,7 @@ public class BuildingDescription {
             blocks.add(lNew);
         }
         influenceRadiusFactor = aDesc.influenceRadiusFactor;
+        detectPriority = aDesc.detectPriority;
         handler = aDesc.handler;
     }
     
@@ -442,6 +444,9 @@ public class BuildingDescription {
                     Framework.plugin.getLogger().info("block description " + lRel.block + " of building description '" + name + "' not found!");
                 }
             }
+        }
+        if (detectPriority < 0) {
+            detectPriority = blocks.size();
         }
         active = true;
     }

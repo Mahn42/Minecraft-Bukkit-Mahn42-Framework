@@ -4,9 +4,11 @@
  */
 package com.mahn42.framework;
 
+import java.util.HashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -23,6 +25,7 @@ public class Framework extends JavaPlugin {
     protected DBSaverTask fSaverTask;
     protected DynMapBuildingRenderer fDynMapTask;
     protected BuildingDetector fBuildingDetector;
+    protected HashMap<String, PlayerBuildings> fPlayerBuildings;
     
     /**
      * @param args the command line arguments
@@ -33,6 +36,7 @@ public class Framework extends JavaPlugin {
     @Override
     public void onEnable() { 
         plugin = this;
+        fPlayerBuildings = new HashMap<String, PlayerBuildings>();
         fBuildingDetector = new BuildingDetector();
         readFrameworkConfig();
         fSyncBlockSetter = new SyncBlockSetter();
@@ -71,6 +75,20 @@ public class Framework extends JavaPlugin {
     
     public BuildingDetector getBuildingDetector() {
         return fBuildingDetector;
+    }
+    
+    public PlayerBuildings getPlayerBuildings(String aPlayerName) {
+        return getPlayerBuildings(getServer().getPlayer(aPlayerName));
+    }
+
+    public PlayerBuildings getPlayerBuildings(Player aPlayer) {
+        PlayerBuildings lBuildings = fPlayerBuildings.get(aPlayer.getName());
+        if (lBuildings == null) {
+            lBuildings = new PlayerBuildings(aPlayer.getName());
+            lBuildings.playerPos = new BlockPosition(aPlayer.getLocation());
+            fPlayerBuildings.put(lBuildings.playerName, lBuildings);
+        }
+        return lBuildings;
     }
 
     public void registerSaver(DBSave aSaver) {

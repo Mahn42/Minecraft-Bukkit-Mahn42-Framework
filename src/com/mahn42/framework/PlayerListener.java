@@ -29,12 +29,36 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void playerMove(PlayerMoveEvent aEvent) {
         Player lPlayer = aEvent.getPlayer();
-        List<Block> aLineOfSight = lPlayer.getLastTwoTargetBlocks(null, 100);
-        if (aLineOfSight.size() > 0) {
-            Block lBlock = aLineOfSight.get(aLineOfSight.size()-1);
-            if (!lBlock.equals(lLastBlock)) {
-                //lPlayer.sendMessage("Block " + lBlock);
-                lLastBlock = lBlock;
+        Block lTargetBlock = lPlayer.getTargetBlock(null, 100);
+        if (!lTargetBlock.equals(lLastBlock)) {
+            //lPlayer.sendMessage("Block " + lBlock);
+            lLastBlock = lTargetBlock;
+        }
+        
+        PlayerBuildings lPBuilds = Framework.plugin.getPlayerBuildings(lPlayer);
+        BlockPosition lPPos = new BlockPosition(lPlayer.getLocation());
+        if (!lPPos.equals(lPBuilds.playerPos)) {
+            lPBuilds.playerPos = lPPos;
+            ArrayList<Building> lBuildings;
+            lBuildings = Framework.plugin.getBuildingDetector().getBuildings(lPBuilds.playerPos);
+            for(Building lBuilding : lBuildings) {
+                if (!lPBuilds.inBuildings.contains(lBuilding)) {
+                    lPBuilds.inBuildings.add(lBuilding);
+                    //TODO raise event enter building
+                    BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerEnter);
+                    Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
+                    //lPlayer.sendMessage("you enter building " + lBuilding.getName());
+                }
+            }
+            ArrayList<Building> lInBuildings = new ArrayList<Building>(lPBuilds.inBuildings);
+            for(Building lBuilding : lInBuildings) {
+                if (!lBuildings.contains(lBuilding)) {
+                    lPBuilds.inBuildings.remove(lBuilding);
+                    //TODO raise event leave building
+                    BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerLeave);
+                    Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
+                    //lPlayer.sendMessage("you leave building " + lBuilding.getName());
+                }
             }
         }
     }
