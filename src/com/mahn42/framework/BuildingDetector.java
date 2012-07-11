@@ -87,8 +87,10 @@ public class BuildingDetector {
             java.util.Collections.sort(fDescriptions, new BuildingDescriptionComparator());
             fHandlers.clear();
             for(BuildingDescription lDesc : fDescriptions) {
-                if (!fHandlers.contains(lDesc.handler)) {
-                    fHandlers.add(lDesc.handler);
+                if (lDesc.handler != null) {
+                    if (!fHandlers.contains(lDesc.handler)) {
+                        fHandlers.add(lDesc.handler);
+                    }
                 }
             }
             fDBs.clear();

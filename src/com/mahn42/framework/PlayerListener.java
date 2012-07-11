@@ -86,6 +86,8 @@ public class PlayerListener implements Listener {
                     lBuilding.playerName = lPlayer.getName();
                     if (lBuilding.description.handler != null) {
                         if (lBuilding.description.handler.playerInteract(aEvent, lBuilding)) {
+                            BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Create);
+                            Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
                             lFound = true;
                         }
                     }

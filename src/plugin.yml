@@ -1,7 +1,7 @@
 ## YAML Template.
 name: MAHN42-Framework
 main: com.mahn42.framework.Framework
-version: 0.46
+version: 0.47
 commands:
    fw_bd_dump:
       description: only for testing, dumps building descriptions.
