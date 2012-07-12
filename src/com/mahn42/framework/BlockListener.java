@@ -74,10 +74,12 @@ public class BlockListener implements Listener {
         boolean lFound = false;
         for (BuildingHandler lHandler : lHandlers) {
             BuildingDB lDB = lHandler.getDB(lWorld);
-            ArrayList<Building> lBuildings = lDB.getRedStoneSensibles(lPos);
-            for(Building lBuilding : lBuildings) {
-                if (lBuilding.description.handler != null) {
-                    lFound = lBuilding.description.handler.redstoneChanged(aEvent, lBuilding);
+            if (lDB != null) {
+                ArrayList<Building> lBuildings = lDB.getRedStoneSensibles(lPos);
+                for(Building lBuilding : lBuildings) {
+                    if (lBuilding.description.handler != null) {
+                        lFound = lBuilding.description.handler.redstoneChanged(aEvent, lBuilding);
+                    }
                 }
             }
         }

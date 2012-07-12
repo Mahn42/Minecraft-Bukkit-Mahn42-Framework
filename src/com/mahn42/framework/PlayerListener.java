@@ -44,7 +44,6 @@ public class PlayerListener implements Listener {
             for(Building lBuilding : lBuildings) {
                 if (!lPBuilds.inBuildings.contains(lBuilding)) {
                     lPBuilds.inBuildings.add(lBuilding);
-                    //TODO raise event enter building
                     BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerEnter);
                     Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
                     //lPlayer.sendMessage("you enter building " + lBuilding.getName());
@@ -54,7 +53,6 @@ public class PlayerListener implements Listener {
             for(Building lBuilding : lInBuildings) {
                 if (!lBuildings.contains(lBuilding)) {
                     lPBuilds.inBuildings.remove(lBuilding);
-                    //TODO raise event leave building
                     BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerLeave);
                     Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
                     //lPlayer.sendMessage("you leave building " + lBuilding.getName());
@@ -78,7 +76,7 @@ public class PlayerListener implements Listener {
                 && lInHand.equals(Material.BOOK)) {
             ArrayList<Building> lBuildings;
             BlockPosition lPos = new BlockPosition(lBlock.getLocation());
-            lBuildings = Framework.plugin.getBuildingDetector().getBuildings(lPos);
+            lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithNoneShareableBlock(lPos);
             if (lBuildings.isEmpty()) {
                 lBuildings = Framework.plugin.getBuildingDetector().detect(lWorld, lPos, lPos);
                 boolean lFound = false;

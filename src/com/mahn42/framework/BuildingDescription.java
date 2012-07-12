@@ -88,7 +88,7 @@ public class BuildingDescription {
             aLogger.info("direction = " + direction);
             aLogger.info("position = " + position);
             aLogger.info("block = " + block);
-            aLogger.info("description = " + description == null ? "no" : description.name);
+            aLogger.info("description = " + ((description == null) ? "no" : description.name));
             aLogger.info("minDistance = " + minDistance);
             materials.dump(aLogger);
         }
@@ -195,6 +195,7 @@ public class BuildingDescription {
         public boolean redstoneSensible = false;
         public boolean nameSensible = false;
         public boolean signSensible = false;
+        public boolean shareable = false;
         public ArrayList<RelatedTo> relatedTo = new ArrayList<RelatedTo>();
         
         public RelatedTo newRelatedTo() {
@@ -456,7 +457,6 @@ public class BuildingDescription {
         ArrayList<BlockDescription> lExcludes = new ArrayList<BlockDescription>();
         Logger.getLogger("detect").info(this.name);
         for(BlockDescription lBlockDesc : blocks) {
-// TODO detect only sensible blocks
             if (lBlockDesc.detectSensible) {
                 if (lBlockDesc.materials.contains(lBlock)) {
                     lExcludes.clear();

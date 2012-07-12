@@ -46,6 +46,20 @@ public class BuildingDB<T extends Building> extends DBSetWorld<T> {
         return lResult;
     }
     
+    public ArrayList<T> getBuildingsWithNoneShareableBlock(BlockPosition aPos) {
+        ArrayList<T> lResult = new ArrayList<T>();
+        for(Object lObj : this) {
+            T lBuilding = (T)lObj;
+            if (lBuilding.isInside(aPos)) {
+                BuildingBlock lBlock = lBuilding.getBlock(aPos);
+                if (lBlock != null && !lBlock.description.shareable) {
+                    lResult.add(lBuilding);
+                }
+            }
+        }
+        return lResult;
+    }
+    
     public ArrayList<T> getRedStoneSensibles(BlockPosition aPos) {
         ArrayList<T> lResult = new ArrayList<T>();
         for(Object lObj : this) {

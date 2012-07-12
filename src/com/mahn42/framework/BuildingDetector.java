@@ -31,7 +31,6 @@ public class BuildingDetector {
     }
     
     public ArrayList<Building> detect(World aWorld, BlockPosition aPos1, BlockPosition aPos2) {
-        //TODO sort desc with most related to first scan
         ArrayList<Building> lResult = new ArrayList<Building>();
         int dx = aPos1.x > aPos2.x ? -1 : 1;
         int dy = aPos1.y > aPos2.y ? -1 : 1;
@@ -41,19 +40,20 @@ public class BuildingDetector {
         getHandlers();
         for(BuildingDescription lDesc : fDescriptions) {
             //Logger.getLogger("detect").info("teste " + lDesc.name);
-            for(int lX = aPos1.x; lX <= aPos2.x; lX+=dx) {
-                for(int lY = aPos1.y; lY <= aPos2.y; lY+=dy) {
-                    for(int lZ = aPos1.z; lZ <= aPos2.z; lZ+=dz) {
-                        //TODO check if pos in building of any DB
-                        //Logger.getLogger("detect").info("teste " + new Integer(lX) + "," + new Integer(lY) + "," + new Integer(lZ));
-                        if (getBuildings(new BlockPosition(lX, lY, lZ)).isEmpty()) {
-                            Building aBuilding = matchDescription(lDesc, aWorld, lX, lY, lZ);
-                            if (aBuilding != null) {
-                                lResult.add(aBuilding);
-                                Logger.getLogger("detect").info("add " + aBuilding.getName());
+            if (lDesc.active) {
+                for(int lX = aPos1.x; lX <= aPos2.x; lX+=dx) {
+                    for(int lY = aPos1.y; lY <= aPos2.y; lY+=dy) {
+                        for(int lZ = aPos1.z; lZ <= aPos2.z; lZ+=dz) {
+                            //Logger.getLogger("detect").info("teste " + new Integer(lX) + "," + new Integer(lY) + "," + new Integer(lZ));
+                            if (getBuildingsWithNoneShareableBlock(new BlockPosition(lX, lY, lZ)).isEmpty()) {
+                                Building aBuilding = matchDescription(lDesc, aWorld, lX, lY, lZ);
+                                if (aBuilding != null) {
+                                    lResult.add(aBuilding);
+                                    Logger.getLogger("detect").info("add " + aBuilding.getName());
+                                }
+                            } else {
+                                // there are always buildings
                             }
-                        } else {
-                            // there are always buildings
                         }
                     }
                 }
@@ -98,8 +98,10 @@ public class BuildingDetector {
             for(BuildingHandler lHandler : fHandlers) {
                 for(World lWorld : lWorlds) {
                     BuildingDB lDB = lHandler.getDB(lWorld);
-                    if (!fDBs.contains(lDB)) {
-                        fDBs.add(lDB);
+                    if (lDB != null) {
+                        if (!fDBs.contains(lDB)) {
+                            fDBs.add(lDB);
+                        }
                     }
                 }
             }
@@ -117,6 +119,18 @@ public class BuildingDetector {
         ArrayList<BuildingDB> lDBs = getDBs();
         for(BuildingDB lDB : lDBs) {
             ArrayList<Building> lBuildings = lDB.getBuildings(aPos);
+            if (!lBuildings.isEmpty()) {
+                lResult.addAll(lBuildings);
+            }
+        }
+        return lResult;
+    }
+
+    public ArrayList<Building> getBuildingsWithNoneShareableBlock(BlockPosition aPos) {
+        ArrayList<Building> lResult = new ArrayList<Building>();
+        ArrayList<BuildingDB> lDBs = getDBs();
+        for(BuildingDB lDB : lDBs) {
+            ArrayList<Building> lBuildings = lDB.getBuildingsWithNoneShareableBlock(aPos);
             if (!lBuildings.isEmpty()) {
                 lResult.addAll(lBuildings);
             }
