@@ -13,10 +13,20 @@ commands:
       usage: /fw_bd_create descname
       permission: fw.bd_create
       permission-message: You don't have permission
+   fw_bd_detect:
+      description: only for testing, detect a building for a given building description.
+      usage: /fw_bd_detect descname
+      permission: fw.bd_detect
+      permission-message: You don't have permission
    fw_set_spawn:
       description: set the worlds spawn point to the player location.
       usage: /fw_set_sawn
       permission: fw.set_spawn
+      permission-message: You don't have permission
+   fw_save:
+      description: save the data to disk. 
+      usage: /fw_save
+      permission: fw.save
       permission-message: You don't have permission
 permissions:
     fw.*:
@@ -24,13 +34,21 @@ permissions:
         children:
             fw.bd_dump: true
             fw.bd_create: true
+            fw.bd_detect: true
             fw.set_spawn: true
+            fw.save: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
     fw.bd_create:
         description: Allows you to create a building based on a building description
         default: false
+    fw.bd_detect:
+        description: Allows you to detect a building based on a building description
+        default: false
     fw.set_spawn:
         description: Allows you to set the spawn point of the world
+        default: false
+    fw.save:
+        description: Allows you to save data to disk
         default: false

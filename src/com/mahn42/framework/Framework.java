@@ -48,7 +48,9 @@ public class Framework extends JavaPlugin {
         
         getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
         getCommand("fw_bd_create").setExecutor(new CommandBD_Create());
+        getCommand("fw_bd_detect").setExecutor(new CommandBD_Detect());
         getCommand("fw_set_spawn").setExecutor(new CommandSetSpawn());
+        getCommand("fw_save").setExecutor(new CommandSave());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);

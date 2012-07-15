@@ -520,6 +520,7 @@ public class BuildingDescription {
                             lPoss.remove(0); // remove the first, its the startpoint
                             int lLastRel = 0;
                             for(int lIndex = lPoss.size() - 1; lIndex >= 0; lIndex--) {
+                                Logger.getLogger("detect").info("rel " + lRel.description.name + " index " + lIndex);
                                 BlockPosition lPos = lPoss.get(lIndex);
                                 Block lBlock = lPos.getBlock(aWorld);
                                 if (!lRelated && lIndex < lRel.minDistance) {
