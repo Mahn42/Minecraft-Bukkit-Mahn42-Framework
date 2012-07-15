@@ -156,6 +156,11 @@ public class BuildingDescription {
         public boolean add(Material aMaterial, byte aData) {
             return add(new BlockMaterial(aMaterial, aData));
         }
+        public void add(BlockMaterialArray aList) {
+            for(BlockMaterial lMat : aList) {
+                add(lMat);
+            }
+        }
         //public boolean contains(Material aMaterial) {
         //    return contains(new BlockMaterial(aMaterial));
         //}
@@ -430,6 +435,10 @@ public class BuildingDescription {
         return lBDesc;
     }
     
+    public BlockMaterialArray newBlockMaterialArray() {
+        return new BlockMaterialArray();
+    }
+    
     public void activate() {
         HashMap<String, BlockDescription> lHash = new HashMap<String, BlockDescription>();
         for(BlockDescription lBDesc : blocks) {
@@ -505,32 +514,50 @@ public class BuildingDescription {
                     switch(lRel.position) {
                         case Vector:
                             int lSkip = lRel.minDistance;
-                            for(BlockPosition lPos : new WorldLineWalk(
+                            ArrayList<BlockPosition> lPoss = new WorldLineWalk(
                                     lStartPos,
-                                    new BlockPosition(lX + lRel.direction.getBlockX(), lY + lRel.direction.getBlockY(), lZ + lRel.direction.getBlockZ()))) {
-                                if (lFirst) {
-                                    lFirst = false;
+                                    new BlockPosition(lX + lRel.direction.getBlockX(), lY + lRel.direction.getBlockY(), lZ + lRel.direction.getBlockZ())).getPositions();
+                            lPoss.remove(0); // remove the first, its the startpoint
+                            int lLastRel = 0;
+                            for(int lIndex = lPoss.size() - 1; lIndex >= 0; lIndex--) {
+                                BlockPosition lPos = lPoss.get(lIndex);
+                                Block lBlock = lPos.getBlock(aWorld);
+                                if (!lRelated && lIndex < lRel.minDistance) {
+                                    Logger.getLogger("detect").info("break rel " + lRel.description.name + " mindist " + lIndex);
+                                    break;
+                                }
+                                if (lRelated && !lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
+                                    Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType());
+                                    lRelatedPos = null;
+                                    lRelated = false;
+                                    lLastRel = lIndex;
+                                }
+                                if (!lRelated && lRel.description.materials.contains(lBlock)) {
+                                    Logger.getLogger("detect").info("found rel " + lRel.description.name);
+                                    lRelatedPos = lPos;
+                                    lRelated = true;
+                                    lIndex = lLastRel-1;
+                                }
+                                /*
+                                if (lSkip == 0) {
+                                    Logger.getLogger("detect").info("check rel " + lRel.description.name + " at " + lPos + " mat " + lBlock.getType() + " " + lBlock.getData() + " -> " + lRel.description.materials.get(0));
+                                    if (lRel.description.materials.contains(lBlock)) {
+                                        Logger.getLogger("detect").info("found rel " + lRel.description.name);
+                                        lRelatedPos = lPos;
+                                        lRelated = true;
+                                        break;
+                                    } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
+                                        Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType() + " " + lRel.materials.get(0));
+                                        break;
+                                    }
                                 } else {
-                                    Block lBlock = lPos.getBlock(aWorld);
-                                    if (lSkip == 0) {
-                                        Logger.getLogger("detect").info("check rel " + lRel.description.name + " at " + lPos + " mat " + lBlock.getType() + " " + lBlock.getData() + " -> " + lRel.description.materials.get(0));
-                                        if (lRel.description.materials.contains(lBlock)) {
-                                            Logger.getLogger("detect").info("found rel " + lRel.description.name);
-                                            lRelatedPos = lPos;
-                                            lRelated = true;
-                                            break;
-                                        } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                            Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType() + " " + lRel.materials.get(0));
-                                            break;
-                                        }
-                                    } else {
-                                        lSkip--;
-                                        if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                            Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType());
-                                            break;
-                                        }
+                                    lSkip--;
+                                    if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
+                                        Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType());
+                                        break;
                                     }
                                 }
+                                */
                             }
                             break;
                         case AreaYX:

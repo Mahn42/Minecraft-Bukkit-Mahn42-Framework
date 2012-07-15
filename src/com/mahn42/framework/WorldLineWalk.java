@@ -4,6 +4,7 @@
  */
 package com.mahn42.framework;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import org.bukkit.Location;
 
@@ -23,6 +24,14 @@ public class WorldLineWalk implements Iterable<BlockPosition> {
     public WorldLineWalk(Location aStart, Location aEnd) {
         fStart = new BlockPosition(aStart);
         fEnd = new BlockPosition(aEnd);
+    }
+    
+    public ArrayList<BlockPosition> getPositions() {
+        ArrayList<BlockPosition> lList = new ArrayList<BlockPosition>();
+        for(BlockPosition lPos : this) {
+            lList.add(lPos);
+        }
+        return lList;
     }
 
     @Override
