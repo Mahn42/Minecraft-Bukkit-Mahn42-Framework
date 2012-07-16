@@ -35,11 +35,8 @@ public class BuildingDetector {
         int dx = aPos1.x > aPos2.x ? -1 : 1;
         int dy = aPos1.y > aPos2.y ? -1 : 1;
         int dz = aPos1.z > aPos2.z ? -1 : 1;
-        //Logger.getLogger("detect").info("count " + new Integer(fDescriptions.size()));
-        //Logger.getLogger("detect").info(aPos1.toString() + " - " + aPos2.toString());
         getHandlers();
         for(BuildingDescription lDesc : fDescriptions) {
-            //Logger.getLogger("detect").info("teste " + lDesc.name);
             if (lDesc.active) {
                 for(int lX = aPos1.x; lX <= aPos2.x; lX+=dx) {
                     for(int lY = aPos1.y; lY <= aPos2.y; lY+=dy) {
@@ -84,34 +81,36 @@ public class BuildingDetector {
     
     public ArrayList<BuildingHandler> getHandlers() {
         if (fShouldUpdateHandlers) {
-            java.util.Collections.sort(fDescriptions, new BuildingDescriptionComparator());
-            fHandlers.clear();
-            for(BuildingDescription lDesc : fDescriptions) {
-                if (lDesc.handler != null) {
-                    if (!fHandlers.contains(lDesc.handler)) {
-                        fHandlers.add(lDesc.handler);
+            synchronized(fDescriptions) {
+                java.util.Collections.sort(fDescriptions, new BuildingDescriptionComparator());
+                fHandlers.clear();
+                for(BuildingDescription lDesc : fDescriptions) {
+                    if (lDesc.handler != null) {
+                        if (!fHandlers.contains(lDesc.handler)) {
+                            fHandlers.add(lDesc.handler);
+                        }
                     }
                 }
-            }
-            fDBs.clear();
-            List<World> lWorlds = Framework.plugin.getServer().getWorlds();
-            for(BuildingHandler lHandler : fHandlers) {
-                for(World lWorld : lWorlds) {
-                    BuildingDB lDB = lHandler.getDB(lWorld);
-                    if (lDB != null) {
-                        if (!fDBs.contains(lDB)) {
-                            fDBs.add(lDB);
+                fDBs.clear();
+                List<World> lWorlds = Framework.plugin.getServer().getWorlds();
+                for(BuildingHandler lHandler : fHandlers) {
+                    for(World lWorld : lWorlds) {
+                        BuildingDB lDB = lHandler.getDB(lWorld);
+                        if (lDB != null) {
+                            if (!fDBs.contains(lDB)) {
+                                fDBs.add(lDB);
+                            }
                         }
                     }
                 }
             }
         }
-        return fHandlers;
+        return new ArrayList<BuildingHandler>(fHandlers);
     }
     
     public ArrayList<BuildingDB> getDBs() {
         getHandlers();
-        return fDBs;
+        return new ArrayList<BuildingDB>(fDBs);
     }
     
     public ArrayList<Building> getBuildings(BlockPosition aPos) {
