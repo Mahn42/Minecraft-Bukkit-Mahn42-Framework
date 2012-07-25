@@ -28,7 +28,9 @@ public class PlayerListener implements Listener {
         Player lPlayer = aEvent.getPlayer();
         Block lTargetBlock = lPlayer.getTargetBlock(null, 100);
         if (!lTargetBlock.equals(lLastBlock)) {
-            //lPlayer.sendMessage("Block " + lBlock);
+            if (Framework.plugin.isDebugSet("targetblock")) {
+                lPlayer.sendMessage("Block " + lTargetBlock);
+            }
             lLastBlock = lTargetBlock;
         }
         

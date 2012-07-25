@@ -464,7 +464,7 @@ public class BuildingDescription {
     public Building matchDescription(World aWorld, int lX, int lY, int lZ) {
         Block lBlock = aWorld.getBlockAt(lX, lY, lZ);
         ArrayList<BlockDescription> lExcludes = new ArrayList<BlockDescription>();
-        Logger.getLogger("detect").info(this.name);
+        Framework.plugin.log("bd", this.name);
         for(BlockDescription lBlockDesc : blocks) {
             if (lBlockDesc.detectSensible) {
                 if (lBlockDesc.materials.contains(lBlock)) {
@@ -474,21 +474,21 @@ public class BuildingDescription {
                     aBuilding.setWorld(aWorld);
                     //Logger.getLogger("detect").info("mat " + lMat.name());
                     if (!canFollowRelateds(lExcludes, aBuilding, aWorld, lBlockDesc, lX, lY, lZ)) {
-                        Logger.getLogger("detect").info("not ok, excludes " + lExcludes.size());
+                        Framework.plugin.log("bd", "not ok, excludes " + lExcludes.size());
                         //return null;
                     } else {
                         if (lExcludes.size() >= blocks.size()) {
                             aBuilding.update();
-                            Logger.getLogger("detect").info("found: " + this.name);
+                            Framework.plugin.log("bd", "found: " + this.name);
                             return aBuilding;
                         } else {
-                            Logger.getLogger("detect").info("not enough matches (excluder " + lExcludes.size() + " )");
+                            Framework.plugin.log("bd", "not enough matches (excluder " + lExcludes.size() + " )");
                         }
                     }
                 }
             }
         }
-        Logger.getLogger("detect").info(this.name + " does not match!");
+        Framework.plugin.log("bd", this.name + " does not match!");
         return null;
     }
     
@@ -501,7 +501,7 @@ public class BuildingDescription {
             BlockPosition lStartPos = new BlockPosition(lX, lY, lZ);
             aBuilding.blocks.add(new BuildingBlock(lBlockDesc, new BlockPosition(lStartPos)));
             if (lBlockDesc.relatedTo.size() > 0) {
-                Logger.getLogger("detect").info("check desc " + lBlockDesc.name + " at " + lStartPos);
+                Framework.plugin.log("bd", "check desc " + lBlockDesc.name + " at " + lStartPos);
                 ArrayList<RelFollower> lFs = new ArrayList<RelFollower>();
                 for(RelatedTo lRel : lBlockDesc.relatedTo) {
                     boolean lRelated = false;
@@ -518,26 +518,26 @@ public class BuildingDescription {
                                     lStartPos,
                                     new BlockPosition(lX + lRel.direction.getBlockX(), lY + lRel.direction.getBlockY(), lZ + lRel.direction.getBlockZ())).getPositions();
                             lPoss.remove(0); // remove the first, its the startpoint
-                            int lLastRel = 0;
+                            int lLastRel = -1;
                             for(int lIndex = lPoss.size() - 1; lIndex >= 0; lIndex--) {
-                                Logger.getLogger("detect").info("rel " + lRel.description.name + " index " + lIndex);
+                                //Logger.getLogger("detect").info("rel " + lRel.description.name + " index " + lIndex);
                                 BlockPosition lPos = lPoss.get(lIndex);
                                 Block lBlock = lPos.getBlock(aWorld);
                                 if (!lRelated && lIndex < lRel.minDistance) {
-                                    Logger.getLogger("detect").info("break rel " + lRel.description.name + " mindist " + lIndex);
+                                    Framework.plugin.log("bd", "break rel " + lRel.description.name + " mindist " + lIndex);
                                     break;
                                 }
                                 if (lRelated && !lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                    Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType());
+                                    Framework.plugin.log("bd", "break rel " + lRel.description.name + " mat " + lBlock.getType());
                                     lRelatedPos = null;
                                     lRelated = false;
-                                    lLastRel = lIndex;
+                                    lIndex = lLastRel-1;
                                 }
                                 if (!lRelated && lRel.description.materials.contains(lBlock)) {
-                                    Logger.getLogger("detect").info("found rel " + lRel.description.name);
+                                    Framework.plugin.log("bd", "found rel " + lRel.description.name);
                                     lRelatedPos = lPos;
                                     lRelated = true;
-                                    lIndex = lLastRel-1;
+                                    lLastRel = lIndex;
                                 }
                                 /*
                                 if (lSkip == 0) {
@@ -586,20 +586,20 @@ public class BuildingDescription {
                                     } else {
                                         Block lBlock = lPos.getBlock(aWorld);
                                         if (lSkip == 0) {
-                                            Logger.getLogger("detect").info("check rel " + lRel.description.name + " at " + lPos + " mat " + lBlock.getType() + " " + lBlock.getData() + " -> " + lRel.description.materials.get(0));
+                                            Framework.plugin.log("bd", "check rel " + lRel.description.name + " at " + lPos + " mat " + lBlock.getType() + " " + lBlock.getData() + " -> " + lRel.description.materials.get(0));
                                             if (lRel.description.materials.contains(lBlock)) {
-                                                Logger.getLogger("detect").info("found rel " + lRel.description.name);
+                                                Framework.plugin.log("bd", "found rel " + lRel.description.name);
                                                 lRelatedPos = lPos;
                                                 lRelated = true;
                                                 break;
                                             } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                                Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType() + " " + lRel.materials.get(0));
+                                                Framework.plugin.log("bd", "break rel " + lRel.description.name + " mat " + lBlock.getType() + " " + lRel.materials.get(0));
                                                 break;
                                             }
                                         } else {
                                             lSkip--;
                                             if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                                Logger.getLogger("detect").info("break rel " + lRel.description.name + " mat " + lBlock.getType());
+                                                Framework.plugin.log("bd", "break rel " + lRel.description.name + " mat " + lBlock.getType());
                                                 break;
                                             }
                                         }
@@ -627,18 +627,18 @@ public class BuildingDescription {
                             for(BlockPosition lPos : new BlockPositionWalkAround(lStartPos, BlockPositionDelta.HorizontalAndVertical)) {
                                 Block lBlock = lPos.getBlock(aWorld);
                                 if (lRel.description.materials.contains(lBlock)) {
-                                    Logger.getLogger("detect").info("found rel nearby " + lRel.description.name);
+                                    Framework.plugin.log("bd", "found rel nearby " + lRel.description.name);
                                     lRelated = true;
                                     lRelatedPos = lPos.clone();
                                     break;
                                 } else {
-                                    Logger.getLogger("detect").info("break rel nearby " + lRel.description.name + " mat " + lBlock.getType());
+                                    Framework.plugin.log("bd", "break rel nearby " + lRel.description.name + " mat " + lBlock.getType());
                                 }
                             }
                             break;
                     }
                     if (!lRelated) {
-                        Logger.getLogger("detect").info("rel " + lRel.description.name + " not match");
+                        Framework.plugin.log("bd", "rel " + lRel.description.name + " not match");
                         return false;
                     }
                     if (!aExcludes.contains(lRel.description)) {
@@ -651,19 +651,19 @@ public class BuildingDescription {
                 }
                 if (!aExcludes.contains(lBlockDesc)) {
                     aExcludes.add(lBlockDesc);
-                    Logger.getLogger("detect").info("excluded add " + lBlockDesc.name + " " + aExcludes.size());
+                    Framework.plugin.log("bd", "excluded add " + lBlockDesc.name + " " + aExcludes.size());
                 }
                 for(RelFollower lF : lFs) {
-                    Logger.getLogger("detect").info("follow rel " + lF.desc.name);
+                    Framework.plugin.log("bd", "follow rel " + lF.desc.name);
                     if (!canFollowRelateds(aExcludes, aBuilding, aWorld, lF.desc, lF.pos.x, lF.pos.y, lF.pos.z)) {
-                        Logger.getLogger("detect").info("rel2 " + lF.desc.name + " not match");
+                        Framework.plugin.log("bd", "rel2 " + lF.desc.name + " not match");
                         return false;
                     }
                 }
                 return true;
             } else {
                 aExcludes.add(lBlockDesc);
-                Logger.getLogger("detect").info("excluded add " + lBlockDesc.name + " " + aExcludes.size());
+                Framework.plugin.log("bd", "excluded add " + lBlockDesc.name + " " + aExcludes.size());
                 return true;
             }
         } else {

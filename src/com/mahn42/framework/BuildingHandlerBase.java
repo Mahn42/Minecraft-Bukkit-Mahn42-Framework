@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -45,6 +46,10 @@ public class BuildingHandlerBase implements BuildingHandler {
     @Override
     public boolean signChanged(SignChangeEvent aEvent, Building aBuilding) {
         return false;
+    }
+
+    @Override
+    public void nextConfiguration(Building aBuilding, BlockPosition position, Player aPlayer) {
     }
     
 }

@@ -24,29 +24,38 @@ public class BuildingDetectTask implements Runnable {
     public void run() {
         ArrayList<Building> lBuildings;
         lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithNoneShareableBlock(position);
-        if (player != null) {
-            for(Building lBuilding : lBuildings) {
-                player.sendMessage("Here is always the building " + lBuilding.getName());
+        if (lBuildings.size() == 1) {
+            if (lBuildings.get(0).description.handler != null) {
+                lBuildings.get(0).description.handler.nextConfiguration(lBuildings.get(0), position, player);
+                return;
             }
-        }
-        lBuildings = Framework.plugin.getBuildingDetector().detect(world, position, position);
-        boolean lFound = false;
-        for(Building lBuilding : lBuildings) {
+        } else {
             if (player != null) {
-                lBuilding.playerName = player.getName();
-            }
-            if (lBuilding.description.handler != null) {
-                if (lBuilding.description.handler.playerInteract(event, lBuilding)) {
-                    BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Create);
-                    Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
-                    lFound = true;
-                    break;
+                for(Building lBuilding : lBuildings) {
+                    player.sendMessage("Here is always the building " + lBuilding.getName());
                 }
             }
         }
-        if (!lFound) {
-            if (player != null) {
-                player.sendMessage("No building found!");
+        if (lBuildings.isEmpty()) {
+            lBuildings = Framework.plugin.getBuildingDetector().detect(world, position, position);
+            boolean lFound = false;
+            for(Building lBuilding : lBuildings) {
+                if (player != null) {
+                    lBuilding.playerName = player.getName();
+                }
+                if (lBuilding.description.handler != null) {
+                    if (lBuilding.description.handler.playerInteract(event, lBuilding)) {
+                        BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Create);
+                        Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
+                        lFound = true;
+                        break;
+                    }
+                }
+            }
+            if (!lFound) {
+                if (player != null) {
+                    player.sendMessage("No building found!");
+                }
             }
         }
     }

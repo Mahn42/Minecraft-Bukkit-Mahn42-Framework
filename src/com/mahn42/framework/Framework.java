@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +22,7 @@ public class Framework extends JavaPlugin {
     public int configSyncBlockSetterTicks = 2;
     public int configDBSaverTicks = 18000;
     
+    protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected SyncBlockSetter fSyncBlockSetter;
     protected DBSaverTask fSaverTask;
     protected DynMapBuildingRenderer fDynMapTask;
@@ -31,8 +33,19 @@ public class Framework extends JavaPlugin {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        BlockArea lArea = new BlockArea(10, 10, 10);
+        Logger.getAnonymousLogger().info("Area Item 0 = " + lArea.items.get(0));
     }
 
+    public boolean isDebugSet(String aName) {
+        Boolean lValue = fDebugSet.get(aName);
+        return lValue != null && lValue.booleanValue();
+    }
+    
+    public void setDebugSet(String aName, boolean aValue) {
+        fDebugSet.put(aName, new Boolean(aValue));
+    }
+    
     @Override
     public void onEnable() { 
         plugin = this;
@@ -51,6 +64,7 @@ public class Framework extends JavaPlugin {
         getCommand("fw_bd_detect").setExecutor(new CommandBD_Detect());
         getCommand("fw_set_spawn").setExecutor(new CommandSetSpawn());
         getCommand("fw_save").setExecutor(new CommandSave());
+        getCommand("fw_debug").setExecutor(new CommandDebugSet());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
@@ -104,6 +118,12 @@ public class Framework extends JavaPlugin {
     private void readFrameworkConfig() {
         FileConfiguration lConfig = getConfig();
         configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
+    }
+    
+    public void log(String aDebugOption, String aText) {
+        if (isDebugSet(aDebugOption)) {
+            getLogger().info(aText);
+        }
     }
     
     public static boolean isSpade(Material aMaterial) {

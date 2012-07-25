@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -21,4 +22,5 @@ public interface BuildingHandler {
     public boolean nameChanged(SignChangeEvent aEvent, Building aBuilding);
     public boolean signChanged(SignChangeEvent aEvent, Building aBuilding);
     public BuildingDB getDB(World aWorld);
+    public void nextConfiguration(Building aBuilding, BlockPosition position, Player aPlayer);
 }

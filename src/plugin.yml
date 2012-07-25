@@ -28,6 +28,11 @@ commands:
       usage: /fw_save
       permission: fw.save
       permission-message: You don't have permission
+   fw_debug:
+      description: set or show the debug option. 
+      usage: /fw_debug <optionname> [true|false]
+      permission: fw.debug
+      permission-message: You don't have permission
 permissions:
     fw.*:
         description: Gives access to all framework commands
@@ -37,6 +42,7 @@ permissions:
             fw.bd_detect: true
             fw.set_spawn: true
             fw.save: true
+            fw.debug: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
@@ -51,4 +57,7 @@ permissions:
         default: false
     fw.save:
         description: Allows you to save data to disk
+        default: false
+    fw.debug:
+        description: Allows you to set debug option
         default: false

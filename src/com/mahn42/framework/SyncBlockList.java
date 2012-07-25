@@ -53,6 +53,10 @@ public class SyncBlockList implements Iterable<SyncBlockList.SyncBlockItem> {
     public void execute() {
         Framework.plugin.fSyncBlockSetter.addList(this);
     }
+    
+    public int size() {
+        return fList.size();
+    }
 
     @Override
     public Iterator<SyncBlockItem> iterator() {

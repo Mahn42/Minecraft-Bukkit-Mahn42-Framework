@@ -41,7 +41,7 @@ public class CommandBD_Create implements CommandExecutor {
                         lPos.add(0, 0, 3);
                         debugDesc(lDones, lPos, lBDesc, lWorld);
                     } else {
-                        lPlayer.sendMessage("'" + lName + "' has no detect seinsible block!");
+                        lPlayer.sendMessage("'" + lName + "' has no detect sensible block!");
                     }
                 } else {
                     lPlayer.sendMessage("'" + lName + "' desc unkown");
@@ -52,9 +52,21 @@ public class CommandBD_Create implements CommandExecutor {
     }
     
     protected void debugDesc(ArrayList<BuildingDescription.BlockDescription> aDones, BlockPosition aPos, BuildingDescription.BlockDescription aBDesc, World aWorld) {
+        if (aBDesc == null) {
+            Framework.plugin.getLogger().info("no block description!");
+            return;
+        }
         if (!aDones.contains(aBDesc)) {
             aDones.add(aBDesc);
+            if (aBDesc.materials.isEmpty()) {
+                Framework.plugin.getLogger().info("Block " + aBDesc.name + " has no materiual!");
+                return;
+            }
             BlockState lState = aPos.getBlock(aWorld).getState();
+            if (lState == null) {
+                Framework.plugin.getLogger().info("Block " + aBDesc.name + " no BlockState! " + aPos);
+                return;
+            }
             lState.setType(aBDesc.materials.get(0).material);
             if (aBDesc.materials.get(0).withData) {
                 lState.setRawData(aBDesc.materials.get(0).data);
