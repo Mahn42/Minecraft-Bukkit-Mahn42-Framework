@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 
 /**
  *
@@ -40,9 +41,30 @@ public class BlockArea {
             data = aBlock.getData();
         }
         
+        public void toBlock(Block aBlock) {
+            BlockState lState = aBlock.getState();
+            lState.setTypeId(id);
+            lState.setRawData(data);
+            lState.update(true);
+        }
+        
+        public void toList(SyncBlockList aList, BlockPosition aPos) {
+            aList.add(aPos, Material.getMaterial(id), data);
+        }
+        
         @Override
         public String toString() {
             return Material.getMaterial(id).toString() + "(" + data + ")";
+        }
+
+        private String toFileString() {
+            return id + "," + data;
+        }
+
+        private void fromFileString(String aText) {
+            String lParts[] = aText.split(",");
+            id = Integer.parseInt(lParts[0]);
+            data = Byte.parseByte(lParts[1]);
         }
     }
     
@@ -80,7 +102,67 @@ public class BlockArea {
         lItem.fromBlock(aBlock);
     }
 
-    public void fromBlock(World aWorld, BlockPosition aEdge1, BlockPosition aEdge2) {
-        //TODO
+    public void fromWorld(World aWorld, BlockPosition aEdge1) {
+        for(int lX = 0; lX < width; lX++) {
+            for(int lY = 0; lY < height; lY++) {
+                for(int lZ = 0; lZ < depth; lZ++) {
+                    get(lX, lY, lZ).fromBlock(aWorld.getBlockAt(aEdge1.x + lX, aEdge1.y + lY, aEdge1.z + lZ));
+                }
+            }
+        }
+    }
+
+    public void toWorld(World aWorld, BlockPosition aEdge1) {
+        for(int lX = 0; lX < width; lX++) {
+            for(int lY = 0; lY < height; lY++) {
+                for(int lZ = 0; lZ <= depth; lZ++) {
+                    get(lX,lY,lZ).toBlock(aWorld.getBlockAt(aEdge1.x + lX, aEdge1.y + lY, aEdge1.z + lZ));
+                }
+            }
+        }
+    }
+
+    public void toList(SyncBlockList aList, BlockPosition aEdge1) {
+        toList(aList, aEdge1, false, false, false, false);
+    }
+    
+    public void toList(SyncBlockList aList, BlockPosition aEdge1, boolean aMirrorX, boolean aMirrorZ, boolean aMirrorY, boolean aSwapXZ) {
+        int lfX = aMirrorX ? -1 : 1;
+        int lfY = aMirrorY ? -1 : 1;
+        int lfZ = aMirrorZ ? -1 : 1;
+        for(int lX = 0; lX < width; lX++) {
+            for(int lY = 0; lY < height; lY++) {
+                for(int lZ = 0; lZ <= depth; lZ++) {
+                    BlockPosition aPos = new BlockPosition(aEdge1.x + lX * lfX, aEdge1.y + lY * lfY, aEdge1.z + lZ * lfZ);
+                    if (aSwapXZ) {
+                        int lSwap = aPos.x;
+                        aPos.x = aPos.z;
+                        aPos.z = lSwap;
+                    }
+                    get(lX,lY,lZ).toList(aList, aPos);
+                }
+            }
+        }
+    }
+    
+    public String toFileString() {
+        String lResult;
+        lResult = "1," + width + "," + height + "," + depth;
+        for(BlockAreaItem lItem : items) {
+            lResult += ";" + lItem.toFileString();
+        }
+        return lResult;
+    }
+    
+    public void fromFileString(String aText) {
+        String lParts[] = aText.split(";");
+        String lHeader[] = lParts[0].split(",");
+        width = Integer.parseInt(lHeader[1]);
+        height = Integer.parseInt(lHeader[2]);
+        depth = Integer.parseInt(lHeader[3]);
+        initItems();
+        for(int lIndex = 1; lIndex < lParts.length; lIndex++) {
+            items.get(lIndex - 1).fromFileString(lParts[lIndex]);
+        }
     }
 }

@@ -22,6 +22,7 @@ public class Framework extends JavaPlugin {
     public int configSyncBlockSetterTicks = 2;
     public int configDBSaverTicks = 18000;
     
+    protected HashMap<String, BlockPosition> fPositionMarker = new HashMap<String, BlockPosition>();
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected SyncBlockSetter fSyncBlockSetter;
     protected DBSaverTask fSaverTask;
@@ -46,6 +47,14 @@ public class Framework extends JavaPlugin {
         fDebugSet.put(aName, new Boolean(aValue));
     }
     
+    public void setPositionMarker(String aName, BlockPosition aPos) {
+        fPositionMarker.put(aName, aPos);
+    }
+    
+    public BlockPosition getPositionMarker(String aName) {
+        return fPositionMarker.get(aName);
+    }
+    
     @Override
     public void onEnable() { 
         plugin = this;
@@ -65,6 +74,9 @@ public class Framework extends JavaPlugin {
         getCommand("fw_set_spawn").setExecutor(new CommandSetSpawn());
         getCommand("fw_save").setExecutor(new CommandSave());
         getCommand("fw_debug").setExecutor(new CommandDebugSet());
+        getCommand("fw_markpos").setExecutor(new CommandSetPosMarker());
+        getCommand("fw_area_load").setExecutor(new CommandAreaLoad());
+        getCommand("fw_area_save").setExecutor(new CommandAreaSave());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
