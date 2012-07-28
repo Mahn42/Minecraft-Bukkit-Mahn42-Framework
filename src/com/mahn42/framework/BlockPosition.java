@@ -48,6 +48,22 @@ public class BlockPosition {
     public int getBlockTypeId(World aWorld) {
         return aWorld.getBlockTypeIdAt(x, y, z);
     }
+
+    public BlockPosition getWHD(BlockPosition aPos) {
+        BlockPosition lWHD = new BlockPosition();
+        lWHD.x = Math.abs(x - aPos.x) + 1;
+        lWHD.y = Math.abs(y - aPos.y) + 1;
+        lWHD.z = Math.abs(z - aPos.z) + 1;
+        return lWHD;
+    }
+    
+    public BlockPosition getMinPos(BlockPosition aPos) {
+        return new BlockPosition(Math.min(x, aPos.x), Math.min(y, aPos.y), Math.min(z, aPos.z));
+    }
+    
+    public BlockPosition getMaxPos(BlockPosition aPos) {
+        return new BlockPosition(Math.max(x, aPos.x), Math.max(y, aPos.y), Math.max(z, aPos.z));
+    }
     
     @Override
     public boolean equals(Object aObject) {

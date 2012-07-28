@@ -68,14 +68,7 @@ public class BlockAreaList extends ArrayList<BlockArea> {
     }
     
     public void addFromWorld(World aWorld, BlockPosition aEdge1, BlockPosition aEdge2) {
-        int lWidth = Math.abs(aEdge1.x - aEdge2.x) + 1;
-        int lHeight = Math.abs(aEdge1.y - aEdge2.y) + 1;
-        int lDepth = Math.abs(aEdge1.z - aEdge2.z) + 1;
-        BlockArea aArea = new BlockArea(lWidth, lHeight, lDepth);
-        BlockPosition lPos = new BlockPosition(Math.min(aEdge1.x, aEdge2.x), Math.min(aEdge1.y, aEdge2.y), Math.min(aEdge1.z, aEdge2.x));
-        Framework.plugin.getLogger().info("pos = " + lPos);
-        aArea.fromWorld(aWorld, lPos);
-        add(aArea);
+        add(new BlockArea(aWorld, aEdge1, aEdge2));
     }
     
     public void toList(int aIndex, SyncBlockList aList, BlockPosition aEdge1) {

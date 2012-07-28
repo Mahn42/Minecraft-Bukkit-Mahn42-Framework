@@ -84,17 +84,39 @@ public class BlockArea {
         initItems();
     }
     
+    public BlockArea(World aWorld, BlockPosition aEdge1, BlockPosition aEdge2) {
+        BlockPosition lWHD = aEdge1.getWHD(aEdge2);
+        width = lWHD.x;
+        height = lWHD.y;
+        depth = lWHD.z;
+        initItems();
+        BlockPosition lPos = aEdge1.getMinPos(aEdge2);
+        fromWorld(aWorld, lPos);
+    }
+    
     public void initItems() {
         items = new ArrayList<BlockArea.BlockAreaItem>(width * height * depth);
         items.clear();
         int lSize = width * height * depth;
+        Framework.plugin.getLogger().info("initItems: size=" + lSize + " w=" + width + " h=" + height + " d=" + depth);
         for(int lIndex = 0; lIndex < lSize; lIndex++) {
             items.add(lIndex, new BlockAreaItem());
         }
     }
     
+    public void clear(Material aMaterial, byte aData) {
+        clear(aMaterial.getId(), aData);
+    }
+    
+    public void clear(int aMaterialId, byte aData) {
+        for(BlockAreaItem lItem : items) {
+            lItem.id = aMaterialId;
+            lItem.data = aData;
+        }
+    }
+    
     public BlockAreaItem get(int aX, int aY, int aZ) {
-        return items.get(aX + width * aY + width * depth * aZ);
+        return items.get(aX + width * aY + width * height * aZ);
     }
     
     public void fromBlock(int aX, int aY, int aZ, Block aBlock) {
@@ -132,7 +154,7 @@ public class BlockArea {
         int lfZ = aMirrorZ ? -1 : 1;
         for(int lX = 0; lX < width; lX++) {
             for(int lY = 0; lY < height; lY++) {
-                for(int lZ = 0; lZ <= depth; lZ++) {
+                for(int lZ = 0; lZ < depth; lZ++) {
                     BlockPosition aPos = new BlockPosition(aEdge1.x + lX * lfX, aEdge1.y + lY * lfY, aEdge1.z + lZ * lfZ);
                     if (aSwapXZ) {
                         int lSwap = aPos.x;

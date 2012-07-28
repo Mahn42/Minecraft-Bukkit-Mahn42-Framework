@@ -40,13 +40,28 @@ commands:
       permission-message: You don't have permission
    fw_area_save:
       description: save area given by marker 1 and 2 to given file. 
-      usage: /fw_area_save <filename>
+      usage: /fw_area_save <filename> [add]
       permission: fw.area_save
       permission-message: You don't have permission
    fw_area_load:
       description: load area to player location. 
-      usage: /fw_area_load <filename>
+      usage: /fw_area_load <filename> [index]
       permission: fw.area_load
+      permission-message: You don't have permission
+   fw_area_delete:
+      description: delete area on disk. 
+      usage: /fw_area_delete <filename>
+      permission: fw.area_delete
+      permission-message: You don't have permission
+   fw_area_remove:
+      description: remove part of area on disk. 
+      usage: /fw_area_remove <filename> <index>
+      permission: fw.area_remove
+      permission-message: You don't have permission
+   fw_we_fill:
+      description: fill region marker 1 to marker 2 with given material. 
+      usage: /fw_we_fill <materialname> [<rawmetadata>]
+      permission: fw.we_fill
       permission-message: You don't have permission
 permissions:
     fw.*:
@@ -61,6 +76,9 @@ permissions:
             fw.markpos: true
             fw.area_save: true
             fw.area_load: true
+            fw.area_delete: true
+            fw.area_remove: true
+            fw.we_fill: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
@@ -87,4 +105,13 @@ permissions:
         default: false
     fw.area_load:
         description: Allows you to load an area
+        default: false
+    fw.area_delete:
+        description: Allows you to delete an area on disk
+        default: false
+    fw.area_remove:
+        description: Allows you to remove a part of an area on disk
+        default: false
+    fw.we_fill:
+        description: Allows you to fill regions of the world
         default: false

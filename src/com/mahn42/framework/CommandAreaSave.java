@@ -26,8 +26,14 @@ public class CommandAreaSave implements CommandExecutor {
                 BlockPosition lEdge2 = Framework.plugin.getPositionMarker("2");
                 if (lEdge1 != null && lEdge2 != null) {
                     BlockAreaList lAreaList = new BlockAreaList();
+                    File lFile = new File(aName);
+                    if (aStrings.length > 1 && aStrings[1].equalsIgnoreCase("add")) {
+                        if (lFile.exists()) {
+                            lAreaList.load(lFile);
+                        }
+                    }
                     lAreaList.addFromWorld(lPlayer.getWorld(), lEdge1, lEdge2);
-                    lAreaList.save(new File(aName));
+                    lAreaList.save(lFile);
                     lPlayer.sendMessage("area " + lEdge1 + " - " + lEdge2 + " saved to " + aName);
                 }
             }

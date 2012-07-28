@@ -21,7 +21,9 @@ public class CommandSetPosMarker implements CommandExecutor {
             Player lPlayer = (Player)aCommandSender;
             if (aStrings.length > 0) {
                 String aName = aStrings[0];
-                Framework.plugin.setPositionMarker(aName, new BlockPosition(lPlayer.getLocation()));
+                BlockPosition lPos = new BlockPosition(lPlayer.getLocation());
+                Framework.plugin.setPositionMarker(aName, lPos);
+                lPlayer.sendMessage("mark " + aName + " at " + lPos);
             } else {
 
             }
