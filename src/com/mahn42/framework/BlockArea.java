@@ -98,7 +98,7 @@ public class BlockArea {
         items = new ArrayList<BlockArea.BlockAreaItem>(width * height * depth);
         items.clear();
         int lSize = width * height * depth;
-        Framework.plugin.getLogger().info("initItems: size=" + lSize + " w=" + width + " h=" + height + " d=" + depth);
+        //Framework.plugin.getLogger().info("initItems: size=" + lSize + " w=" + width + " h=" + height + " d=" + depth);
         for(int lIndex = 0; lIndex < lSize; lIndex++) {
             items.add(lIndex, new BlockAreaItem());
         }

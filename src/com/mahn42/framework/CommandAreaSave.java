@@ -27,14 +27,29 @@ public class CommandAreaSave implements CommandExecutor {
                 if (lEdge1 != null && lEdge2 != null) {
                     BlockAreaList lAreaList = new BlockAreaList();
                     File lFile = new File(aName);
-                    if (aStrings.length > 1 && aStrings[1].equalsIgnoreCase("add")) {
+                    String lExtText = "";
+                    if (aStrings.length > 1) {
                         if (lFile.exists()) {
                             lAreaList.load(lFile);
                         }
+                        if (aStrings[1].equalsIgnoreCase("add")) {
+                            lExtText = " added";
+                            lAreaList.addFromWorld(lPlayer.getWorld(), lEdge1, lEdge2);
+                        } else {
+                            int lIndex = Integer.parseInt(aStrings[1]);
+                            if (lIndex < lAreaList.size()) {
+                                lExtText = " set at " + lIndex;
+                                lAreaList.setFromWorld(lIndex, lPlayer.getWorld(), lEdge1, lEdge2);
+                            } else {
+                                lExtText = " added";
+                                lAreaList.addFromWorld(lPlayer.getWorld(), lEdge1, lEdge2);
+                            }
+                        }
+                    } else {
+                        lAreaList.addFromWorld(lPlayer.getWorld(), lEdge1, lEdge2);
                     }
-                    lAreaList.addFromWorld(lPlayer.getWorld(), lEdge1, lEdge2);
                     lAreaList.save(lFile);
-                    lPlayer.sendMessage("area " + lEdge1 + " - " + lEdge2 + " saved to " + aName);
+                    lPlayer.sendMessage("area " + lEdge1 + " - " + lEdge2 + " saved to " + aName + lExtText + ".");
                 }
             }
         }

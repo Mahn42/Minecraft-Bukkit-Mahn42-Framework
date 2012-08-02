@@ -4,6 +4,7 @@
  */
 package com.mahn42.framework;
 
+import com.sun.org.apache.bcel.internal.generic.PUTFIELD;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,6 +44,7 @@ public class BlockAreaList extends ArrayList<BlockArea> {
                         add(lRecord);
                     }
                 }
+                lReader.close();
             } catch (IOException ex) {
                 Framework.plugin.getLogger().log(Level.SEVERE, null, ex);
             }            
@@ -69,6 +71,10 @@ public class BlockAreaList extends ArrayList<BlockArea> {
     
     public void addFromWorld(World aWorld, BlockPosition aEdge1, BlockPosition aEdge2) {
         add(new BlockArea(aWorld, aEdge1, aEdge2));
+    }
+    
+    public void setFromWorld(int aIndex, World aWorld, BlockPosition aEdge1, BlockPosition aEdge2) {
+        this.set(aIndex, new BlockArea(aWorld, aEdge1, aEdge2));
     }
     
     public void toList(int aIndex, SyncBlockList aList, BlockPosition aEdge1) {

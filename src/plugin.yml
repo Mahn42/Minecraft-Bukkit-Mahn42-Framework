@@ -40,12 +40,12 @@ commands:
       permission-message: You don't have permission
    fw_area_save:
       description: save area given by marker 1 and 2 to given file. 
-      usage: /fw_area_save <filename> [add]
+      usage: /fw_area_save <filename> [<index>|add]
       permission: fw.area_save
       permission-message: You don't have permission
    fw_area_load:
       description: load area to player location. 
-      usage: /fw_area_load <filename> [index]
+      usage: /fw_area_load <filename> [<index>|play]
       permission: fw.area_load
       permission-message: You don't have permission
    fw_area_delete:

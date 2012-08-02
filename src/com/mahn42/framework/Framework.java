@@ -50,11 +50,12 @@ public class Framework extends JavaPlugin {
     }
     
     public void setPositionMarker(String aName, BlockPosition aPos) {
-        fPositionMarker.put(aName, aPos);
+        fPositionMarker.put(aName, aPos.clone());
     }
     
     public BlockPosition getPositionMarker(String aName) {
-        return fPositionMarker.get(aName);
+        BlockPosition lPos = fPositionMarker.get(aName);
+        return lPos == null ? null : lPos.clone();
     }
     
     public Messenger getMessenger() {
