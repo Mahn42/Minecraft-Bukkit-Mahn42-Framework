@@ -29,6 +29,8 @@ public class Framework extends JavaPlugin {
     protected DynMapBuildingRenderer fDynMapTask;
     protected BuildingDetector fBuildingDetector;
     protected HashMap<String, PlayerBuildings> fPlayerBuildings;
+    protected Messenger fMessenger = null;
+    protected PlayerManager fPlayerManager = null;
     
     /**
      * @param args the command line arguments
@@ -53,6 +55,32 @@ public class Framework extends JavaPlugin {
     
     public BlockPosition getPositionMarker(String aName) {
         return fPositionMarker.get(aName);
+    }
+    
+    public Messenger getMessenger() {
+        return fMessenger;
+    }
+    
+    public boolean registerMessenger(Messenger aMessenger) {
+        if (fMessenger == null) {
+            fMessenger = aMessenger;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public PlayerManager getPlayerManager() {
+        return fPlayerManager;
+    }
+    
+    public boolean registerPlayerManager(PlayerManager aPlayerManager) {
+        if (fPlayerManager == null) {
+            fPlayerManager = aPlayerManager;
+            return true;
+        } else {
+            return false;
+        }
     }
     
     @Override
@@ -157,5 +185,9 @@ public class Framework extends JavaPlugin {
                 || aMaterial.equals(Material.IRON_AXE)
                 || aMaterial.equals(Material.DIAMOND_AXE)
                 || aMaterial.equals(Material.GOLD_AXE));
+    }
+    
+    public boolean existsPlayer(String aName) {
+        return getServer().getOfflinePlayer(aName) != null;
     }
 }
