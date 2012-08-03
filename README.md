@@ -10,4 +10,4 @@ Ziele
 - Anbindung an Dynmap für erfasste Strukturen
 - ...
 
-Schau ins https://github.com/Mahn42/Minecraft-Bukkit-Mahn42-Framework/wiki
+Schau ins Wiki -> https://github.com/Mahn42/Minecraft-Bukkit-Mahn42-Framework/wiki
