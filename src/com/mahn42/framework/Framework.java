@@ -4,7 +4,9 @@
  */
 package com.mahn42.framework;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,6 +20,42 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Framework extends JavaPlugin {
 
+    protected class __Messenger implements Messenger {
+        @Override
+        public void sendPlayerMessage(String aFromPlayer, String aToPlayerName, String aMessage) {
+        }
+
+        @Override
+        public void sendGroupMessage(String aFromPlayer, String aToGroupName, String aMessage) {
+        }
+
+        @Override
+        public void recallPlayerMessages(String aFromPlayer, String aToPlayerName) {
+        }
+
+        @Override
+        public void recallGroupMessages(String aFromPlayer, String aToGroupName) {
+        }
+    }
+
+    protected class __PlayerManager implements PlayerManager {
+
+        @Override
+        public void increaseSocialPoint(String aPlayerName, String aName, int aAmount, String aReason, String aChargePlayerName) {
+        }
+
+        @Override
+        public List<SocialPoint> getSocialPoints(String aPlayerName) {
+            return new ArrayList<SocialPoint>();
+        }
+
+        @Override
+        public List<SocialPointHistory> getSocialPointHistory(String aPlayerName, String aName) {
+            return new ArrayList<SocialPointHistory>();
+        }
+        
+    }
+    
     public static Framework plugin;
     public int configSyncBlockSetterTicks = 2;
     public int configDBSaverTicks = 18000;
@@ -59,7 +97,11 @@ public class Framework extends JavaPlugin {
     }
     
     public Messenger getMessenger() {
-        return fMessenger;
+        if (fMessenger != null) {
+            return fMessenger;
+        } else {
+            return new __Messenger();
+        }
     }
     
     public boolean registerMessenger(Messenger aMessenger) {
@@ -72,7 +114,11 @@ public class Framework extends JavaPlugin {
     }
     
     public PlayerManager getPlayerManager() {
-        return fPlayerManager;
+        if (fPlayerManager != null) {
+            return fPlayerManager;
+        } else {
+            return new __PlayerManager();
+        }
     }
     
     public boolean registerPlayerManager(PlayerManager aPlayerManager) {
