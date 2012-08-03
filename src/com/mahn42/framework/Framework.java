@@ -103,12 +103,6 @@ public class Framework extends JavaPlugin {
         getCommand("fw_set_spawn").setExecutor(new CommandSetSpawn());
         getCommand("fw_save").setExecutor(new CommandSave());
         getCommand("fw_debug").setExecutor(new CommandDebugSet());
-        getCommand("fw_markpos").setExecutor(new CommandSetPosMarker());
-        getCommand("fw_area_load").setExecutor(new CommandAreaLoad());
-        getCommand("fw_area_save").setExecutor(new CommandAreaSave());
-        getCommand("fw_area_delete").setExecutor(new CommandAreaDelete());
-        getCommand("fw_area_remove").setExecutor(new CommandAreaRemove());
-        getCommand("fw_we_fill").setExecutor(new CommandWorldEditFill());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);

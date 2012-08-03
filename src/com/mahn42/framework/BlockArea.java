@@ -148,20 +148,41 @@ public class BlockArea {
         toList(aList, aEdge1, false, false, false, false);
     }
     
+    public boolean isStep(int aId, int aStep) {
+        boolean lResult; 
+        switch (aStep) {
+            case 0:
+                lResult = aId != Material.PAINTING.getId();
+                break;
+            case 1:
+                lResult = true;
+                break;
+            default:
+                lResult = true;
+                break;
+        }
+        return lResult;
+    }
+    
     public void toList(SyncBlockList aList, BlockPosition aEdge1, boolean aMirrorX, boolean aMirrorZ, boolean aMirrorY, boolean aSwapXZ) {
         int lfX = aMirrorX ? -1 : 1;
         int lfY = aMirrorY ? -1 : 1;
         int lfZ = aMirrorZ ? -1 : 1;
-        for(int lX = 0; lX < width; lX++) {
-            for(int lY = 0; lY < height; lY++) {
-                for(int lZ = 0; lZ < depth; lZ++) {
-                    BlockPosition aPos = new BlockPosition(aEdge1.x + lX * lfX, aEdge1.y + lY * lfY, aEdge1.z + lZ * lfZ);
-                    if (aSwapXZ) {
-                        int lSwap = aPos.x;
-                        aPos.x = aPos.z;
-                        aPos.z = lSwap;
+        for(int lStep = 0; lStep < 2; lStep++) {
+            for(int lX = 0; lX < width; lX++) {
+                for(int lY = 0; lY < height; lY++) {
+                    for(int lZ = 0; lZ < depth; lZ++) {
+                        BlockAreaItem lItem = get(lX,lY,lZ);
+                        if (isStep(lItem.id, lStep)) {
+                            BlockPosition aPos = new BlockPosition(aEdge1.x + lX * lfX, aEdge1.y + lY * lfY, aEdge1.z + lZ * lfZ);
+                            if (aSwapXZ) {
+                                int lSwap = aPos.x;
+                                aPos.x = aPos.z;
+                                aPos.z = lSwap;
+                            }
+                            lItem.toList(aList, aPos);
+                        }
                     }
-                    get(lX,lY,lZ).toList(aList, aPos);
                 }
             }
         }
