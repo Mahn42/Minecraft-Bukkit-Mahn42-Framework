@@ -9,3 +9,5 @@ Ziele
 - Erfassen von gebauten Strukturen (Boje, Pumpstation, Statue, Umladeplatz Schiene <-> Boot usw.)
 - Anbindung an Dynmap für erfasste Strukturen
 - ...
+
+Schau ins https://github.com/Mahn42/Minecraft-Bukkit-Mahn42-Framework/wiki
