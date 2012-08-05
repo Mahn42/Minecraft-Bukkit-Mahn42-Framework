@@ -228,6 +228,13 @@ public class Framework extends JavaPlugin {
                 || aMaterial.equals(Material.GOLD_AXE));
     }
     
+    public static boolean isSign(Material aMaterial) {
+        return aMaterial != null
+                && (aMaterial.equals(Material.SIGN)
+                || aMaterial.equals(Material.SIGN_POST)
+                || aMaterial.equals(Material.WALL_SIGN));
+    }
+    
     public boolean existsPlayer(String aName) {
         return getServer().getOfflinePlayer(aName) != null;
     }

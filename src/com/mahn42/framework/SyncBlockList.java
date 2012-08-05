@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -22,6 +24,12 @@ public class SyncBlockList implements Iterable<SyncBlockList.SyncBlockItem> {
         public byte data;
         public boolean physics;
         public int skipCount = 0;
+        public String signLine0 = null;
+        public String signLine1 = null;
+        public String signLine2 = null;
+        public String signLine3 = null;
+        public ItemStack[] itemStacks = null;
+        public EntityType entityType = EntityType.UNKNOWN;
         
         public SyncBlockItem(BlockPosition aPos, Material aMaterial, byte aData, boolean aPhysics, int aSkipCount) {
             pos = aPos.clone();
@@ -29,6 +37,20 @@ public class SyncBlockList implements Iterable<SyncBlockList.SyncBlockItem> {
             data = aData;
             physics = aPhysics;
             skipCount = aSkipCount;
+        }
+
+        public SyncBlockItem(BlockPosition aPos, Material aMaterial, byte aData, boolean aPhysics, int aSkipCount, String aSignLine0, String aSignLine1, String aSignLine2, String aSignLine3, ItemStack[] aItemStacks, EntityType aEntityType) {
+            pos = aPos.clone();
+            material = aMaterial;
+            data = aData;
+            physics = aPhysics;
+            skipCount = aSkipCount;
+            signLine0 = aSignLine0;
+            signLine1 = aSignLine1;
+            signLine2 = aSignLine2;
+            signLine3 = aSignLine3;
+            itemStacks = aItemStacks;
+            entityType = aEntityType;
         }
     }
     
@@ -48,6 +70,14 @@ public class SyncBlockList implements Iterable<SyncBlockList.SyncBlockItem> {
     
     public void add(BlockPosition aPos, Material aMaterial, byte aData, boolean aPhysics, int aSkipCount) {
         fList.add(new SyncBlockItem(aPos, aMaterial, aData, aPhysics, aSkipCount));
+    }
+    
+    public void add(BlockPosition aPos, Material aMaterial, byte aData, boolean aPhysics, int aSkipCount, String aSignLine0, String aSignLine1, String aSignLine2, String aSignLine3, ItemStack[] aItemStacks, EntityType aEntityType) {
+        fList.add(new SyncBlockItem(aPos, aMaterial, aData, aPhysics, aSkipCount, aSignLine0, aSignLine1, aSignLine2, aSignLine3, aItemStacks, aEntityType));
+    }
+    
+    public void add(BlockPosition aPos, EntityType aEntityType) {
+        fList.add(new SyncBlockItem(aPos, null, (byte)0, false, 0, null, null, null, null, null, aEntityType));
     }
     
     public void execute() {
