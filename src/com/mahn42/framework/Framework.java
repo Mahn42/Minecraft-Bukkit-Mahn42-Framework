@@ -66,7 +66,7 @@ public class Framework extends JavaPlugin {
     public int configSyncBlockSetterTicks = 2;
     public int configDBSaverTicks = 18000;
     
-    protected HashMap<String, BlockPosition> fPositionMarker = new HashMap<String, BlockPosition>();
+    //protected HashMap<String, BlockPosition> fPositionMarker = new HashMap<String, BlockPosition>();
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected SyncBlockSetter fSyncBlockSetter;
     protected DBSaverTask fSaverTask;
@@ -93,6 +93,7 @@ public class Framework extends JavaPlugin {
         fDebugSet.put(aName, new Boolean(aValue));
     }
     
+    /*
     public void setPositionMarker(String aName, BlockPosition aPos) {
         fPositionMarker.put(aName, aPos.clone());
     }
@@ -101,6 +102,7 @@ public class Framework extends JavaPlugin {
         BlockPosition lPos = fPositionMarker.get(aName);
         return lPos == null ? null : lPos.clone();
     }
+    */
     
     public Messenger getMessenger() {
         if (fMessenger != null) {

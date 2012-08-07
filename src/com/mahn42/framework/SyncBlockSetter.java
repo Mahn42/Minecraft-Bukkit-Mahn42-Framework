@@ -76,8 +76,8 @@ public class SyncBlockSetter implements Runnable {
                         lDispenser.getInventory().setContents(itemStacks);
                         lDispenser.update(true);
                     }
-                } else if (material.equals(Material.FURNACE)) {
-                    Framework.plugin.getLogger().info("Furnace " + itemStacks);
+                } else if (material.equals(Material.FURNACE) || material.equals(Material.BURNING_FURNACE)) {
+                    Framework.plugin.getLogger().info("Furnace " + (itemStacks != null ? itemStacks.length: 0));
                     if (itemStacks != null && itemStacks.length >= 3) {
                         Furnace lFurnace = (Furnace)location.getBlock().getState();
                         lFurnace.getInventory().setFuel(itemStacks[0]);
@@ -91,7 +91,7 @@ public class SyncBlockSetter implements Runnable {
                 }
             } else {
                 try {
-                    Framework.plugin.getLogger().info("try to spawn " + entityType + " at " + location);
+                    //Framework.plugin.getLogger().info("try to spawn " + entityType + " at " + location);
                     location.getWorld().spawnEntity(location, entityType);
                 } catch (Exception lEx) {
                     Framework.plugin.getLogger().log(Level.SEVERE, null, lEx);

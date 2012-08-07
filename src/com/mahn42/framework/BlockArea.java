@@ -159,6 +159,7 @@ public class BlockArea {
                         if (lStack != null) {
                             lResult += "," + lStack.getTypeId() + "," + lStack.getData().getData() + "," + lStack.getAmount();
                         } else {
+                            lResult += ",-1,0,0";
                         }
                     }
                 }
@@ -180,7 +181,12 @@ public class BlockArea {
             } else if (id == Material.CHEST.getId() || id == Material.FURNACE.getId() || id == Material.DISPENSER.getId() || id == Material.BURNING_FURNACE.getId()) {
                 ArrayList<ItemStack> lItemStacks = new ArrayList<ItemStack>();
                 for(int lIndex = 2; lIndex < lParts.length; lIndex+=3) {
-                    lItemStacks.add(new ItemStack(Integer.parseInt(lParts[lIndex]), Integer.parseInt(lParts[lIndex+2]), (short)0, Byte.parseByte(lParts[lIndex+1])));
+                    int lId = Integer.parseInt(lParts[lIndex]);
+                    if (lId >= 0) {
+                        lItemStacks.add(new ItemStack(lId, Integer.parseInt(lParts[lIndex+2]), (short)0, Byte.parseByte(lParts[lIndex+1])));
+                    } else {
+                        lItemStacks.add(null);
+                    }
                 }
                 itemStacks = new ItemStack[lItemStacks.size()];
                 itemStacks = lItemStacks.toArray(itemStacks);
