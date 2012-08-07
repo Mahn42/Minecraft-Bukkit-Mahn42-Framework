@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,6 +53,11 @@ public class Framework extends JavaPlugin {
         @Override
         public List<SocialPointHistory> getSocialPointHistory(String aPlayerName, String aName) {
             return new ArrayList<SocialPointHistory>();
+        }
+
+        @Override
+        public SocialPoint getSocialPoint(String aPlayerName, String aName) {
+            return null;
         }
         
     }
@@ -236,6 +242,11 @@ public class Framework extends JavaPlugin {
     }
     
     public boolean existsPlayer(String aName) {
-        return getServer().getOfflinePlayer(aName) != null;
+        OfflinePlayer[] offPlayers = getServer().getOfflinePlayers();
+        for (OfflinePlayer lOffPlayer : offPlayers) {
+            if (lOffPlayer.getName().equals(aName)) return true;
+        }
+        return false;
     }
+    
 }
