@@ -22,6 +22,7 @@ public interface PlayerManager {
         public int getAmount();
         public String getReason();
         public String getChargePlayerName();
+        public long getTimestamp();
     }
     
     public void increaseSocialPoint(String aPlayerName, String aName, int aAmount, String aReason, String aChargePlayerName);
