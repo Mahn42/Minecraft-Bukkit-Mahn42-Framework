@@ -61,6 +61,17 @@ public class BlockArea {
             lLoc.add(aEdge1.x, aEdge1.y, aEdge1.z);
             aList.add(lLoc, type);
         }
+
+        private void toStringBuilder(StringBuilder lBuilder) {
+            //return "" + type.getTypeId() + "," + location.x + "," + location.y + "," + location.z;
+            lBuilder.append(Integer.toString(type.getTypeId()));
+            lBuilder.append(",");
+            lBuilder.append(Integer.toString(location.x));
+            lBuilder.append(",");
+            lBuilder.append(Integer.toString(location.y));
+            lBuilder.append(",");
+            lBuilder.append(Integer.toString(location.z));
+        }
     }
 
     public class BlockAreaItem {
@@ -147,6 +158,43 @@ public class BlockArea {
             }
         }
         
+        private void toStringBuilder(StringBuilder lBuilder) {
+            lBuilder.append(Integer.toString(id));
+            lBuilder.append(",");
+            lBuilder.append(Byte.toString(data));
+            //String lResult = id + "," + data;
+            if (Framework.plugin.isSign(Material.getMaterial(id))) {
+                if (signLine0 != null || signLine1 != null || signLine2 != null || signLine3 != null) {
+                    lBuilder.append(",");
+                    lBuilder.append(escapeSignLine(signLine0));
+                    lBuilder.append(",");
+                    lBuilder.append(escapeSignLine(signLine1));
+                    lBuilder.append(",");
+                    lBuilder.append(escapeSignLine(signLine2));
+                    lBuilder.append(",");
+                    lBuilder.append(escapeSignLine(signLine3));
+                    //lResult += "," + escapeSignLine(signLine0) + "," + escapeSignLine(signLine1) + "," + escapeSignLine(signLine2) + "," + escapeSignLine(signLine3);
+                }
+            } else if (id == Material.CHEST.getId() || id == Material.FURNACE.getId() || id == Material.DISPENSER.getId() || id == Material.BURNING_FURNACE.getId()) {
+                if (itemStacks != null) {
+                    for(ItemStack lStack : itemStacks) {
+                        if (lStack != null) {
+                            lBuilder.append(",");
+                            lBuilder.append(Integer.toString(lStack.getTypeId()));
+                            lBuilder.append(",");
+                            lBuilder.append(Byte.toString(lStack.getData().getData()));
+                            lBuilder.append(",");
+                            lBuilder.append(Integer.toString(lStack.getAmount()));
+                            //lResult += "," + lStack.getTypeId() + "," + lStack.getData().getData() + "," + lStack.getAmount();
+                        } else {
+                            lBuilder.append(",-1,0,0");
+                            //lResult += ",-1,0,0";
+                        }
+                    }
+                }
+            }
+        }
+
         private String toFileString() {
             String lResult = id + "," + data;
             if (Framework.plugin.isSign(Material.getMaterial(id))) {
@@ -355,16 +403,29 @@ public class BlockArea {
     }
     
     public String toFileString() {
-        String lResult;
-        lResult = "1," + width + "," + height + "," + depth;
+        StringBuilder lBuilder = new StringBuilder();
+        //String lResult;
+        lBuilder.append("1,");
+        lBuilder.append(Integer.toString(width));
+        lBuilder.append(",");
+        lBuilder.append(Integer.toString(height));
+        lBuilder.append(",");
+        lBuilder.append(Integer.toString(depth));
+        //lResult = "1," + width + "," + height + "," + depth;
         for(BlockAreaItem lItem : items) {
-            lResult += ";" + lItem.toFileString();
+            lBuilder.append(";");
+            lItem.toStringBuilder(lBuilder);
+            //lResult += ";" + lItem.toFileString();
         }
-        lResult += ";" + entities.size();
+        lBuilder.append(";");
+        lBuilder.append(Integer.toString(entities.size()));
+        //lResult += ";" + entities.size();
         for(BlockAreaEntity lItem : entities) {
-            lResult += ";" + lItem.toFileString();
+            lBuilder.append(";");
+            lItem.toStringBuilder(lBuilder);
+            //lResult += ";" + lItem.toFileString();
         }
-        return lResult;
+        return lBuilder.toString(); //lResult;
     }
     
     public void fromFileString(String aText) {

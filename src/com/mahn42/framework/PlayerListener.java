@@ -26,12 +26,12 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void playerMove(PlayerMoveEvent aEvent) {
         Player lPlayer = aEvent.getPlayer();
-        Block lTargetBlock = lPlayer.getTargetBlock(null, 100);
-        if (!lTargetBlock.equals(lLastBlock)) {
-            if (Framework.plugin.isDebugSet("targetblock")) {
-                lPlayer.sendMessage("Block " + lTargetBlock);
+        if (Framework.plugin.isDebugSet("targetblock")) {
+            Block lTargetBlock = lPlayer.getTargetBlock(null, 100);
+            if (!lTargetBlock.equals(lLastBlock)) {
+                    lPlayer.sendMessage("Block " + lTargetBlock);
+                lLastBlock = lTargetBlock;
             }
-            lLastBlock = lTargetBlock;
         }
         
         PlayerBuildings lPBuilds = Framework.plugin.getPlayerBuildings(lPlayer);
