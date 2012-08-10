@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -75,6 +76,7 @@ public class Framework extends JavaPlugin {
     protected HashMap<String, PlayerBuildings> fPlayerBuildings;
     protected Messenger fMessenger = null;
     protected PlayerManager fPlayerManager = null;
+    protected HashMap<World, RestrictedRegions> fRestrictedRegions = new HashMap<World, RestrictedRegions>();
     
     /**
      * @param args the command line arguments
@@ -84,6 +86,10 @@ public class Framework extends JavaPlugin {
         Logger.getAnonymousLogger().info("Area Item 0 = " + lArea.items.get(0));
     }
 
+    public RestrictedRegions getRestrictedRegions(World aWorld) {
+        return fRestrictedRegions.get(aWorld);
+    }
+    
     public boolean isDebugSet(String aName) {
         Boolean lValue = fDebugSet.get(aName);
         return lValue != null && lValue.booleanValue();

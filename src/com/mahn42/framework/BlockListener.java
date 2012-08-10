@@ -60,19 +60,24 @@ public class BlockListener implements Listener {
         Player lPlayer = aEvent.getPlayer();
         Block lBlock = aEvent.getBlock();
         World lWorld = lBlock.getWorld();
-        ArrayList<BuildingHandler> lHandlers = Framework.plugin.getBuildingDetector().getHandlers();
-        boolean lFound;
-        for (BuildingHandler lHandler : lHandlers) {
-            BuildingDB lDB = lHandler.getDB(lWorld);
-            ArrayList<Building> lBuildings = lDB.getBuildingsWithBlock(new BlockPosition(lBlock.getLocation()));
-            for(Building lBuilding : lBuildings) {
-                if (lBuilding.description.handler != null) {
-                    lFound = lBuilding.description.handler.breakBlock(aEvent, lBuilding);
-                    if (lFound) {
-                        BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Destroy);
-                        Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
-                        if (lPlayer != null) {
-                            lPlayer.sendMessage("Building " + lBuilding.getName() + " is destroyed!");
+        RestrictedRegions lRegions = Framework.plugin.getRestrictedRegions(lWorld);
+        if (lRegions != null && !lRegions.allowed(lBlock, lPlayer.getName())) {
+            aEvent.setCancelled(true);
+        } else {
+            ArrayList<BuildingHandler> lHandlers = Framework.plugin.getBuildingDetector().getHandlers();
+            boolean lFound;
+            for (BuildingHandler lHandler : lHandlers) {
+                BuildingDB lDB = lHandler.getDB(lWorld);
+                ArrayList<Building> lBuildings = lDB.getBuildingsWithBlock(new BlockPosition(lBlock.getLocation()));
+                for(Building lBuilding : lBuildings) {
+                    if (lBuilding.description.handler != null) {
+                        lFound = lBuilding.description.handler.breakBlock(aEvent, lBuilding);
+                        if (lFound) {
+                            BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Destroy);
+                            Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
+                            if (lPlayer != null) {
+                                lPlayer.sendMessage("Building " + lBuilding.getName() + " is destroyed!");
+                            }
                         }
                     }
                 }

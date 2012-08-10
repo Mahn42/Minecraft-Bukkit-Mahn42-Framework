@@ -80,5 +80,11 @@ public class PlayerListener implements Listener {
             lTask.position = new BlockPosition(lBlock.getLocation());
             Framework.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(Framework.plugin, lTask);
         }
+        if (lBlock != null
+                && aEvent.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && aEvent.hasItem()
+                && lInHand.equals(Material.EMERALD)) {
+            //TODO protect building
+        }
     }
 }
