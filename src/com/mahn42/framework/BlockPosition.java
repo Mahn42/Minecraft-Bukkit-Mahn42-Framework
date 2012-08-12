@@ -100,6 +100,14 @@ public class BlockPosition {
         return new Integer(x).toString() + aSep + new Integer(y).toString() + aSep + new Integer(z).toString();
     }
 
+    public void toCSV(StringBuilder aBuilder, String aSep) {
+        aBuilder.append(Integer.toString(x));
+        aBuilder.append(aSep);
+        aBuilder.append(Integer.toString(y));
+        aBuilder.append(aSep);
+        aBuilder.append(Integer.toString(z));
+    }
+
     public void fromCSV(String aValue, String aSep) {
         String[] lVals = aValue.split(aSep);
         x = Integer.parseInt(lVals[0]);

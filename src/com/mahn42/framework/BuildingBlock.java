@@ -26,6 +26,16 @@ public class BuildingBlock {
         return description.name + "," + new Integer(position.x) + "," + new Integer(position.y) + "," + new Integer(position.z);
     }
     
+    public void toCSVValue(StringBuilder aBuilder) {
+        aBuilder.append(description.name);
+        aBuilder.append(",");
+        aBuilder.append(Integer.toString(position.x));
+        aBuilder.append(",");
+        aBuilder.append(Integer.toString(position.y));
+        aBuilder.append(",");
+        aBuilder.append(Integer.toString(position.z));
+    }
+    
     public void fromCSVValue(BuildingDescription aDesc, String aValue) {
         String[] lParts = aValue.split("\\,");
         String lDescName = lParts[0];

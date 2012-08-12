@@ -54,8 +54,14 @@ public class DBRecord {
     }
     
     public String toCSV() {
+        StringBuilder lBuilder = new StringBuilder();
+        toCSV(lBuilder);
+        return lBuilder.toString();
+    }
+    
+    public void toCSV(StringBuilder aBuilder) {
         ArrayList lCols = new ArrayList();
-        String lLine = null;
+        boolean lFirst = true;
         toCSVInternal(lCols);
         for(Object lObject : lCols) {
             String lCol;
@@ -64,15 +70,15 @@ public class DBRecord {
             } else {
                 lCol = "";
             }
-            if (lLine == null) {
-                lLine = lCol;
+            if (lFirst) {
+                lFirst = false;
             } else {
-                lLine = lLine + ";" + lCol;
+                aBuilder.append(";");
             }
+            aBuilder.append(lCol);
         }
-        return lLine;
     }
-    
+
     protected void toCSVInternal(ArrayList aCols) {
         aCols.add(key);
     }

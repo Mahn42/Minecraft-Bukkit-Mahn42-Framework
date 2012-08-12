@@ -5,7 +5,6 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 import org.bukkit.util.Vector;
 
 /**
@@ -38,15 +37,17 @@ public class Building extends DBRecordWorld {
         aCols.add(edge2.x);
         aCols.add(edge2.y);
         aCols.add(edge2.z);
-        String lBlocks = null;
+        boolean lFirst = true;
+        StringBuilder lBuilder = new StringBuilder();
         for(BuildingBlock lBlock : blocks) {
-            if (lBlocks == null) {
-                lBlocks = lBlock.toCSVValue();
+            if (lFirst) {
+                lFirst = false;
             } else {
-                lBlocks = lBlocks + "|" + lBlock.toCSVValue();
+                lBuilder.append("|");
             }
+            lBlock.toCSVValue(lBuilder);
         }
-        aCols.add(lBlocks);
+        aCols.add(lBuilder.toString());
     }
 
     @Override
