@@ -141,6 +141,18 @@ public class BlockPosition {
         z += aZ;
     }
 
+    public void add(BlockPosition aPos) {
+        x += aPos.x;
+        y += aPos.y;
+        z += aPos.z;
+    }
+
+    public void subtract(BlockPosition aPos) {
+        x -= aPos.x;
+        y -= aPos.y;
+        z -= aPos.z;
+    }
+
     public void add(BlockPositionDelta aDelta) {
         x += aDelta.dx;
         y += aDelta.dy;
