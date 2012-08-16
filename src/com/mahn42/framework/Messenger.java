@@ -9,8 +9,9 @@ package com.mahn42.framework;
  * @author andre
  */
 public interface Messenger {
-    public void sendPlayerMessage(String aFromPlayer, String aToPlayerName, String aMessage);
-    public void sendGroupMessage(String aFromPlayer, String aToGroupName, String aMessage);
-    public void recallPlayerMessages(String aFromPlayer, String aToPlayerName);
-    public void recallGroupMessages(String aFromPlayer, String aToGroupName);
+    public boolean sendPlayerMessage(String aFromPlayer, String aToPlayerName, String aMessage);
+    public boolean sendGroupMessage(String aFromPlayer, String aToGroupName, String aMessage);
+    public boolean recallPlayerMessages(String aFromPlayer);
+    public boolean recallPlayerMessages(String aFromPlayer, String aToPlayerName);
+    public boolean recallGroupMessages(String aFromPlayer, String aToGroupName);
 }

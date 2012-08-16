@@ -24,19 +24,28 @@ public class Framework extends JavaPlugin {
 
     protected class __Messenger implements Messenger {
         @Override
-        public void sendPlayerMessage(String aFromPlayer, String aToPlayerName, String aMessage) {
+        public boolean sendPlayerMessage(String aFromPlayer, String aToPlayerName, String aMessage) {
+            return true;
         }
 
         @Override
-        public void sendGroupMessage(String aFromPlayer, String aToGroupName, String aMessage) {
+        public boolean sendGroupMessage(String aFromPlayer, String aToGroupName, String aMessage) {
+            return true;
         }
 
         @Override
-        public void recallPlayerMessages(String aFromPlayer, String aToPlayerName) {
+        public boolean recallPlayerMessages(String aFromPlayer, String aToPlayerName) {
+            return true;
         }
 
         @Override
-        public void recallGroupMessages(String aFromPlayer, String aToGroupName) {
+        public boolean recallGroupMessages(String aFromPlayer, String aToGroupName) {
+            return true;
+        }
+
+        @Override
+        public boolean recallPlayerMessages(String aFromPlayer) {
+            return true;
         }
     }
 
