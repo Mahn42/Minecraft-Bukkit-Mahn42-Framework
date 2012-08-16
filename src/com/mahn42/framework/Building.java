@@ -224,6 +224,8 @@ public class Building extends DBRecordWorld {
             } else {
                 Framework.plugin.getMessenger().sendPlayerMessage("", playerName, aText);
             }
+        } else {
+            Framework.plugin.getLogger().info(aText);
         }
     }
 }

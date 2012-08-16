@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
@@ -21,9 +19,6 @@ import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -310,6 +305,7 @@ public class BlockArea {
             lTask.event = null;
             lTask.position = pos.clone();
             lTask.position.add(aEdge1);
+            //Framework.plugin.getLogger().info("will detect building at " + lTask.position);
             Framework.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(Framework.plugin, lTask, 20);
         }
     }

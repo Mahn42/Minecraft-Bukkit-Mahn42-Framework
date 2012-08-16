@@ -29,10 +29,14 @@ public class BuildingDetectTask implements Runnable {
                 lBuildings.get(0).description.handler.nextConfiguration(lBuildings.get(0), position, player);
                 return;
             }
-        } else {
+        } else if (lBuildings.size() > 1) {
             if (player != null) {
                 for(Building lBuilding : lBuildings) {
                     player.sendMessage("Here is always the building " + lBuilding.getName());
+                }
+            } else {
+                for(Building lBuilding : lBuildings) {
+                    Framework.plugin.getLogger().info("Here is always the building " + lBuilding.getName());
                 }
             }
         }
@@ -43,24 +47,33 @@ public class BuildingDetectTask implements Runnable {
                 if (player != null) {
                     lBuilding.playerName = player.getName();
                 }
+                //Framework.plugin.getLogger().info("1");
                 if (lBuilding.description.handler != null) {
+                    //Framework.plugin.getLogger().info("2");
                     boolean lOK = false;
                     if (event != null) {
+                        //Framework.plugin.getLogger().info("3");
                         lOK = lBuilding.description.handler.playerInteract(event, lBuilding);
                     } else {
+                        //Framework.plugin.getLogger().info("4 " + lBuilding.description.handler.getClass().getName());
                         lOK = lBuilding.description.handler.insert(lBuilding) != null;
                     }
                     if (lOK) {
+                        //Framework.plugin.getLogger().info("5");
                         BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Create);
                         Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
                         lFound = true;
                         break;
                     }
+                } else {
+                    Framework.plugin.getLogger().info("Building with no handler!");
                 }
             }
             if (!lFound) {
                 if (player != null) {
                     player.sendMessage("No building found!");
+                } else {
+                    Framework.plugin.getLogger().info("No building found! (" + lBuildings.size() + ")");
                 }
             }
         }
