@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 /**
@@ -189,6 +190,15 @@ public class Building extends DBRecordWorld {
         return null;
     }
 
+    public BuildingBlock getDetectBlock() {
+        for(BuildingBlock lBlock : blocks) {
+            if (lBlock.description.detectSensible) {
+                return lBlock;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void cloneFrom(DBRecord aRecord) {
         super.cloneFrom(aRecord);
@@ -203,6 +213,17 @@ public class Building extends DBRecordWorld {
             influenceRadius = lBuilding.influenceRadius;
             blocks.clear();
             blocks.addAll(lBuilding.blocks);
+        }
+    }
+    
+    public void sendToPlayer(String aText) {
+        if (playerName != null && playerName.length() > 0) {
+            Player lPlayer = Framework.plugin.getServer().getPlayer(playerName);
+            if (lPlayer != null) {
+                lPlayer.sendMessage(aText);
+            } else {
+                Framework.plugin.getMessenger().sendPlayerMessage("", playerName, aText);
+            }
         }
     }
 }

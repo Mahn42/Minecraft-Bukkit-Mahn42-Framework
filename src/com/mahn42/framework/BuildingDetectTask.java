@@ -44,7 +44,13 @@ public class BuildingDetectTask implements Runnable {
                     lBuilding.playerName = player.getName();
                 }
                 if (lBuilding.description.handler != null) {
-                    if (lBuilding.description.handler.playerInteract(event, lBuilding)) {
+                    boolean lOK = false;
+                    if (event != null) {
+                        lOK = lBuilding.description.handler.playerInteract(event, lBuilding);
+                    } else {
+                        lOK = lBuilding.description.handler.insert(lBuilding) != null;
+                    }
+                    if (lOK) {
                         BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Create);
                         Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
                         lFound = true;

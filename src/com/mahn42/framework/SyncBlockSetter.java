@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
@@ -67,8 +68,13 @@ public class SyncBlockSetter implements Runnable {
                 } else if (material.equals(Material.CHEST)) {
                     if (itemStacks != null) {
                         Chest lChest = (Chest)location.getBlock().getState();
-                        lChest.getInventory().setContents(itemStacks);
-                        lChest.update(true);
+                        if (lChest instanceof DoubleChest) {
+                            DoubleChest lDChest = (DoubleChest)lChest;
+                            lDChest.getInventory().setContents(itemStacks);
+                        } else {
+                            lChest.getBlockInventory().setContents(itemStacks);
+                            lChest.update(true);
+                        }
                     }
                 } else if (material.equals(Material.DISPENSER)) {
                     if (itemStacks != null) {
@@ -77,22 +83,28 @@ public class SyncBlockSetter implements Runnable {
                         lDispenser.update(true);
                     }
                 } else if (material.equals(Material.FURNACE) || material.equals(Material.BURNING_FURNACE)) {
-                    Framework.plugin.getLogger().info("Furnace " + (itemStacks != null ? itemStacks.length: 0));
+                    //Framework.plugin.getLogger().info("Furnace " + (itemStacks != null ? itemStacks.length: 0));
                     if (itemStacks != null && itemStacks.length >= 3) {
                         Furnace lFurnace = (Furnace)location.getBlock().getState();
                         lFurnace.getInventory().setFuel(itemStacks[0]);
-                        Framework.plugin.getLogger().info("Fuel: " + itemStacks[0]);
+                        //Framework.plugin.getLogger().info("Fuel: " + itemStacks[0]);
                         lFurnace.getInventory().setResult(itemStacks[1]);
-                        Framework.plugin.getLogger().info("Result: " + itemStacks[1]);
+                        //Framework.plugin.getLogger().info("Result: " + itemStacks[1]);
                         lFurnace.getInventory().setSmelting(itemStacks[2]);
-                        Framework.plugin.getLogger().info("Smelting: " + itemStacks[2]);
+                        //Framework.plugin.getLogger().info("Smelting: " + itemStacks[2]);
                         lFurnace.update(true);
                     }
                 }
             } else {
                 try {
                     //Framework.plugin.getLogger().info("try to spawn " + entityType + " at " + location);
-                    location.getWorld().spawnEntity(location, entityType);
+                    if (entityType == EntityType.DROPPED_ITEM) {
+                        if (itemStacks != null && itemStacks.length > 0) {
+                            location.getWorld().dropItem(location, itemStacks[0]);
+                        }
+                    } else {
+                        location.getWorld().spawnEntity(location, entityType);
+                    }
                 } catch (Exception lEx) {
                     Framework.plugin.getLogger().log(Level.SEVERE, null, lEx);
                 }

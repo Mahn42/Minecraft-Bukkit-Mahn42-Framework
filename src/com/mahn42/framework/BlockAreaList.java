@@ -78,14 +78,14 @@ public class BlockAreaList extends ArrayList<BlockArea> {
     }
     
     public void toList(int aIndex, SyncBlockList aList, BlockPosition aEdge1) {
-        toList(aIndex, aList, aEdge1, false, false, false, false, false);
+        toList(aIndex, aList, aEdge1, false, false, false, false, BlockArea.BlockAreaPlaceMode.full);
     }
     
     public void toListMixed(int aIndex, SyncBlockList aList, BlockPosition aEdge1) {
-        toList(aIndex, aList, aEdge1, false, false, false, false, true);
+        toList(aIndex, aList, aEdge1, false, false, false, false, BlockArea.BlockAreaPlaceMode.mixed);
     }
     
-    public void toList(int aIndex, SyncBlockList aList, BlockPosition aEdge1, boolean aMirrorX, boolean aMirrorZ, boolean aMirrorY, boolean aSwapXZ, boolean aNoAir) {
-        get(aIndex).toList(aList, aEdge1, aMirrorX, aMirrorZ, aMirrorY, aSwapXZ, aNoAir);
+    public void toList(int aIndex, SyncBlockList aList, BlockPosition aEdge1, boolean aMirrorX, boolean aMirrorZ, boolean aMirrorY, boolean aSwapXZ, BlockArea.BlockAreaPlaceMode aMode) {
+        get(aIndex).toList(aList, aEdge1, aMirrorX, aMirrorZ, aMirrorY, aSwapXZ, aMode);
     }
 }

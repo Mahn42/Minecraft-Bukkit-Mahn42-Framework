@@ -92,4 +92,18 @@ public class BuildingDB<T extends Building> extends DBSetWorld<T> {
         }
         return lResult;
     }
+
+    public ArrayList<T> getBuildingsWithDetectBlock(BlockPosition aEdge1, BlockPosition aEdge2) {
+        ArrayList<T> lResult = new ArrayList<T>();
+        for(Object lObj : this) {
+            T lBuilding = (T)lObj;
+            BuildingBlock lDetectBlock = lBuilding.getDetectBlock();
+            if (lDetectBlock.position.x >= aEdge1.x && lDetectBlock.position.x <= aEdge2.x
+                    && lDetectBlock.position.y >= aEdge1.y && lDetectBlock.position.y <= aEdge2.y
+                    && lDetectBlock.position.z >= aEdge1.z && lDetectBlock.position.z <= aEdge2.z) {
+                lResult.add(lBuilding);
+            }
+        }
+        return lResult;
+    }
 }

@@ -9,15 +9,21 @@ import java.util.List;
 import java.util.logging.Level;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,9 +32,16 @@ import org.bukkit.inventory.ItemStack;
  * @author andre
  */
 public class BlockArea {
+    public enum BlockAreaPlaceMode {
+        full,
+        mixed,
+        reverse
+    }
+    
     public class BlockAreaEntity {
         public EntityType type;
         public BlockPosition location;
+        public ItemStack[] itemStacks;
 
         private void fromEntity(Entity lEntity, BlockPosition aEdge1) {
             location = new BlockPosition(lEntity.getLocation());
@@ -54,16 +67,26 @@ public class BlockArea {
             String[] lParts = aText.split(",");
             type = EntityType.fromId(Integer.parseInt(lParts[0]));
             location = new BlockPosition(Integer.parseInt(lParts[1]), Integer.parseInt(lParts[2]), Integer.parseInt(lParts[3]));
+            if (lParts.length > 4) {
+                itemStacks = new ItemStack[lParts.length - 4];
+                for(int lIndex = 4; lIndex < lParts.length; lIndex++) {
+                    int lId = Integer.parseInt(lParts[lIndex]);
+                    if (lId >= 0) {
+                        itemStacks[lIndex-4] = new ItemStack(lId, Integer.parseInt(lParts[lIndex+2]), (short)0, Byte.parseByte(lParts[lIndex+1]));
+                    } else {
+                        itemStacks[lIndex-4] = null;
+                    }
+                }
+            }
         }
 
         private void toList(SyncBlockList aList, BlockPosition aEdge1) {
             BlockPosition lLoc = location.clone();
             lLoc.add(aEdge1.x, aEdge1.y, aEdge1.z);
-            aList.add(lLoc, type);
+            aList.add(lLoc, null, (byte)0, true, 0, null, null, null, null, itemStacks, type);
         }
 
         private void toStringBuilder(StringBuilder lBuilder) {
-            //return "" + type.getTypeId() + "," + location.x + "," + location.y + "," + location.z;
             lBuilder.append(Integer.toString(type.getTypeId()));
             lBuilder.append(",");
             lBuilder.append(Integer.toString(location.x));
@@ -71,6 +94,20 @@ public class BlockArea {
             lBuilder.append(Integer.toString(location.y));
             lBuilder.append(",");
             lBuilder.append(Integer.toString(location.z));
+            if (itemStacks != null) {
+                for(ItemStack lStack : itemStacks) {
+                    if (lStack != null) {
+                        lBuilder.append(",");
+                        lBuilder.append(Integer.toString(lStack.getTypeId()));
+                        lBuilder.append(",");
+                        lBuilder.append(Byte.toString(lStack.getData().getData()));
+                        lBuilder.append(",");
+                        lBuilder.append(Integer.toString(lStack.getAmount()));
+                    } else {
+                        lBuilder.append(",-1,0,0");
+                    }
+                }
+            }
         }
     }
 
@@ -111,8 +148,14 @@ public class BlockArea {
                 signLine3 = lSign.getLine(3);
             } else if (id == Material.CHEST.getId()) {
                 Chest lChest = (Chest)aBlock.getState();
-                Inventory lInventory = lChest.getBlockInventory();
-                itemStacks = lInventory.getContents().clone();
+                if (lChest instanceof DoubleChest) {
+                    DoubleChest lDChest = (DoubleChest)lChest;
+                    Inventory lInventory = lDChest.getInventory();
+                    itemStacks = lInventory.getContents().clone();
+                } else {
+                    Inventory lInventory = lChest.getBlockInventory();
+                    itemStacks = lInventory.getContents().clone();
+                }
             } else if (id == Material.FURNACE.getId() || id == Material.BURNING_FURNACE.getId()) {
                 Furnace lFurnace = (Furnace)aBlock.getState();
                 itemStacks = new ItemStack[3];
@@ -242,11 +285,41 @@ public class BlockArea {
         }
     }
     
+    public class BlockAreaBuilding {
+        public BlockPosition pos = new BlockPosition();
+        
+        public BlockAreaBuilding() {
+        }
+
+        public BlockAreaBuilding(BlockPosition aPos) {
+            pos = aPos.clone();
+        }
+
+        public void toStringBuilder(StringBuilder aBuilder) {
+            pos.toCSV(aBuilder, ",");
+        }
+
+        public void fromFileString(String aString) {
+            pos.fromCSV(aString, ",");
+        }
+
+        public void toList(SyncBlockList aList, BlockPosition aEdge1) {
+            BuildingDetectTask lTask = new BuildingDetectTask();
+            lTask.player = null;
+            lTask.world = aList.world;
+            lTask.event = null;
+            lTask.position = pos.clone();
+            lTask.position.add(aEdge1);
+            Framework.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(Framework.plugin, lTask, 20);
+        }
+    }
+    
     public int width;
     public int height;
     public int depth;
     public ArrayList<BlockAreaItem> items;
-    public ArrayList<BlockAreaEntity> entities = new ArrayList<BlockArea.BlockAreaEntity>();;
+    public ArrayList<BlockAreaEntity> entities = new ArrayList<BlockArea.BlockAreaEntity>();
+    public ArrayList<BlockAreaBuilding> buildings = new ArrayList<BlockArea.BlockAreaBuilding>();
     
     public BlockArea() {
         items = new ArrayList<BlockArea.BlockAreaItem>();
@@ -324,6 +397,13 @@ public class BlockArea {
                 }
             }
         }
+        buildings.clear();
+        ArrayList<Building> lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithDetectBlock(aEdge1, lEdge2);
+        for(Building lBuilding : lBuildings) {
+            BlockPosition lPos = lBuilding.getDetectBlock().position.clone();
+            lPos.subtract(aEdge1);
+            buildings.add(new BlockAreaBuilding(lPos));
+        }
     }
 
     public void toWorld(World aWorld, BlockPosition aEdge1) {
@@ -339,21 +419,42 @@ public class BlockArea {
         }
     }
 
-    public void toList(SyncBlockList aList, BlockPosition aEdge1) {
-        toList(aList, aEdge1, false, false, false, false, false);
+    public void toList(SyncBlockList aList, BlockPosition aEdge1, BlockAreaPlaceMode aMode) {
+        toList(aList, aEdge1, false, false, false, false, aMode);
     }
     
     public void toListMixed(SyncBlockList aList, BlockPosition aEdge1) {
-        toList(aList, aEdge1, false, false, false, false, true);
+        toList(aList, aEdge1, false, false, false, false, BlockAreaPlaceMode.mixed);
     }
     
     public static ArrayList<Material> dependsOnOtherBlock;
     {
         dependsOnOtherBlock = new ArrayList<Material>();
         dependsOnOtherBlock.add(Material.PAINTING);
+        dependsOnOtherBlock.add(Material.REDSTONE_WIRE);
+        dependsOnOtherBlock.add(Material.REDSTONE_TORCH_ON);
+        dependsOnOtherBlock.add(Material.REDSTONE_TORCH_OFF);
         dependsOnOtherBlock.add(Material.TORCH);
         dependsOnOtherBlock.add(Material.LEVER);
+        dependsOnOtherBlock.add(Material.CACTUS);
+        dependsOnOtherBlock.add(Material.DEAD_BUSH);
+        dependsOnOtherBlock.add(Material.DETECTOR_RAIL);
+        dependsOnOtherBlock.add(Material.GRASS);
+        dependsOnOtherBlock.add(Material.RAILS);
+        dependsOnOtherBlock.add(Material.SAPLING);
+        dependsOnOtherBlock.add(Material.VINE);
+        dependsOnOtherBlock.add(Material.WHEAT);
+        dependsOnOtherBlock.add(Material.SEEDS);
+        dependsOnOtherBlock.add(Material.SUGAR_CANE_BLOCK);
+        dependsOnOtherBlock.add(Material.WEB);
+        dependsOnOtherBlock.add(Material.WATER_LILY);
+        dependsOnOtherBlock.add(Material.LADDER);
         dependsOnOtherBlock.add(Material.STONE_BUTTON);
+        dependsOnOtherBlock.add(Material.YELLOW_FLOWER);
+        dependsOnOtherBlock.add(Material.RED_ROSE);
+        dependsOnOtherBlock.add(Material.TRIPWIRE);
+        dependsOnOtherBlock.add(Material.BROWN_MUSHROOM);
+        dependsOnOtherBlock.add(Material.RED_MUSHROOM);
     }
     
     public boolean isStep(int aId, int aStep) {
@@ -372,16 +473,40 @@ public class BlockArea {
         return lResult;
     }
     
-    public void toList(SyncBlockList aList, BlockPosition aEdge1, boolean aMirrorX, boolean aMirrorZ, boolean aMirrorY, boolean aSwapXZ, boolean aNoAir) {
+    public void toList(SyncBlockList aList, BlockPosition aEdge1, boolean aMirrorX, boolean aMirrorZ, boolean aMirrorY, boolean aSwapXZ, BlockAreaPlaceMode aMode) {
         int lfX = aMirrorX ? -1 : 1;
         int lfY = aMirrorY ? -1 : 1;
         int lfZ = aMirrorZ ? -1 : 1;
+        // first we will remove all dependentBlocks, so there should no drop
+        for(int lX = 0; lX < width; lX++) {
+            for(int lY = 0; lY < height; lY++) {
+                for(int lZ = 0; lZ < depth; lZ++) {
+                    BlockAreaItem lItem = get(lX,lY,lZ);
+                    if (aMode == BlockAreaPlaceMode.full
+                            || (aMode == BlockAreaPlaceMode.mixed && lItem.id != 0)
+                            || (aMode == BlockAreaPlaceMode.reverse && lItem.id == 0)) {
+                        BlockPosition aPos = new BlockPosition(aEdge1.x + lX * lfX, aEdge1.y + lY * lfY, aEdge1.z + lZ * lfZ);
+                        if (aSwapXZ) {
+                            int lSwap = aPos.x;
+                            aPos.x = aPos.z;
+                            aPos.z = lSwap;
+                        }
+                        if (isStep(aPos.getBlockTypeId(aList.world), 1)) {
+                            aList.add(aPos, Material.AIR, (byte)0);
+                        }
+                    }
+                }
+            }
+        }
+        // now we place blocks in two phases, first the stable blocks, second the dependent blocks
         for(int lStep = 0; lStep < 2; lStep++) {
             for(int lX = 0; lX < width; lX++) {
                 for(int lY = 0; lY < height; lY++) {
                     for(int lZ = 0; lZ < depth; lZ++) {
                         BlockAreaItem lItem = get(lX,lY,lZ);
-                        if (lItem.id != 0 || !aNoAir) {
+                        if (aMode == BlockAreaPlaceMode.full
+                                || (aMode == BlockAreaPlaceMode.mixed && lItem.id != 0)
+                                || (aMode == BlockAreaPlaceMode.reverse && lItem.id == 0)) {
                             if (isStep(lItem.id, lStep)) {
                                 BlockPosition aPos = new BlockPosition(aEdge1.x + lX * lfX, aEdge1.y + lY * lfY, aEdge1.z + lZ * lfZ);
                                 if (aSwapXZ) {
@@ -397,35 +522,38 @@ public class BlockArea {
             }
         }
         for(BlockAreaEntity lItem : entities) {
-//            lItem.toWorld(aList.world, aEdge1);
+            lItem.toList(aList, aEdge1);
+        }
+        for(BlockAreaBuilding lItem : buildings) {
             lItem.toList(aList, aEdge1);
         }
     }
     
     public String toFileString() {
         StringBuilder lBuilder = new StringBuilder();
-        //String lResult;
         lBuilder.append("1,");
         lBuilder.append(Integer.toString(width));
         lBuilder.append(",");
         lBuilder.append(Integer.toString(height));
         lBuilder.append(",");
         lBuilder.append(Integer.toString(depth));
-        //lResult = "1," + width + "," + height + "," + depth;
         for(BlockAreaItem lItem : items) {
             lBuilder.append(";");
             lItem.toStringBuilder(lBuilder);
-            //lResult += ";" + lItem.toFileString();
         }
         lBuilder.append(";");
         lBuilder.append(Integer.toString(entities.size()));
-        //lResult += ";" + entities.size();
         for(BlockAreaEntity lItem : entities) {
             lBuilder.append(";");
             lItem.toStringBuilder(lBuilder);
-            //lResult += ";" + lItem.toFileString();
         }
-        return lBuilder.toString(); //lResult;
+        lBuilder.append(";");
+        lBuilder.append(Integer.toString(buildings.size()));
+        for(BlockAreaBuilding lItem : buildings) {
+            lBuilder.append(";");
+            lItem.toStringBuilder(lBuilder);
+        }
+        return lBuilder.toString();
     }
     
     public void fromFileString(String aText) {
@@ -448,6 +576,15 @@ public class BlockArea {
                 lItem.fromFileString(lParts[lPos]);
                 entities.add(lItem);
                 lPos++;
+            }
+            if (lPos < (lParts.length - 1)) {
+                int lBuildSize = Integer.parseInt(lParts[lPos++]);
+                for (int lIndex = 0; lIndex < lBuildSize; lIndex++) {
+                    BlockAreaBuilding lItem = new BlockAreaBuilding();
+                    lItem.fromFileString(lParts[lPos]);
+                    buildings.add(lItem);
+                    lPos++;
+                }
             }
         }
     }

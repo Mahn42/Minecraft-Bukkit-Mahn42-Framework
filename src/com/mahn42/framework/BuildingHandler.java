@@ -16,6 +16,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
  * @author andre
  */
 public interface BuildingHandler {
+    public Building insert(Building aBuilding);
+    public boolean remove(Building aBuilding);
+
+    
     public boolean breakBlock(BlockBreakEvent aEvent, Building aBuilding);
     public boolean redstoneChanged(BlockRedstoneEvent aEvent, Building aBuilding);
     public boolean playerInteract(PlayerInteractEvent aEvent, Building aBuilding);

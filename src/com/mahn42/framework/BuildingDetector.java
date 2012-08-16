@@ -136,4 +136,19 @@ public class BuildingDetector {
         }
         return lResult;
     }
+
+    public ArrayList<Building> getBuildingsWithDetectBlock(BlockPosition aEdge1, BlockPosition aEdge2) {
+        BlockPosition lEdge1, lEdge2;
+        lEdge1 = aEdge1.getMinPos(aEdge2);
+        lEdge2 = aEdge1.getMaxPos(aEdge2);
+        ArrayList<Building> lResult = new ArrayList<Building>();
+        ArrayList<BuildingDB> lDBs = getDBs();
+        for(BuildingDB lDB : lDBs) {
+            ArrayList<Building> lBuildings = lDB.getBuildingsWithDetectBlock(lEdge1, lEdge2);
+            if (!lBuildings.isEmpty()) {
+                lResult.addAll(lBuildings);
+            }
+        }
+        return lResult;
+    }
 }

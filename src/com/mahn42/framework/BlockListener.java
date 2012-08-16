@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -30,53 +31,56 @@ public class BlockListener implements Listener {
             for(Block lBlock : lBlocks) {
                 BlockBreakEvent lBreak = new BlockBreakEvent(lBlock, null);
                 breakBlock(lBreak);
-            }
-        }
-    }
-    /*
-    @EventHandler
-    public void fadeBlock(BlockFadeEvent aEvent) {
-        if (aEvent.getNewState().getType().equals(Material.AIR)) {
-            Block lBlock = aEvent.getBlock();
-            World lWorld = lBlock.getWorld();
-            Framework.plugin.getLogger().info("BlockFadeEvent " + lBlock);
-            ArrayList<BuildingHandler> lHandlers = Framework.plugin.getBuildingDetector().getHandlers();
-            for (BuildingHandler lHandler : lHandlers) {
-                BuildingDB lDB = lHandler.getDB(lWorld);
-                ArrayList<Building> lBuildings = lDB.getBuildingsWithBlock(new BlockPosition(lBlock.getLocation()));
-                for(Building lBuilding : lBuildings) {
-                    Framework.plugin.getLogger().info("Building destroyed " + lBuilding.getName());
-                    lDB.remove(lBuilding);
-                    if (lBuilding.description.handler != null) {
-                    }
+                if (lBreak.isCancelled()) {
+                    aEvent.setCancelled(true);
+                    break;
                 }
             }
         }
     }
-    */
 
     @EventHandler(priority = EventPriority.LOWEST)
+    public void placeBlock(BlockPlaceEvent aEvent) {
+        if (!aEvent.isCancelled()) {
+            Player lPlayer = aEvent.getPlayer();
+            Block lBlock = aEvent.getBlock();
+            World lWorld = lBlock.getWorld();
+            RestrictedRegions lRegions = Framework.plugin.getRestrictedRegions(lWorld);
+            if (lRegions != null && lPlayer != null && !lRegions.allowed(lBlock, lPlayer.getName())) {
+                aEvent.setCancelled(true);
+            } else {
+
+            }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.LOWEST)
     public void breakBlock(BlockBreakEvent aEvent) {
-        Player lPlayer = aEvent.getPlayer();
-        Block lBlock = aEvent.getBlock();
-        World lWorld = lBlock.getWorld();
-        RestrictedRegions lRegions = Framework.plugin.getRestrictedRegions(lWorld);
-        if (lRegions != null && !lRegions.allowed(lBlock, lPlayer.getName())) {
-            aEvent.setCancelled(true);
-        } else {
-            ArrayList<BuildingHandler> lHandlers = Framework.plugin.getBuildingDetector().getHandlers();
-            boolean lFound;
-            for (BuildingHandler lHandler : lHandlers) {
-                BuildingDB lDB = lHandler.getDB(lWorld);
-                ArrayList<Building> lBuildings = lDB.getBuildingsWithBlock(new BlockPosition(lBlock.getLocation()));
-                for(Building lBuilding : lBuildings) {
-                    if (lBuilding.description.handler != null) {
-                        lFound = lBuilding.description.handler.breakBlock(aEvent, lBuilding);
-                        if (lFound) {
-                            BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Destroy);
-                            Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
-                            if (lPlayer != null) {
-                                lPlayer.sendMessage("Building " + lBuilding.getName() + " is destroyed!");
+        if (!aEvent.isCancelled()) {
+            Player lPlayer = aEvent.getPlayer();
+            Block lBlock = aEvent.getBlock();
+            World lWorld = lBlock.getWorld();
+            RestrictedRegions lRegions = Framework.plugin.getRestrictedRegions(lWorld);
+            if (lRegions != null && lPlayer != null && !lRegions.allowed(lBlock, lPlayer.getName())) {
+                aEvent.setCancelled(true);
+            } else {
+                ArrayList<BuildingHandler> lHandlers = Framework.plugin.getBuildingDetector().getHandlers();
+                boolean lFound;
+                for (BuildingHandler lHandler : lHandlers) {
+                    BuildingDB lDB = lHandler.getDB(lWorld);
+                    ArrayList<Building> lBuildings = lDB.getBuildingsWithBlock(new BlockPosition(lBlock.getLocation()));
+                    for(Building lBuilding : lBuildings) {
+                        if (lBuilding.description.handler != null) {
+                            lFound = lBuilding.description.handler.breakBlock(aEvent, lBuilding);
+                            if (lFound) {
+                                BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Destroy);
+                                Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
+                                if (lPlayer != null) {
+                                    lPlayer.sendMessage("Building " + lBuilding.getName() + " is destroyed!");
+                                }
+                                if (lPlayer == null || !lPlayer.getName().equals(lBuilding.playerName)) {
+                                    Framework.plugin.getMessenger().sendPlayerMessage(null, lBuilding.playerName, "Your building " + lBuilding.getName() + " is destroyed!");
+                                }
                             }
                         }
                     }

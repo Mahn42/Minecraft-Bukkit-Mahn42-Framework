@@ -19,7 +19,7 @@ public class BuildingHandlerBase implements BuildingHandler {
 
     @Override
     public boolean breakBlock(BlockBreakEvent aEvent, Building aBuilding) {
-        return false;
+        return remove(aBuilding);
     }
 
     @Override
@@ -29,7 +29,14 @@ public class BuildingHandlerBase implements BuildingHandler {
 
     @Override
     public boolean playerInteract(PlayerInteractEvent aEvent, Building aBuilding) {
-        return false;
+        Player lPlayer = aEvent.getPlayer();
+        Building lBuilding = insert(aBuilding);
+        if (lBuilding != null) {
+            lPlayer.sendMessage("Building " + lBuilding.getName() + " found.");
+        } else {
+            lPlayer.sendMessage("Building " + aBuilding.getName() + " found but not accepted.");
+        }
+        return lBuilding != null;
     }
 
     @Override
@@ -50,6 +57,22 @@ public class BuildingHandlerBase implements BuildingHandler {
 
     @Override
     public void nextConfiguration(Building aBuilding, BlockPosition position, Player aPlayer) {
+    }
+
+    @Override
+    public Building insert(Building aBuilding) {
+        return null;
+    }
+
+    @Override
+    public boolean remove(Building aBuilding) {
+        BuildingDB lDB = getDB(aBuilding.world);
+        if (lDB != null) {
+            lDB.remove(aBuilding);
+            return true;
+        } else {
+            return false;
+        }
     }
     
 }
