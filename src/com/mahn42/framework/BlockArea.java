@@ -481,14 +481,14 @@ public class BlockArea {
                     if (aMode == BlockAreaPlaceMode.full
                             || (aMode == BlockAreaPlaceMode.mixed && lItem.id != 0)
                             || (aMode == BlockAreaPlaceMode.reverse && lItem.id == 0)) {
-                        BlockPosition aPos = new BlockPosition(aEdge1.x + lX * lfX, aEdge1.y + lY * lfY, aEdge1.z + lZ * lfZ);
+                        BlockPosition lPos = new BlockPosition(aEdge1.x + lX * lfX, aEdge1.y + lY * lfY, aEdge1.z + lZ * lfZ);
                         if (aSwapXZ) {
-                            int lSwap = aPos.x;
-                            aPos.x = aPos.z;
-                            aPos.z = lSwap;
+                            int lSwap = lPos.x;
+                            lPos.x = lPos.z;
+                            lPos.z = lSwap;
                         }
-                        if (isStep(aPos.getBlockTypeId(aList.world), 1)) {
-                            aList.add(aPos, Material.AIR, (byte)0);
+                        if (isStep(lPos.getBlockTypeId(aList.world), 1)) {
+                            aList.add(lPos, Material.AIR, (byte)0);
                         }
                     }
                 }

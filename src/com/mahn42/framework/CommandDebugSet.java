@@ -7,13 +7,11 @@ package com.mahn42.framework;
 import java.util.Random;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.util.noise.PerlinNoiseGenerator;
 
 /**
  *
@@ -27,13 +25,22 @@ public class CommandDebugSet implements CommandExecutor {
             if (aStrings[0].equalsIgnoreCase("special")) {
                 World lWorld = Framework.plugin.getServer().getWorld(aStrings[1]);
                 BlockPosition lEdge1 = new BlockPosition();
-                lEdge1.fromCSV(aStrings[2], ",");
                 BlockPosition lEdge2 = new BlockPosition();
-                lEdge2.fromCSV(aStrings[3], ",");
-                PerlinNoiseGenerator lGen = new PerlinNoiseGenerator(lWorld);
-                double lMin = Double.MAX_VALUE;
-                double lMax = Double.MIN_VALUE;
-                int lCount = 0;
+                if (aStrings.length > 3) {
+                    lEdge1.fromCSV(aStrings[2], ",");
+                    lEdge2.fromCSV(aStrings[3], ",");
+                } else {
+                    int lRad = Integer.parseInt(aStrings[2]);
+                    BlockPosition lPos = new BlockPosition(((Player)aCommandSender).getLocation());
+                    lEdge1 = lPos.clone();
+                    lEdge1.x -= lRad;
+                    lEdge1.y = 4;
+                    lEdge1.z -= lRad;
+                    lEdge2 = lPos.clone();
+                    lEdge2.x += lRad;
+                    lEdge2.y = 31;
+                    lEdge2.z += lRad;
+                }
                 BlockPosition lWHD = lEdge1.getWHD(lEdge2);
                 int lAnz = (int) ((lWHD.x) * (lWHD.z) * 0.0034);
                 Random lRnd = new Random();
@@ -65,6 +72,10 @@ public class CommandDebugSet implements CommandExecutor {
                     }
                 }
                 /*
+                PerlinNoiseGenerator lGen = new PerlinNoiseGenerator(lWorld);
+                double lMin = Double.MAX_VALUE;
+                double lMax = Double.MIN_VALUE;
+                int lCount = 0;
                 for(int x = lEdge1.x; x < lEdge2.x; x++) {
                     for(int z = lEdge1.z; z < lEdge2.z; z++) {
                         Biome lBiome = lWorld.getBiome(x, z);

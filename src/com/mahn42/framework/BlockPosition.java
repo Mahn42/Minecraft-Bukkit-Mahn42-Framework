@@ -183,4 +183,12 @@ public class BlockPosition {
     public boolean nearly(BlockPosition aPos) {
         return (Math.abs(x - aPos.x) + Math.abs(y - aPos.y) + Math.abs(z - aPos.z)) < 2;
     }
+    
+    public boolean isBetween(BlockPosition aEdge1, BlockPosition aEdge2) {
+        BlockPosition lEdge1 = aEdge1.getMinPos(aEdge2);
+        BlockPosition lEdge2 = aEdge1.getMaxPos(aEdge2);
+        return x >= lEdge1.x && x <= lEdge2.x
+                && y >= lEdge1.y && y <= lEdge2.y
+                && z >= lEdge1.z && z <= lEdge2.z;
+    }
 }
