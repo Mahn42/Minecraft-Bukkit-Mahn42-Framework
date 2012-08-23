@@ -46,7 +46,7 @@ public class BuildingDetector {
                                 Building aBuilding = matchDescription(lDesc, aWorld, lX, lY, lZ);
                                 if (aBuilding != null) {
                                     lResult.add(aBuilding);
-                                    Logger.getLogger("detect").info("add " + aBuilding.getName());
+                                    Framework.plugin.getLogger().info("detected " + aBuilding.getName());
                                 }
                             } else {
                                 // there are always buildings
