@@ -4,7 +4,6 @@
  */
 package com.mahn42.framework;
 
-import com.sun.org.apache.bcel.internal.generic.PUTFIELD;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

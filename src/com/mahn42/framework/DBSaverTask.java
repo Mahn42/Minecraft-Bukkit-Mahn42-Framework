@@ -28,9 +28,10 @@ public class DBSaverTask implements Runnable {
     
     @Override
     public void run() {
-        Framework.plugin.getLogger().info("Saving DBs.");
+        Framework.plugin.getLogger().info("Saving DBs...");
         for(DBSave lSaver : fSaver) {
             lSaver.save();
         }
+        Framework.plugin.getLogger().info("Saving DBs done.");
     }
 }
