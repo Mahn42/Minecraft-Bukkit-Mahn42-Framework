@@ -306,7 +306,7 @@ public class BlockArea {
             lTask.position = pos.clone();
             lTask.position.add(aEdge1);
             //Framework.plugin.getLogger().info("will detect building at " + lTask.position);
-            Framework.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(Framework.plugin, lTask, 20);
+            Framework.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(Framework.plugin, lTask, 10);
         }
     }
     
@@ -360,7 +360,13 @@ public class BlockArea {
     }
     
     public BlockAreaItem get(int aX, int aY, int aZ) {
-        return items.get(aX + width * aY + width * height * aZ);
+        int lIndex = aX + width * aY + width * height * aZ;
+        if (lIndex<0 || lIndex>items.size()) {
+            Framework.plugin.getLogger().info(getClass().getSimpleName() + ": (" + aX + "," + aY + "," + aZ + ") is out of (" + width + "," + height + "," + depth + ")!");
+            return null;
+        } else {
+            return items.get(aX + width * aY + width * height * aZ);
+        }
     }
     
     public void fromBlock(int aX, int aY, int aZ, Block aBlock) {
@@ -389,7 +395,7 @@ public class BlockArea {
                     BlockAreaEntity lItem = new BlockAreaEntity();
                     lItem.fromEntity(lEntity, aEdge1);
                     entities.add(lItem);
-                    Framework.plugin.getLogger().info("Entity: " + lEntity);
+                    //Framework.plugin.getLogger().info("Entity: " + lEntity);
                 }
             }
         }

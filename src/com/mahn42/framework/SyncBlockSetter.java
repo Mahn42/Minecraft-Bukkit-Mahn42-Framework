@@ -24,6 +24,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class SyncBlockSetter implements Runnable {
 
+    public int maxItems = 5000;
+    
     protected int fCount = 0;
     
     protected class SyncBlockSetterItem {
@@ -156,8 +158,17 @@ public class SyncBlockSetter implements Runnable {
             if (!fItems.isEmpty()) {
                 ArrayList<SyncBlockSetterItem> lWorking;
                 synchronized(fsync) {
-                    lWorking = fItems;
-                    fItems = new ArrayList<SyncBlockSetterItem>();
+                    if (fItems.size() < maxItems) {
+                        lWorking = fItems;
+                        fItems = new ArrayList<SyncBlockSetterItem>();
+                    } else {
+                        lWorking = new ArrayList<SyncBlockSetterItem>();
+                        for(int i=0;i<maxItems;i++) {
+                            SyncBlockSetterItem lItem = fItems.get(0);
+                            lWorking.add(lItem);
+                            fItems.remove(0);
+                        }
+                    }
                 }
                 //Logger.getLogger("SyncBlockSetter").info("count = " + new Integer(lWorking.size()) + " stat = " + new Integer(fCount));
                 ArrayList<SyncBlockSetterItem> lNext = new ArrayList<SyncBlockSetterItem>();
