@@ -441,8 +441,11 @@ public class BlockArea {
         dependsOnOtherBlock.add(Material.CACTUS);
         dependsOnOtherBlock.add(Material.DEAD_BUSH);
         dependsOnOtherBlock.add(Material.DETECTOR_RAIL);
-        dependsOnOtherBlock.add(Material.GRASS);
+        dependsOnOtherBlock.add(Material.LONG_GRASS);
+        dependsOnOtherBlock.add(Material.TRIPWIRE);
+        dependsOnOtherBlock.add(Material.TRIPWIRE_HOOK);
         dependsOnOtherBlock.add(Material.RAILS);
+        dependsOnOtherBlock.add(Material.POWERED_RAIL);
         dependsOnOtherBlock.add(Material.SAPLING);
         dependsOnOtherBlock.add(Material.VINE);
         dependsOnOtherBlock.add(Material.WHEAT);
@@ -454,7 +457,6 @@ public class BlockArea {
         dependsOnOtherBlock.add(Material.STONE_BUTTON);
         dependsOnOtherBlock.add(Material.YELLOW_FLOWER);
         dependsOnOtherBlock.add(Material.RED_ROSE);
-        dependsOnOtherBlock.add(Material.TRIPWIRE);
         dependsOnOtherBlock.add(Material.BROWN_MUSHROOM);
         dependsOnOtherBlock.add(Material.RED_MUSHROOM);
     }
@@ -479,6 +481,7 @@ public class BlockArea {
         int lfX = aMirrorX ? -1 : 1;
         int lfY = aMirrorY ? -1 : 1;
         int lfZ = aMirrorZ ? -1 : 1;
+        int lCount = 0;
         // first we will remove all dependentBlocks, so there should no drop
         for(int lX = 0; lX < width; lX++) {
             for(int lY = 0; lY < height; lY++) {
@@ -493,13 +496,15 @@ public class BlockArea {
                             lPos.x = lPos.z;
                             lPos.z = lSwap;
                         }
-                        if (isStep(lPos.getBlockTypeId(aList.world), 1)) {
+                        if (dependsOnOtherBlock.contains(lPos.getBlockType(aList.world))) { // isStep(lPos.getBlockTypeId(aList.world), 1)) {
                             aList.add(lPos, Material.AIR, (byte)0);
+                            lCount++;
                         }
                     }
                 }
             }
         }
+        Framework.plugin.log("ba", "Count depentent blocks " + lCount);
         // now we place blocks in two phases, first the stable blocks, second the dependent blocks
         for(int lStep = 0; lStep < 2; lStep++) {
             for(int lX = 0; lX < width; lX++) {
