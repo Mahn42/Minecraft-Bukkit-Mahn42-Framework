@@ -45,7 +45,7 @@ public class BlockListener implements Listener {
             Player lPlayer = aEvent.getPlayer();
             Block lBlock = aEvent.getBlock();
             World lWorld = lBlock.getWorld();
-            RestrictedRegions lRegions = Framework.plugin.getRestrictedRegions(lWorld);
+            RestrictedRegions lRegions = Framework.plugin.getRestrictedRegions(lWorld, false);
             if (lRegions != null && lPlayer != null && !lRegions.allowed(lBlock, lPlayer.getName())) {
                 aEvent.setCancelled(true);
             } else {
@@ -60,7 +60,7 @@ public class BlockListener implements Listener {
             Player lPlayer = aEvent.getPlayer();
             Block lBlock = aEvent.getBlock();
             World lWorld = lBlock.getWorld();
-            RestrictedRegions lRegions = Framework.plugin.getRestrictedRegions(lWorld);
+            RestrictedRegions lRegions = Framework.plugin.getRestrictedRegions(lWorld, false);
             if (lRegions != null && lPlayer != null && !lRegions.allowed(lBlock, lPlayer.getName())) {
                 aEvent.setCancelled(true);
             } else {

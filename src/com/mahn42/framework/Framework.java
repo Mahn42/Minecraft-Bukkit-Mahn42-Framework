@@ -95,8 +95,13 @@ public class Framework extends JavaPlugin {
         Logger.getAnonymousLogger().info("Area Item 0 = " + lArea.items.get(0));
     }
 
-    public RestrictedRegions getRestrictedRegions(World aWorld) {
-        return fRestrictedRegions.get(aWorld);
+    public RestrictedRegions getRestrictedRegions(World aWorld, boolean aCreate) {
+        RestrictedRegions lResult = fRestrictedRegions.get(aWorld);
+        if (lResult == null && aCreate) {
+            lResult = new RestrictedRegions();
+            fRestrictedRegions.put(aWorld, lResult);
+        }
+        return lResult;
     }
     
     public boolean isDebugSet(String aName) {

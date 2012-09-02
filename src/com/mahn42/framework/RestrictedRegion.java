@@ -18,6 +18,9 @@ public class RestrictedRegion {
     public ArrayList<Material> allowedMaterials = new ArrayList<Material>();
     public String playerName = null;
     
+    public RestrictedRegion() {
+    }
+    
     public RestrictedRegion(BlockPosition aLowerEdge, BlockPosition aUpperEdge) {
         lowerEdge = aLowerEdge.clone();
         upperEdge = aUpperEdge.clone();
