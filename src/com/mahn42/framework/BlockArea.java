@@ -132,6 +132,16 @@ public class BlockArea {
             id = aMat.getId();
         }
         
+        public void cloneFrom(BlockAreaItem aSrc) {
+            id = aSrc.id;
+            data = aSrc.data;
+            itemStacks = aSrc.itemStacks.clone();
+            signLine0 = aSrc.signLine0;
+            signLine1 = aSrc.signLine1;
+            signLine2 = aSrc.signLine2;
+            signLine3 = aSrc.signLine3;
+        }
+        
         public void fromBlock(Block aBlock) {
             id = aBlock.getTypeId();
             data = aBlock.getData();
