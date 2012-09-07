@@ -135,7 +135,11 @@ public class BlockArea {
         public void cloneFrom(BlockAreaItem aSrc) {
             id = aSrc.id;
             data = aSrc.data;
-            itemStacks = aSrc.itemStacks.clone();
+            if (aSrc.itemStacks != null) {
+                itemStacks = aSrc.itemStacks.clone();
+            } else {
+                itemStacks = null;
+            }
             signLine0 = aSrc.signLine0;
             signLine1 = aSrc.signLine1;
             signLine2 = aSrc.signLine2;
