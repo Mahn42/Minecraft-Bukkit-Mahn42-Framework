@@ -389,6 +389,10 @@ public class BlockArea {
     }
 
     public void fromWorld(World aWorld, BlockPosition aEdge1) {
+        fromWorld(aWorld, aEdge1, true, true);
+    }
+    
+    public void fromWorld(World aWorld, BlockPosition aEdge1, boolean aWithEntities, boolean aWithBuildings) {
         for(int lX = 0; lX < width; lX++) {
             for(int lY = 0; lY < height; lY++) {
                 for(int lZ = 0; lZ < depth; lZ++) {
@@ -396,29 +400,33 @@ public class BlockArea {
                 }
             }
         }
-        entities.clear();
-        List<Entity> lEntities = aWorld.getEntities();
         BlockPosition lEdge2 = aEdge1.clone();
         lEdge2.add(width - 1, height - 1, depth - 1);
-        for(Entity lEntity : lEntities) {
-            if (lEntity.getType() != EntityType.PLAYER) {
-                BlockPosition lPos = new BlockPosition(lEntity.getLocation());
-                if (lPos.x >= aEdge1.x && lPos.x <= lEdge2.x
-                    && lPos.y >= aEdge1.y && lPos.y <= lEdge2.y
-                    && lPos.z >= aEdge1.z && lPos.z <= lEdge2.z) {
-                    BlockAreaEntity lItem = new BlockAreaEntity();
-                    lItem.fromEntity(lEntity, aEdge1);
-                    entities.add(lItem);
-                    //Framework.plugin.getLogger().info("Entity: " + lEntity);
+        entities.clear();
+        if (aWithEntities) {
+            List<Entity> lEntities = aWorld.getEntities();
+            for(Entity lEntity : lEntities) {
+                if (lEntity.getType() != EntityType.PLAYER) {
+                    BlockPosition lPos = new BlockPosition(lEntity.getLocation());
+                    if (lPos.x >= aEdge1.x && lPos.x <= lEdge2.x
+                        && lPos.y >= aEdge1.y && lPos.y <= lEdge2.y
+                        && lPos.z >= aEdge1.z && lPos.z <= lEdge2.z) {
+                        BlockAreaEntity lItem = new BlockAreaEntity();
+                        lItem.fromEntity(lEntity, aEdge1);
+                        entities.add(lItem);
+                        //Framework.plugin.getLogger().info("Entity: " + lEntity);
+                    }
                 }
             }
         }
         buildings.clear();
-        ArrayList<Building> lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithDetectBlock(aEdge1, lEdge2);
-        for(Building lBuilding : lBuildings) {
-            BlockPosition lPos = lBuilding.getDetectBlock().position.clone();
-            lPos.subtract(aEdge1);
-            buildings.add(new BlockAreaBuilding(lPos));
+        if (aWithBuildings) {
+            ArrayList<Building> lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithDetectBlock(aEdge1, lEdge2);
+            for(Building lBuilding : lBuildings) {
+                BlockPosition lPos = lBuilding.getDetectBlock().position.clone();
+                lPos.subtract(aEdge1);
+                buildings.add(new BlockAreaBuilding(lPos));
+            }
         }
     }
 
