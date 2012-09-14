@@ -383,6 +383,12 @@ public class BlockArea {
         }
     }
     
+    public BlockAreaEntity newEntity() {
+        BlockAreaEntity lResult = new BlockAreaEntity();
+        entities.add(lResult);
+        return lResult;
+    }
+    
     public void fromBlock(int aX, int aY, int aZ, Block aBlock) {
         BlockAreaItem lItem = get(aX, aY, aZ);
         lItem.fromBlock(aBlock);
