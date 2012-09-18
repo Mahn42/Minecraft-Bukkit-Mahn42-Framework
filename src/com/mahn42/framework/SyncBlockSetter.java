@@ -55,7 +55,6 @@ public class SyncBlockSetter implements Runnable {
                     Sign lSign = (Sign)location.getBlock().getState();
                     if (signLine0 != null) {
                         lSign.setLine(0, signLine0);
-                        Framework.plugin.getLogger().info("signLine0 = " + signLine0);
                     }
                     if (signLine1 != null) {
                         lSign.setLine(1, signLine1);
