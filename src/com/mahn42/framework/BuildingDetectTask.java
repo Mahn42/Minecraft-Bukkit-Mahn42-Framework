@@ -61,7 +61,7 @@ public class BuildingDetectTask implements Runnable {
                     if (lOK) {
                         //Framework.plugin.getLogger().info("5");
                         BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Create);
-                        Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
+                        lEvent.raise();
                         lFound = true;
                         break;
                     }

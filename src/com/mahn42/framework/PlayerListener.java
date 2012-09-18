@@ -44,8 +44,7 @@ public class PlayerListener implements Listener {
                 if (!lPBuilds.inBuildings.contains(lBuilding)) {
                     lPBuilds.inBuildings.add(lBuilding);
                     BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerEnter);
-                    Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
-                    //lPlayer.sendMessage("you enter building " + lBuilding.getName());
+                    lEvent.raise();
                 }
             }
             ArrayList<Building> lInBuildings = new ArrayList<Building>(lPBuilds.inBuildings);
@@ -53,8 +52,7 @@ public class PlayerListener implements Listener {
                 if (!lBuildings.contains(lBuilding)) {
                     lPBuilds.inBuildings.remove(lBuilding);
                     BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerLeave);
-                    Framework.plugin.getServer().getPluginManager().callEvent(lEvent);
-                    //lPlayer.sendMessage("you leave building " + lBuilding.getName());
+                    lEvent.raise();
                 }
             }
         }

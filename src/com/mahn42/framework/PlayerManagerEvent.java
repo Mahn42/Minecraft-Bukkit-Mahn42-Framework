@@ -6,37 +6,24 @@ package com.mahn42.framework;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
- 
+
 /**
  *
  * @author andre
  */
-public class BuildingEvent extends Event {
+public class PlayerManagerEvent extends Event {
 
-    public enum BuildingAction {
-        PlayerEnter,
-        PlayerLeave,
-        Create,
-        Destroy,
-    }
-    
     private static final HandlerList handlers = new HandlerList();
-    private Building building;
-    private BuildingAction action;
+    private PlayerManager playerManager;
     
-    public BuildingEvent(Building aBuilding, BuildingAction aAction) {
-        building = aBuilding;
-        action = aAction;
+    public PlayerManagerEvent(PlayerManager aPlayerManager) {
+        playerManager = aPlayerManager;
     }
- 
-    public Building getBuilding() {
-        return building;
+
+    public PlayerManager getPlayerManager() {
+        return playerManager; // should be override
     }
- 
-    public BuildingAction getAction() {
-        return action;
-    }
- 
+
     @Override
     public HandlerList getHandlers() {
         return handlers;
@@ -49,5 +36,4 @@ public class BuildingEvent extends Event {
     public void raise() {
         Framework.plugin.getServer().getPluginManager().callEvent(this);
     }
-    
 }
