@@ -71,7 +71,11 @@ public class CommandBD_Create implements CommandExecutor {
             if (aBDesc.materials.get(0).withData) {
                 lState.setRawData(aBDesc.materials.get(0).data);
             }
-            lState.update(true);
+            try {
+                lState.update(true);
+            } catch (Exception ex) {
+                Framework.plugin.getLogger().throwing(getClass().getName(), null, ex);
+            }
             for(BuildingDescription.RelatedTo lRel : aBDesc.relatedTo) {
                 BlockPosition lRelPos;
                 switch(lRel.position) {
