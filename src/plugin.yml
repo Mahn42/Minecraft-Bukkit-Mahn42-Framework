@@ -33,6 +33,11 @@ commands:
       usage: /fw_debug <optionname> [true|false]
       permission: fw.debug
       permission-message: You don't have permission
+   fw_createworld:
+      description: create a new world. 
+      usage: /fw_createworld <worldname>
+      permission: fw.createworld
+      permission-message: You don't have permission
 permissions:
     fw.*:
         description: Gives access to all framework commands
@@ -49,6 +54,7 @@ permissions:
             fw.area_delete: true
             fw.area_remove: true
             fw.we_fill: true
+            fw.createworld: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
@@ -66,4 +72,7 @@ permissions:
         default: false
     fw.debug:
         description: Allows you to set debug option
+        default: false
+    fw.createworld:
+        description: Allows you to create new world
         default: false
