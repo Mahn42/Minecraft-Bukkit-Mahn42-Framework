@@ -178,6 +178,7 @@ public class Framework extends JavaPlugin {
         getCommand("fw_save").setExecutor(new CommandSave());
         getCommand("fw_debug").setExecutor(new CommandDebugSet());
         getCommand("fw_createworld").setExecutor(new CommandCreateWorld());
+        getCommand("fw_tpworld").setExecutor(new CommandTPWorld());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);

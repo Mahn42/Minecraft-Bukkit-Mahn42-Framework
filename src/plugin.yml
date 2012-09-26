@@ -38,6 +38,11 @@ commands:
       usage: /fw_createworld <worldname>
       permission: fw.createworld
       permission-message: You don't have permission
+   fw_tpworld:
+      description: teleport to a world. 
+      usage: /fw_tpworld <worldname>
+      permission: fw.tpworld
+      permission-message: You don't have permission
 permissions:
     fw.*:
         description: Gives access to all framework commands
@@ -55,6 +60,7 @@ permissions:
             fw.area_remove: true
             fw.we_fill: true
             fw.createworld: true
+            fw.tpworld: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
@@ -75,4 +81,7 @@ permissions:
         default: false
     fw.createworld:
         description: Allows you to create new world
+        default: false
+    fw.tpworld:
+        description: Allows you to teleport to a world
         default: false
