@@ -34,10 +34,10 @@ public class CommandCreateWorld implements CommandExecutor{
             if (lCreate) {
                 World lWorld = lWC.createWorld();
                 lWorld.save();
-                aCommandSender.sendMessage(ChatColor.GREEN + "World " + lWorld.getName() + " created.");
+                aCommandSender.sendMessage(Framework.plugin.getText("&aWorld %s created.", lWorld.getName()));
             }
             else {
-                aCommandSender.sendMessage(ChatColor.RED + "World " + lName+ " not created.");
+                aCommandSender.sendMessage(Framework.plugin.getText("&cWorld %s not created.", lName));
             }
         }
         return true;
