@@ -17,7 +17,6 @@ public class CommandCreateWorld implements CommandExecutor{
 
     //fw_createworld <worldname> <worldconfname> 
     @Override
-<<<<<<< HEAD
     public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {
         if (aStrings.length > 0) {
             WorldConfiguration lConf = new WorldConfiguration();
@@ -29,30 +28,6 @@ public class CommandCreateWorld implements CommandExecutor{
             World lWorld = lConf.getCreator().createWorld();
             lWorld.save();
             aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&aWorld %s created.", lWorld.getName()));
-            /*
-=======
-    public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {        
-        if (aStrings.length > 1) {
->>>>>>> 1d5ebb4ccc171ffd130258d0057755cbc602a897
-            Boolean lCreate = false;
-            String lType = aStrings[0];
-            String lName = aStrings[1];
-            WorldCreator lWC = new WorldCreator(lName);
-            if (lType.equalsIgnoreCase("flat")) {
-                lWC.seed(42);
-                lWC.generateStructures(false);
-                lWC.type(WorldType.FLAT);
-                lCreate = true;
-            }
-            if (lCreate) {
-                World lWorld = lWC.createWorld();
-                lWorld.save();
-                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&aWorld %s created.", lWorld.getName()));
-            }
-            else {
-                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&cWorld %s not created.", lName));
-            }
-            */
         }
         return true;
     }
