@@ -87,6 +87,7 @@ public class Framework extends JavaPlugin {
     
     //protected HashMap<String, BlockPosition> fPositionMarker = new HashMap<String, BlockPosition>();
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
+    protected HashMap<String, Properties> fPluginLangs = new HashMap<String, Properties>();
     protected SyncBlockSetter fSyncBlockSetter;
     protected DBSaverTask fSaverTask;
     protected DynMapBuildingRenderer fDynMapTask;
@@ -95,7 +96,6 @@ public class Framework extends JavaPlugin {
     protected Messenger fMessenger = null;
     protected PlayerManager fPlayerManager = null;
     protected HashMap<World, RestrictedRegions> fRestrictedRegions = new HashMap<World, RestrictedRegions>();
-    protected Properties fLang = null;
     
     /**
      * @param args the command line arguments
@@ -169,25 +169,36 @@ public class Framework extends JavaPlugin {
     }
     
     public Properties getLanguage(JavaPlugin aPlugin, String aLanguage) {
-        Properties lProps = new Properties();
-        String lFileName = String.format("%s.properties", aLanguage != null ? aLanguage : configLanguage);
-        try {
-            InputStream lStream = null;
-            File lExt = new File(aPlugin.getDataFolder().getPath() + File.separatorChar + lFileName);
-            if (lExt.exists()) {
-                lStream = new BufferedInputStream(new FileInputStream(lExt));
-            } else {
-                lStream = aPlugin.getResource(lFileName);
-            }
-            if (lStream != null) {
-                try {
-                    lProps.load(lStream);
-                } finally {
-                    lStream.close();
+        String lName;
+        if (aLanguage != null && !aLanguage.isEmpty()) {
+            lName = aPlugin.getName()+"."+aLanguage;
+        } else {
+            lName = aPlugin.getName()+"."+configLanguage;
+        }
+        Properties lProps;
+        lProps = fPluginLangs.get(lName);
+        if (lProps == null) {
+            lProps = new Properties();
+            String lFileName = String.format("%s.properties", aLanguage != null ? aLanguage : configLanguage);
+            try {
+                InputStream lStream;
+                File lExt = new File(aPlugin.getDataFolder().getPath() + File.separatorChar + lFileName);
+                if (lExt.exists()) {
+                    lStream = new BufferedInputStream(new FileInputStream(lExt));
+                } else {
+                    lStream = aPlugin.getResource(lFileName);
                 }
+                if (lStream != null) {
+                    try {
+                        lProps.load(lStream);
+                    } finally {
+                        lStream.close();
+                    }
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Framework.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(Framework.class.getName()).log(Level.SEVERE, null, ex);
+            fPluginLangs.put(lName, lProps);
         }
         return lProps;
     }
@@ -198,7 +209,6 @@ public class Framework extends JavaPlugin {
         fPlayerBuildings = new HashMap<String, PlayerBuildings>();
         fBuildingDetector = new BuildingDetector();
         readFrameworkConfig();
-        fLang = getLanguage(this, configLanguage);
         fSyncBlockSetter = new SyncBlockSetter();
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
         fSaverTask = new DBSaverTask();
@@ -271,12 +281,13 @@ public class Framework extends JavaPlugin {
     }
     
     public String getText(String aText, Object... aObjects) {
-        if (fLang == null) {
-            return String.format(aText, aObjects);
-        } else {
-            String lText = ChatColor.translateAlternateColorCodes('&', String.format(fLang.getProperty(aText, aText), aObjects));
-            return lText;
-        }
+        return getText(configLanguage, aText, aObjects);
+    }
+    
+    public String getText(String aLanguage, String aText, Object... aObjects) {
+        Properties lProps = getLanguage(this, aLanguage);
+        String lText = ChatColor.translateAlternateColorCodes('&', String.format(lProps.getProperty(aText, aText), aObjects));
+        return lText;
     }
     
     public void log(String aDebugOption, String aText) {
