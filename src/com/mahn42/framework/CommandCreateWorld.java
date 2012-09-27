@@ -19,7 +19,7 @@ import org.bukkit.command.CommandSender;
 public class CommandCreateWorld implements CommandExecutor{
 
     @Override
-    public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {
+    public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {        
         if (aStrings.length > 1) {
             Boolean lCreate = false;
             String lType = aStrings[0];
