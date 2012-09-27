@@ -86,7 +86,6 @@ public class Framework extends JavaPlugin {
     public int configDBSaverTicks = 18000;
     public String configLanguage = "DE_de";
     
-    //protected HashMap<String, BlockPosition> fPositionMarker = new HashMap<String, BlockPosition>();
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected HashMap<String, Properties> fPluginLangs = new HashMap<String, Properties>();
     protected SyncBlockSetter fSyncBlockSetter;
@@ -97,6 +96,7 @@ public class Framework extends JavaPlugin {
     protected Messenger fMessenger = null;
     protected PlayerManager fPlayerManager = null;
     protected HashMap<World, RestrictedRegions> fRestrictedRegions = new HashMap<World, RestrictedRegions>();
+    protected WorldConfigurationDB fWorldConfigurationDB;
     
     /**
      * @param args the command line arguments
@@ -104,6 +104,16 @@ public class Framework extends JavaPlugin {
     public static void main(String[] args) {
         BlockArea lArea = new BlockArea(10, 10, 10);
         Logger.getAnonymousLogger().info("Area Item 0 = " + lArea.items.get(0));
+    }
+    
+    public WorldConfigurationDB getWorldConfigurationDB() {
+        if (fWorldConfigurationDB == null) {
+            fWorldConfigurationDB = new WorldConfigurationDB();
+            fWorldConfigurationDB.load();
+            getLogger().info("Datafile " + fWorldConfigurationDB.file.toString() + " loaded. (Records:" + fWorldConfigurationDB.size() + ")");
+            registerSaver(fWorldConfigurationDB);
+        }
+        return fWorldConfigurationDB;
     }
 
     public RestrictedRegions getRestrictedRegions(World aWorld, boolean aCreate) {
@@ -123,17 +133,6 @@ public class Framework extends JavaPlugin {
     public void setDebugSet(String aName, boolean aValue) {
         fDebugSet.put(aName, new Boolean(aValue));
     }
-    
-    /*
-    public void setPositionMarker(String aName, BlockPosition aPos) {
-        fPositionMarker.put(aName, aPos.clone());
-    }
-    
-    public BlockPosition getPositionMarker(String aName) {
-        BlockPosition lPos = fPositionMarker.get(aName);
-        return lPos == null ? null : lPos.clone();
-    }
-    */
     
     public Messenger getMessenger() {
         if (fMessenger != null) {
@@ -211,11 +210,8 @@ public class Framework extends JavaPlugin {
         fBuildingDetector = new BuildingDetector();
         readFrameworkConfig();
         fSyncBlockSetter = new SyncBlockSetter();
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
         fSaverTask = new DBSaverTask();
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSaverTask, 100, configDBSaverTicks);
         fDynMapTask = new DynMapBuildingRenderer();
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, 20);
         
         getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
         getCommand("fw_bd_create").setExecutor(new CommandBD_Create());
@@ -228,6 +224,17 @@ public class Framework extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
+        getServer().getPluginManager().registerEvents(new WorldListener(), this);
+        for(WorldConfiguration lConf : getWorldConfigurationDB()) {
+            World lWorld = getServer().getWorld(lConf.name);
+            if (lWorld == null) {
+                getLogger().info("reload world " + lConf.name);
+                lWorld = lConf.getCreator().createWorld();
+            }
+        }
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSaverTask, 100, configDBSaverTicks);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, 20);
     }
 
     @Override
