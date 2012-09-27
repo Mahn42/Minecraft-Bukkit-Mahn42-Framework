@@ -20,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -281,6 +282,11 @@ public class Framework extends JavaPlugin {
     }
     
     public String getText(String aText, Object... aObjects) {
+        return getText(configLanguage, aText, aObjects);
+    }
+    
+    public String getText(CommandSender aPlayer, String aText, Object... aObjects) {
+        //TODO get language for player
         return getText(configLanguage, aText, aObjects);
     }
     
