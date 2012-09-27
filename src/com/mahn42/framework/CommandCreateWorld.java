@@ -17,6 +17,7 @@ public class CommandCreateWorld implements CommandExecutor{
 
     //fw_createworld <worldname> <worldconfname> 
     @Override
+<<<<<<< HEAD
     public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {
         if (aStrings.length > 0) {
             WorldConfiguration lConf = new WorldConfiguration();
@@ -29,6 +30,10 @@ public class CommandCreateWorld implements CommandExecutor{
             lWorld.save();
             aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&aWorld %s created.", lWorld.getName()));
             /*
+=======
+    public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {        
+        if (aStrings.length > 1) {
+>>>>>>> 1d5ebb4ccc171ffd130258d0057755cbc602a897
             Boolean lCreate = false;
             String lType = aStrings[0];
             String lName = aStrings[1];
