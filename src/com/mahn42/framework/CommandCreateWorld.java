@@ -4,7 +4,6 @@
  */
 package com.mahn42.framework;
 
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
@@ -34,10 +33,10 @@ public class CommandCreateWorld implements CommandExecutor{
             if (lCreate) {
                 World lWorld = lWC.createWorld();
                 lWorld.save();
-                aCommandSender.sendMessage(ChatColor.GREEN + "World " + lWorld.getName() + " created.");
+                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&aWorld %s created.", lWorld.getName()));
             }
             else {
-                aCommandSender.sendMessage(ChatColor.RED + "World " + lName+ " not created.");
+                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&cWorld %s not created.", lName));
             }
         }
         return true;

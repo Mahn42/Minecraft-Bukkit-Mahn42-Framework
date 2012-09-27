@@ -4,14 +4,23 @@
  */
 package com.mahn42.framework;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -75,9 +84,11 @@ public class Framework extends JavaPlugin {
     public static Framework plugin;
     public int configSyncBlockSetterTicks = 2;
     public int configDBSaverTicks = 18000;
+    public String configLanguage = "DE_de";
     
     //protected HashMap<String, BlockPosition> fPositionMarker = new HashMap<String, BlockPosition>();
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
+    protected HashMap<String, Properties> fPluginLangs = new HashMap<String, Properties>();
     protected SyncBlockSetter fSyncBlockSetter;
     protected DBSaverTask fSaverTask;
     protected DynMapBuildingRenderer fDynMapTask;
@@ -158,6 +169,41 @@ public class Framework extends JavaPlugin {
         }
     }
     
+    public Properties getLanguage(JavaPlugin aPlugin, String aLanguage) {
+        String lName;
+        if (aLanguage != null && !aLanguage.isEmpty()) {
+            lName = aPlugin.getName()+"."+aLanguage;
+        } else {
+            lName = aPlugin.getName()+"."+configLanguage;
+        }
+        Properties lProps;
+        lProps = fPluginLangs.get(lName);
+        if (lProps == null) {
+            lProps = new Properties();
+            String lFileName = String.format("%s.properties", aLanguage != null ? aLanguage : configLanguage);
+            try {
+                InputStream lStream;
+                File lExt = new File(aPlugin.getDataFolder().getPath() + File.separatorChar + lFileName);
+                if (lExt.exists()) {
+                    lStream = new BufferedInputStream(new FileInputStream(lExt));
+                } else {
+                    lStream = aPlugin.getResource(lFileName);
+                }
+                if (lStream != null) {
+                    try {
+                        lProps.load(lStream);
+                    } finally {
+                        lStream.close();
+                    }
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Framework.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            fPluginLangs.put(lName, lProps);
+        }
+        return lProps;
+    }
+    
     @Override
     public void onEnable() { 
         plugin = this;
@@ -232,6 +278,22 @@ public class Framework extends JavaPlugin {
     private void readFrameworkConfig() {
         FileConfiguration lConfig = getConfig();
         configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
+        configLanguage = lConfig.getString("Language");
+    }
+    
+    public String getText(String aText, Object... aObjects) {
+        return getText(configLanguage, aText, aObjects);
+    }
+    
+    public String getText(CommandSender aPlayer, String aText, Object... aObjects) {
+        //TODO get language for player
+        return getText(configLanguage, aText, aObjects);
+    }
+    
+    public String getText(String aLanguage, String aText, Object... aObjects) {
+        Properties lProps = getLanguage(this, aLanguage);
+        String lText = ChatColor.translateAlternateColorCodes('&', String.format(lProps.getProperty(aText, aText), aObjects));
+        return lText;
     }
     
     public void log(String aDebugOption, String aText) {

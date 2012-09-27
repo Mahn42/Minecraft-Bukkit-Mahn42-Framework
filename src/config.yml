@@ -1,5 +1,7 @@
 ## YAML Template.
 ---
+#Language: de-de
+Language: en-us
 SyncBlockSetter:
   Ticks: 2
 DBSaver:
