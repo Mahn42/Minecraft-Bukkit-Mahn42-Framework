@@ -267,6 +267,20 @@ public class Framework extends JavaPlugin {
         getServer().getScheduler().cancelTasks(this);
     }
 
+    public World requireWorld(String aName, WorldClassification aClass) {
+        World lWorld = getServer().getWorld(aName);
+        if (lWorld == null) {
+            WorldConfiguration lConf = new WorldConfiguration();
+            lConf.name = aName;
+            lConf.updateFromClassification(aClass);
+            Framework.plugin.getWorldConfigurationDB().addRecord(lConf);
+            lWorld = lConf.getCreator().createWorld();
+            lWorld.save();
+            getLogger().info("new world " + lWorld.getName() + " is created.");
+        }
+        return lWorld;
+    }
+    
     public void setTypeAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {
         fSyncBlockSetter.setTypeAndData(aLocation, aMaterial, aData, aPhysics);
     }
