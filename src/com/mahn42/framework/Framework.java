@@ -97,6 +97,7 @@ public class Framework extends JavaPlugin {
     protected PlayerManager fPlayerManager = null;
     protected HashMap<World, RestrictedRegions> fRestrictedRegions = new HashMap<World, RestrictedRegions>();
     protected WorldConfigurationDB fWorldConfigurationDB;
+    protected HashMap<String, WorldClassification> fWorldClassifications = new HashMap<String, WorldClassification>();
     
     /**
      * @param args the command line arguments
@@ -106,6 +107,26 @@ public class Framework extends JavaPlugin {
         Logger.getAnonymousLogger().info("Area Item 0 = " + lArea.items.get(0));
     }
     
+    public void registerWorldClassification(WorldClassification aClassification) {
+        fWorldClassifications.put(aClassification.name, aClassification);
+    }
+    
+    public void unregisterWorldClassification(String aName) {
+        fWorldClassifications.remove(aName);
+    }
+    
+    public WorldClassification getWorldClassification(String aName) {
+        return fWorldClassifications.get(aName);
+    }
+    
+    public ArrayList<WorldClassification> getWorldClassifications() {
+        ArrayList<WorldClassification> lResult = new ArrayList<WorldClassification>();
+        for(WorldClassification lWC : fWorldClassifications.values()) {
+            lResult.add(lWC);
+        }
+        return lResult;
+    }
+
     public WorldConfigurationDB getWorldConfigurationDB() {
         if (fWorldConfigurationDB == null) {
             fWorldConfigurationDB = new WorldConfigurationDB();
@@ -219,8 +240,11 @@ public class Framework extends JavaPlugin {
         getCommand("fw_set_spawn").setExecutor(new CommandSetSpawn());
         getCommand("fw_save").setExecutor(new CommandSave());
         getCommand("fw_debug").setExecutor(new CommandDebugSet());
-        getCommand("fw_createworld").setExecutor(new CommandCreateWorld());
-        getCommand("fw_tpworld").setExecutor(new CommandTPWorld());
+        getCommand("fw_world_create").setExecutor(new CommandWorldCreate());
+        getCommand("fw_world_remove").setExecutor(new CommandWorldRemove());
+        getCommand("fw_world_list").setExecutor(new CommandWorldList());
+        getCommand("fw_world_clist").setExecutor(new CommandWorldClassificationList());
+        getCommand("fw_tp").setExecutor(new CommandTeleport());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
@@ -286,6 +310,12 @@ public class Framework extends JavaPlugin {
         FileConfiguration lConfig = getConfig();
         configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
         configLanguage = lConfig.getString("Language");
+        List lWorldClasses = lConfig.getList("WorldClassifications");
+        for(Object lItem : lWorldClasses) {
+            WorldClassification lWC = new WorldClassification();
+            lWC.fromSectionValue(lItem);
+            registerWorldClassification(lWC);
+        }
     }
     
     public String getText(String aText, Object... aObjects) {

@@ -33,15 +33,32 @@ commands:
       usage: /fw_debug <optionname> [true|false]
       permission: fw.debug
       permission-message: You don't have permission
-   fw_createworld:
+   fw_world_create:
       description: create a new world. 
-      usage: /fw_createworld <worldname>
-      permission: fw.createworld
+      usage: /fw_world_create <worldname> [worldclass]
+      aliases: newworld
+      permission: fw.world_create
       permission-message: You don't have permission
-   fw_tpworld:
-      description: teleport to a world. 
-      usage: /fw_tpworld <worldname>
-      permission: fw.tpworld
+   fw_world_remove:
+      description: remove a new world. 
+      usage: /fw_world_remove <worldname>
+      aliases: removeworld
+      permission: fw.world_remove
+      permission-message: You don't have permission
+   fw_world_clist:
+      description: list all registered worldclassifications. 
+      usage: /fw_world_clist
+      permission: fw.world_clist
+      permission-message: You don't have permission
+   fw_world_list:
+      description: list all worlds. 
+      usage: /fw_world_list
+      permission: fw.world_list
+      permission-message: You don't have permission
+   fw_tp:
+      description: teleport to position and a world. 
+      usage: /fw_tp [<worldname>] [<x> <y> <z>]
+      permission: fw.tp
       permission-message: You don't have permission
 permissions:
     fw.*:
@@ -59,8 +76,11 @@ permissions:
             fw.area_delete: true
             fw.area_remove: true
             fw.we_fill: true
-            fw.createworld: true
-            fw.tpworld: true
+            fw.world_create: true
+            fw.world_remove: true
+            fw.world_list: true
+            fw.world_clist: true
+            fw.tp: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
@@ -79,9 +99,18 @@ permissions:
     fw.debug:
         description: Allows you to set debug option
         default: false
-    fw.createworld:
+    fw.world_create:
         description: Allows you to create new world
         default: false
-    fw.tpworld:
-        description: Allows you to teleport to a world
+    fw.world_remove:
+        description: Allows you to remove a world
+        default: false
+    fw.world_clist:
+        description: Allows you to list all registered worldclassifications
+        default: false
+    fw.world_list:
+        description: Allows you to list all worlds
+        default: false
+    fw.tp:
+        description: Allows you to teleport to position in a world
         default: false

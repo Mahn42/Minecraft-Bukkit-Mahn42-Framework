@@ -6,4 +6,44 @@ SyncBlockSetter:
   Ticks: 2
 DBSaver:
   Ticks: 18000
-  
+WorldClassifications:
+  -
+    name: empty_flat
+    generateStructures: true
+    generator:
+    seed: 42
+    type: FLAT
+    environment: NORMAL
+    spawnMonsters: false
+    spawnAnimals: false
+    difficulty: NORMAL
+    ownInventory: true
+    gameMode: CREATIVE
+    playerVsPlayer: false
+  -
+    name: empty_nether
+    generateStructures: true
+    generator:
+    seed: 42
+    type: NORMAL
+    environment: NETHER
+    spawnMonsters: false
+    spawnAnimals: false
+    difficulty: NORMAL
+    ownInventory: true
+    gameMode: CREATIVE
+    playerVsPlayer: false
+  -
+    name: empty_normal
+    generateStructures: true
+    generator:
+    seed: 42
+    type: NORMAL
+    environment: NORMAL
+    spawnMonsters: false
+    spawnAnimals: false
+    difficulty: NORMAL
+    ownInventory: true
+    gameMode: CREATIVE
+    playerVsPlayer: false
+    

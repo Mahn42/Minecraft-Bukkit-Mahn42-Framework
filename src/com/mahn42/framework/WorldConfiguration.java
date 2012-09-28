@@ -98,4 +98,16 @@ public class WorldConfiguration extends DBRecord {
             playerVsPlayer = lWorld.getPVP();
         }
     }
+
+    public void updateFromClassification(WorldClassification aWC) {
+        generateStructures = aWC.generateStructures;
+        generator = aWC.generator;
+        seed = aWC.seed;
+        type = aWC.type;
+        environment = aWC.environment;
+        spawnAnimals = aWC.spawnAnimals;
+        spawnMonsters = aWC.spawnMonsters;
+        difficulty = aWC.difficulty;
+        playerVsPlayer = aWC.playerVsPlayer;
+    }
 }

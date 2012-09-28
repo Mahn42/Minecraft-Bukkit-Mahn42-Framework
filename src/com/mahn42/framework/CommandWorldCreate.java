@@ -13,16 +13,17 @@ import org.bukkit.command.CommandSender;
  *
  * @author Nils
  */
-public class CommandCreateWorld implements CommandExecutor{
+public class CommandWorldCreate implements CommandExecutor{
 
-    //fw_createworld <worldname> <worldconfname> 
+    //fw_world_create <worldname> [<worldclassname>]
     @Override
     public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {
         if (aStrings.length > 0) {
             WorldConfiguration lConf = new WorldConfiguration();
             lConf.name = aStrings[0];
             if (aStrings.length > 1) {
-                //TODO get worldconftype
+                WorldClassification lWC = Framework.plugin.getWorldClassification(aStrings[1]);
+                lConf.updateFromClassification(lWC);
             }
             Framework.plugin.getWorldConfigurationDB().addRecord(lConf);
             World lWorld = lConf.getCreator().createWorld();
