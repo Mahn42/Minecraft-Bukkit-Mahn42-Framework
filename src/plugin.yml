@@ -5,17 +5,17 @@ version: 0.49
 commands:
    fw_bd_dump:
       description: only for testing, dumps building descriptions.
-      usage: /fw_bd_dump descname
+      usage: /fw_bd_dump <descname>
       permission: fw.bd_dump
       permission-message: You don't have permission
    fw_bd_create:
       description: only for testing, create a building for a given building description.
-      usage: /fw_bd_create descname
+      usage: /fw_bd_create <descname>
       permission: fw.bd_create
       permission-message: You don't have permission
    fw_bd_detect:
       description: only for testing, detect a building for a given building description.
-      usage: /fw_bd_detect descname
+      usage: /fw_bd_detect <descname>
       permission: fw.bd_detect
       permission-message: You don't have permission
    fw_set_spawn:

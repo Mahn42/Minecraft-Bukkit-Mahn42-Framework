@@ -342,7 +342,11 @@ public class Framework extends JavaPlugin {
     }
     
     public String getText(String aLanguage, String aText, Object... aObjects) {
-        Properties lProps = getLanguage(this, aLanguage);
+        return getText(this, aLanguage, aText, aObjects);
+    }
+    
+    public String getText(JavaPlugin aPlugin, String aLanguage, String aText, Object... aObjects) {
+        Properties lProps = getLanguage(aPlugin, aLanguage);
         String lText = ChatColor.translateAlternateColorCodes('&', String.format(lProps.getProperty(aText, aText), aObjects));
         return lText;
     }
