@@ -6,7 +6,9 @@ package com.mahn42.framework;
 
 import java.util.ArrayList;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import org.dynmap.markers.CircleMarker;
 
 /**
  *
@@ -216,13 +218,17 @@ public class Building extends DBRecordWorld {
         }
     }
     
-    public void sendToPlayer(String aText) {
+    public void sendToPlayer(String aText, Object... aObjects) {
         if (playerName != null && playerName.length() > 0) {
+            JavaPlugin lPlugin;
+            lPlugin = description.handler == null ? null : description.handler.getPlugin();
             Player lPlayer = Framework.plugin.getServer().getPlayer(playerName);
+            String lLang = Framework.plugin.getPlayerLanguage(playerName);
+            String lText = Framework.plugin.getText(lPlugin, lLang, aText, aObjects);
             if (lPlayer != null) {
-                lPlayer.sendMessage(aText);
+                lPlayer.sendMessage(lText);
             } else {
-                Framework.plugin.getMessenger().sendPlayerMessage("", playerName, aText);
+                Framework.plugin.getMessenger().sendPlayerMessage("", playerName, lText);
             }
         } else {
             Framework.plugin.getLogger().info(aText);

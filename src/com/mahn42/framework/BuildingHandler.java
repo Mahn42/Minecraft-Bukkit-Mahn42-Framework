@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  *
@@ -27,4 +28,5 @@ public interface BuildingHandler {
     public boolean signChanged(SignChangeEvent aEvent, Building aBuilding);
     public BuildingDB getDB(World aWorld);
     public void nextConfiguration(Building aBuilding, BlockPosition position, Player aPlayer);
+    public JavaPlugin getPlugin();
 }

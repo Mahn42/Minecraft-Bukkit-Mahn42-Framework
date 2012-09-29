@@ -337,8 +337,7 @@ public class Framework extends JavaPlugin {
     }
     
     public String getText(CommandSender aPlayer, String aText, Object... aObjects) {
-        //TODO get language for player
-        return getText(configLanguage, aText, aObjects);
+        return getText(getPlayerLanguage(aPlayer.getName()), aText, aObjects);
     }
     
     public String getText(String aLanguage, String aText, Object... aObjects) {
@@ -349,6 +348,11 @@ public class Framework extends JavaPlugin {
         Properties lProps = getLanguage(aPlugin, aLanguage);
         String lText = ChatColor.translateAlternateColorCodes('&', String.format(lProps.getProperty(aText, aText), aObjects));
         return lText;
+    }
+    
+    public String getPlayerLanguage(String aPlayerName) {
+        //TODO
+        return configLanguage;
     }
     
     public void log(String aDebugOption, String aText) {
