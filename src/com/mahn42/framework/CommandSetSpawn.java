@@ -23,10 +23,10 @@ public class CommandSetSpawn implements CommandExecutor {
             Location lLoc = lPlayer.getLocation();
             Location lSpawn = lPlayer.getWorld().getSpawnLocation();
             if (lPlayer.getWorld().setSpawnLocation(lLoc.getBlockX(),lLoc.getBlockY(),lLoc.getBlockZ())) {
-                lPlayer.sendMessage("Spawn point was " + new BlockPosition(lSpawn));
-                lPlayer.sendMessage("Spawn point is now set to " + new BlockPosition(lLoc));
+                lPlayer.sendMessage(Framework.plugin.getText(lPlayer, "Spawn point was %s.", new BlockPosition(lSpawn)));
+                lPlayer.sendMessage(Framework.plugin.getText(lPlayer, "Spawn point is now set to %s.", new BlockPosition(lLoc)));
             } else {
-                lPlayer.sendMessage("Could not set. Spawn point is " + new BlockPosition(lSpawn));
+                lPlayer.sendMessage(Framework.plugin.getText(lPlayer, "Could not set. Spawn point is %s.", new BlockPosition(lSpawn)));
             }
         }
         return true;

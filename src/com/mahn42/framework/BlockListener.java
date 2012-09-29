@@ -76,10 +76,10 @@ public class BlockListener implements Listener {
                                 BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.Destroy);
                                 lEvent.raise();
                                 if (lPlayer != null) {
-                                    lPlayer.sendMessage("Building " + lBuilding.getName() + " is destroyed!");
+                                    lPlayer.sendMessage(Framework.plugin.getText(lPlayer, "Building %s is destroyed!", lBuilding.getName()));
                                 }
                                 if (lPlayer == null || !lPlayer.getName().equals(lBuilding.playerName)) {
-                                    Framework.plugin.getMessenger().sendPlayerMessage(null, lBuilding.playerName, "Your building " + lBuilding.getName() + " is destroyed!");
+                                    Framework.plugin.getMessenger().sendPlayerMessage(null, lBuilding.playerName, Framework.plugin.getText(lPlayer, "Your building %s is destroyed!", lBuilding.getName()));
                                 }
                             }
                         }

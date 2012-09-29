@@ -32,9 +32,9 @@ public class BuildingHandlerBase implements BuildingHandler {
         Player lPlayer = aEvent.getPlayer();
         Building lBuilding = insert(aBuilding);
         if (lBuilding != null) {
-            lPlayer.sendMessage("Building " + lBuilding.getName() + " found.");
+            lPlayer.sendMessage(Framework.plugin.getText(lPlayer, "&aBuilding %s found.", lBuilding.getName()));
         } else {
-            lPlayer.sendMessage("Building " + aBuilding.getName() + " found but not accepted.");
+            lPlayer.sendMessage(Framework.plugin.getText(lPlayer, "&cBuilding %s found but not accepted!", aBuilding.getName()));
         }
         return lBuilding != null;
     }

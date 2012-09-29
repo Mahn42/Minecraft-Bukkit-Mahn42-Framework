@@ -32,7 +32,7 @@ public class BuildingDetectTask implements Runnable {
         } else if (lBuildings.size() > 1) {
             if (player != null) {
                 for(Building lBuilding : lBuildings) {
-                    player.sendMessage("Here is always the building " + lBuilding.getName());
+                    player.sendMessage(Framework.plugin.getText(player, "Here is always the building %s!", lBuilding.getName()));
                 }
             } else {
                 for(Building lBuilding : lBuildings) {
@@ -71,7 +71,7 @@ public class BuildingDetectTask implements Runnable {
             }
             if (!lFound) {
                 if (player != null) {
-                    player.sendMessage("No building found!");
+                    player.sendMessage(Framework.plugin.getText(player, "&cNo building found!"));
                 } else {
                     Framework.plugin.getLogger().info("No building found! (" + lBuildings.size() + ")");
                 }
