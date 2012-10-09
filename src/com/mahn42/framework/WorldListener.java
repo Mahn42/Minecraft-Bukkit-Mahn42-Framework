@@ -5,8 +5,11 @@
 package com.mahn42.framework;
 
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
@@ -33,4 +36,17 @@ public class WorldListener implements Listener {
             lConf.updateFromWorld();
         }
     }
-}
+    
+    @EventHandler
+    public void entitySpawn(CreatureSpawnEvent aEvent) {
+        SpawnReason lSpawnReason = aEvent.getSpawnReason();
+        EntityType lEntityType = aEvent.getEntityType();
+        World lWorld = aEvent.getEntity().getWorld();
+        WorldConfiguration lConf = Framework.plugin.getWorldConfigurationDB().getByName(lWorld.getName());
+        if (lConf != null) {
+            if (!lConf.isEntityAllowed(lSpawnReason != SpawnReason.CUSTOM, lEntityType)) {
+                aEvent.setCancelled(true);
+            }
+        }
+    }
+} 

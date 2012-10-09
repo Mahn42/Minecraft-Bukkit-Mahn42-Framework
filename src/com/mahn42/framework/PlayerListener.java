@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -21,6 +22,23 @@ import org.bukkit.event.player.PlayerMoveEvent;
  */
 public class PlayerListener implements Listener {
 
+    @EventHandler
+    public void playerChangedWorld(PlayerChangedWorldEvent aEvent) {
+        Player lPlayer = aEvent.getPlayer();
+        World lWorld = lPlayer.getWorld();
+        WorldConfiguration lConf = Framework.plugin.getWorldConfigurationDB().getByName(lWorld.getName());
+        if (lConf != null) {
+            if (lConf.gameMode != lPlayer.getGameMode()) {
+                lPlayer.setGameMode(lConf.gameMode);
+            }
+            if (lConf.ownInventory) {
+                lPlayer.getInventory().clear();
+                //TODO save inventory in aEvent.getFrom() world
+                // load inventory for current world
+            }
+        }
+    }
+    
     static Block lLastBlock;
     
     @EventHandler

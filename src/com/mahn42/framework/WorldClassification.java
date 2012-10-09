@@ -4,13 +4,14 @@
  */
 package com.mahn42.framework;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.Set;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.WorldType;
+import org.bukkit.entity.EntityType;
 
 /**
  *
@@ -29,6 +30,9 @@ public class WorldClassification {
     public boolean ownInventory = false;
     public GameMode gameMode = GameMode.CREATIVE;
     public boolean playerVsPlayer = false;
+    public boolean entitySpawnCheck = false;
+    public ArrayList<EntityType> naturalEntityTypes = new ArrayList<EntityType>();
+    public ArrayList<EntityType> customEntityTypes = new ArrayList<EntityType>();
     
     public void fromSectionValue(Object aObject) {
         if (aObject instanceof HashMap) {
@@ -60,8 +64,32 @@ public class WorldClassification {
                         gameMode = GameMode.valueOf(lValue);
                     } else if (lEntry.getKey().equalsIgnoreCase("playerVsPlayer")) {
                         playerVsPlayer = Boolean.parseBoolean(lValue);
+                    } else if (lEntry.getKey().equalsIgnoreCase("entitySpawnCheck")) {
+                        entitySpawnCheck = Boolean.parseBoolean(lValue);
+                    } else if (lEntry.getKey().equalsIgnoreCase("naturalEntityTypes")) {
+                        setNaturalEntityTypesFromSectionValue(lEntry.getValue());
+                    } else if (lEntry.getKey().equalsIgnoreCase("customEntityTypes")) {
+                        setCustomEntityTypesFromSectionValue(lEntry.getValue());
                     }
                 }
+            }
+        }
+    }
+    
+    public void setNaturalEntityTypesFromSectionValue(Object aObject) {
+        naturalEntityTypes.clear();
+        if (aObject instanceof ArrayList) {
+            for(Object lObj : ((ArrayList)aObject)) {
+                naturalEntityTypes.add(EntityType.valueOf(lObj.toString()));
+            }
+        }
+    }
+
+    public void setCustomEntityTypesFromSectionValue(Object aObject) {
+        customEntityTypes.clear();
+        if (aObject instanceof ArrayList) {
+            for(Object lObj : ((ArrayList)aObject)) {
+                customEntityTypes.add(EntityType.valueOf(lObj.toString()));
             }
         }
     }

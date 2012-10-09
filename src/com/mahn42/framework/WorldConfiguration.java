@@ -10,6 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.bukkit.entity.EntityType;
 
 /**
  *
@@ -28,6 +29,7 @@ public class WorldConfiguration extends DBRecord {
     public boolean ownInventory = false;
     public GameMode gameMode = GameMode.CREATIVE;
     public boolean playerVsPlayer = false;
+    public String classificationName;
     
     @Override
     protected void toCSVInternal(ArrayList aCols) {
@@ -44,6 +46,7 @@ public class WorldConfiguration extends DBRecord {
         aCols.add(ownInventory);
         aCols.add(gameMode);
         aCols.add(playerVsPlayer);
+        aCols.add(classificationName);
     }
 
     @Override
@@ -61,6 +64,7 @@ public class WorldConfiguration extends DBRecord {
         ownInventory = Boolean.parseBoolean(aCols.pop());
         gameMode = GameMode.valueOf(aCols.pop());
         playerVsPlayer = Boolean.parseBoolean(aCols.pop());
+        classificationName = aCols.pop();
     }
     
     public WorldCreator getCreator() {
@@ -109,5 +113,10 @@ public class WorldConfiguration extends DBRecord {
         spawnMonsters = aWC.spawnMonsters;
         difficulty = aWC.difficulty;
         playerVsPlayer = aWC.playerVsPlayer;
+        classificationName = aWC.name;
+    }
+    
+    public boolean isEntityAllowed(boolean aNatural, EntityType aEntityType) {
+        return true;
     }
 }

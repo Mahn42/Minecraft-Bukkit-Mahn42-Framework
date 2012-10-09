@@ -22,8 +22,8 @@ public class CommandWorldList implements CommandExecutor{
             aCommandSender.sendMessage(
                     Framework.plugin.getText(
                     aCommandSender,
-                    "%1$s %5$s %6$s structures=%2$b animals=%3$b monster=%4$b",
-                    lConf.name, lConf.generateStructures, lConf.spawnAnimals, lConf.spawnMonsters, lConf.type, lConf.environment));
+                    "%1$s %5$s %6$s %7$s structures=%2$b animals=%3$b monster=%4$b",
+                    lConf.name, lConf.generateStructures, lConf.spawnAnimals, lConf.spawnMonsters, lConf.type, lConf.environment, lConf.gameMode));
         }
         return true;
     }

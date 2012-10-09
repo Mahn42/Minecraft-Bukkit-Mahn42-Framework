@@ -22,7 +22,8 @@ public class CommandWorldClassificationList implements CommandExecutor{
             aCommandSender.sendMessage(
                     Framework.plugin.getText(
                     aCommandSender,
-                    "%1$s %5$s %6$s structures=%2$b animals=%3$b monster=%4$b", lWC.name, lWC.generateStructures, lWC.spawnAnimals, lWC.spawnMonsters, lWC.type, lWC.environment));
+                    "%1$s %5$s %6$s %7$s structures=%2$b animals=%3$b monster=%4$b entityC=%8$b %9$d %10$d",
+                    lWC.name, lWC.generateStructures, lWC.spawnAnimals, lWC.spawnMonsters, lWC.type, lWC.environment, lWC.gameMode, lWC.entitySpawnCheck, lWC.naturalEntityTypes.size(), lWC.customEntityTypes.size()));
         }
         return true;
     }

@@ -227,6 +227,9 @@ public class Framework extends JavaPlugin {
     @Override
     public void onEnable() { 
         plugin = this;
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdirs();
+        }
         fPlayerBuildings = new HashMap<String, PlayerBuildings>();
         fBuildingDetector = new BuildingDetector();
         readFrameworkConfig();
