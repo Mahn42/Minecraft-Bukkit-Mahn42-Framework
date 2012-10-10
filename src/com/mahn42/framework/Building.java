@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-import org.dynmap.markers.CircleMarker;
 
 /**
  *

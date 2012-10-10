@@ -97,6 +97,7 @@ public class Framework extends JavaPlugin {
     protected PlayerManager fPlayerManager = null;
     protected HashMap<World, RestrictedRegions> fRestrictedRegions = new HashMap<World, RestrictedRegions>();
     protected WorldConfigurationDB fWorldConfigurationDB;
+    protected WorldDBList<WorldPlayerSettingsDB> fWorldPlayerSettingsDB;
     protected HashMap<String, WorldClassification> fWorldClassifications = new HashMap<String, WorldClassification>();
     
     /**
@@ -224,12 +225,17 @@ public class Framework extends JavaPlugin {
         return lProps;
     }
     
+    public WorldPlayerSettingsDB getWorldPlayerSettingsDB(String aWorldName) {
+        return fWorldPlayerSettingsDB.getDB(aWorldName);
+    }
+    
     @Override
     public void onEnable() { 
         plugin = this;
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
         }
+        fWorldPlayerSettingsDB = new WorldDBList<WorldPlayerSettingsDB>(WorldPlayerSettingsDB.class, "PlayerSets", this);
         fPlayerBuildings = new HashMap<String, PlayerBuildings>();
         fBuildingDetector = new BuildingDetector();
         readFrameworkConfig();
@@ -259,6 +265,7 @@ public class Framework extends JavaPlugin {
                 lWorld = lConf.getCreator().createWorld();
             }
         }
+        registerSaver(fWorldPlayerSettingsDB);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSaverTask, 100, configDBSaverTicks);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, 20);

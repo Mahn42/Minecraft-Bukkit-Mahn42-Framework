@@ -58,7 +58,7 @@ public class WorldDBList<T extends DBSetWorld> implements DBSave, Iterable<T> {
                 lDB.world = aWorld;
                 lDB.file = lFile;
                 lDB.load();
-                plugin.getLogger().info("Datafile " + lFile.toString() + " loaded. (Records:" + lDB.size() + ")");
+                //plugin.getLogger().info("Datafile " + lFile.toString() + " loaded. (Records:" + lDB.size() + ")");
                 fDBs.put(lWorldName, lDB);
             }
         }

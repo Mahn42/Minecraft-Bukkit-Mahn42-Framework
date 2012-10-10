@@ -31,7 +31,18 @@ public class CommandTeleport implements CommandExecutor {
                 lWorld = lPlayer.getWorld();
             }
             if (lWorld != null) {
-                Location lLocation = lWorld.getSpawnLocation();
+                Location lLocation;
+                WorldPlayerSettingsDB lDB = Framework.plugin.getWorldPlayerSettingsDB(lWorld.getName());
+                if (lDB != null) {
+                    WorldPlayerSettings lSet = lDB.getByName(lPlayer.getName());
+                    if (lSet != null) {
+                        lLocation = lSet.position.getLocation(lWorld);
+                    } else {
+                        lLocation = lWorld.getSpawnLocation();
+                    }
+                } else {
+                    lLocation = lWorld.getSpawnLocation();
+                }
                 if (aStrings.length == 3) {
                     lLocation.setX(Double.parseDouble(aStrings[0]));
                     lLocation.setY(Double.parseDouble(aStrings[1]));

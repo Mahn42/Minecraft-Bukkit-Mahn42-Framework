@@ -32,9 +32,21 @@ public class PlayerListener implements Listener {
                 lPlayer.setGameMode(lConf.gameMode);
             }
             if (lConf.ownInventory) {
-                lPlayer.getInventory().clear();
-                //TODO save inventory in aEvent.getFrom() world
-                // load inventory for current world
+                {
+                    WorldPlayerSettingsDB lSetDB = Framework.plugin.getWorldPlayerSettingsDB(aEvent.getFrom().getName());
+                    if (lSetDB != null) {
+                        WorldPlayerSettings lSet = lSetDB.getOrCreateByName(lPlayer.getName());
+                        lSet.setFromInventory(lPlayer.getInventory());
+                    }
+                }
+                {
+                    WorldPlayerSettingsDB lSetDB = Framework.plugin.getWorldPlayerSettingsDB(lWorld.getName());
+                    if (lSetDB != null) {
+                        WorldPlayerSettings lSet = lSetDB.getOrCreateByName(lPlayer.getName());
+                        lSet.setToInventory(lPlayer.getInventory());
+
+                    }
+                }
             }
         }
     }
@@ -74,6 +86,9 @@ public class PlayerListener implements Listener {
                 }
             }
         }
+        WorldPlayerSettingsDB lPSDB = Framework.plugin.getWorldPlayerSettingsDB(lPlayer.getWorld().getName());
+        WorldPlayerSettings lSet = lPSDB.getOrCreateByName(lPlayer.getName());
+        lSet.position.cloneFrom(lPPos);
     }
     
     @EventHandler
