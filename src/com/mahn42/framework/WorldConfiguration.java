@@ -153,6 +153,7 @@ public class WorldConfiguration extends DBRecord {
         difficulty = aWC.difficulty;
         playerVsPlayer = aWC.playerVsPlayer;
         classificationName = aWC.name;
+        ownInventory = aWC.ownInventory;
         entitySpawnCheck = aWC.entitySpawnCheck;
         naturalEntityTypes.clear();
         naturalEntityTypes.addAll(aWC.naturalEntityTypes);

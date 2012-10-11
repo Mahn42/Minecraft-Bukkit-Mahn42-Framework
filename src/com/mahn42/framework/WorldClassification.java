@@ -6,6 +6,7 @@ package com.mahn42.framework;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Difficulty;
@@ -41,7 +42,7 @@ public class WorldClassification {
         if (aObject instanceof Map) {
             lMap = (HashMap<String, Object>)aObject;
         } else if (aObject instanceof MemorySection) {
-            lMap = (HashMap<String, Object>) ((MemorySection)aObject).getValues(false);
+            lMap = (HashMap<String, Object>) ((MemorySection)aObject).getValues(true);
         }
         if (lMap != null) {
             for(Entry<String, Object> lEntry : lMap.entrySet()) {
@@ -90,8 +91,6 @@ public class WorldClassification {
     
     public void setNaturalEntityTypesFromSectionValue(Object aObject) {
         naturalEntityTypes.clear();
-        if (aObject instanceof MemorySection) {
-        }
         if (aObject instanceof ArrayList) {
             for(Object lObj : ((ArrayList)aObject)) {
                 String lStr = lObj.toString();
@@ -112,7 +111,7 @@ public class WorldClassification {
             for(Object lObj : ((ArrayList)aObject)) {
                 String lStr = lObj.toString();
                 if (lStr.equalsIgnoreCase("all")) {
-                    naturalEntityTypes.addAll(java.util.Arrays.asList(EntityType.values()));
+                    customEntityTypes.addAll(java.util.Arrays.asList(EntityType.values()));
                 } else {
                     customEntityTypes.add(EntityType.valueOf(lStr));
                 }

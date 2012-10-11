@@ -18,7 +18,7 @@ public class CommandWorldList implements CommandExecutor{
     @Override
     public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {
         WorldConfigurationDB lDB = Framework.plugin.getWorldConfigurationDB();
-        aCommandSender.sendMessage("NAME                |TYPE |ENV  |MODE |STR|ANI|MON|ENC|N#|C#");
+        aCommandSender.sendMessage("NAME                |TYPE |ENV  |MODE |STR|ANI|MON|ENC|OIV|N#|C#");
         for(WorldConfiguration lConf : lDB) {
             aCommandSender.sendMessage(String.format(
                     "%1$20s|%5$5s|%6$5s|%7$5s| %2$1s | %3$1s | %4$1s | %8$1s | %11$1s |%9$d|%10$d",
