@@ -21,6 +21,10 @@ public class CommandWorldRemove implements CommandExecutor{
         if (aStrings.length > 0) {
             WorldConfigurationDB lDB = Framework.plugin.getWorldConfigurationDB();
             WorldConfiguration lConf =  lDB.getByName(aStrings[0]);
+            if (lConf == null) {
+                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&cWorld %s not found.", aStrings[0]));
+                return true;
+            }
             Framework.plugin.getWorldConfigurationDB().remove(lConf);
             World lWorld = Framework.plugin.getServer().getWorld(lConf.name);
             if (lWorld != null) {

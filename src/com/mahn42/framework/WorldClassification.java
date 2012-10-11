@@ -6,11 +6,13 @@ package com.mahn42.framework;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.WorldType;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.EntityType;
 
 /**
@@ -35,8 +37,13 @@ public class WorldClassification {
     public ArrayList<EntityType> customEntityTypes = new ArrayList<EntityType>();
     
     public void fromSectionValue(Object aObject) {
-        if (aObject instanceof HashMap) {
-            HashMap<String, Object> lMap = (HashMap)aObject;
+        HashMap<String, Object> lMap = null;
+        if (aObject instanceof Map) {
+            lMap = (HashMap<String, Object>)aObject;
+        } else if (aObject instanceof MemorySection) {
+            lMap = (HashMap<String, Object>) ((MemorySection)aObject).getValues(false);
+        }
+        if (lMap != null) {
             for(Entry<String, Object> lEntry : lMap.entrySet()) {
                 if (lEntry.getValue() != null) {
                     String lValue = lEntry.getValue().toString();
@@ -70,18 +77,32 @@ public class WorldClassification {
                         setNaturalEntityTypesFromSectionValue(lEntry.getValue());
                     } else if (lEntry.getKey().equalsIgnoreCase("customEntityTypes")) {
                         setCustomEntityTypesFromSectionValue(lEntry.getValue());
+                    } else {
+                        Framework.plugin.getLogger().info("WC ? unkown attribute " + lEntry.getKey());
                     }
                 }
             }
+        } else {
+            Framework.plugin.getLogger().info("WC ? " + aObject.getClass().getName());
         }
+        
     }
     
     public void setNaturalEntityTypesFromSectionValue(Object aObject) {
         naturalEntityTypes.clear();
+        if (aObject instanceof MemorySection) {
+        }
         if (aObject instanceof ArrayList) {
             for(Object lObj : ((ArrayList)aObject)) {
-                naturalEntityTypes.add(EntityType.valueOf(lObj.toString()));
+                String lStr = lObj.toString();
+                if (lStr.equalsIgnoreCase("all")) {
+                    naturalEntityTypes.addAll(java.util.Arrays.asList(EntityType.values()));
+                } else {
+                    naturalEntityTypes.add(EntityType.valueOf(lStr));
+                }
             }
+        } else {
+            Framework.plugin.getLogger().info("WC nat ? " + aObject.getClass().getName() + " " + aObject.toString());
         }
     }
 
@@ -89,8 +110,15 @@ public class WorldClassification {
         customEntityTypes.clear();
         if (aObject instanceof ArrayList) {
             for(Object lObj : ((ArrayList)aObject)) {
-                customEntityTypes.add(EntityType.valueOf(lObj.toString()));
+                String lStr = lObj.toString();
+                if (lStr.equalsIgnoreCase("all")) {
+                    naturalEntityTypes.addAll(java.util.Arrays.asList(EntityType.values()));
+                } else {
+                    customEntityTypes.add(EntityType.valueOf(lStr));
+                }
             }
+        } else {
+            Framework.plugin.getLogger().info("WC cus ? " + aObject.getClass().getName());
         }
     }
 }

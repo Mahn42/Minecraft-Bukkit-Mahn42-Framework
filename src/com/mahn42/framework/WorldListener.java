@@ -45,6 +45,7 @@ public class WorldListener implements Listener {
         WorldConfiguration lConf = Framework.plugin.getWorldConfigurationDB().getByName(lWorld.getName());
         if (lConf != null) {
             if (!lConf.isEntityAllowed(lSpawnReason != SpawnReason.CUSTOM, lEntityType)) {
+                Framework.plugin.getLogger().info("spawn not allowed " + lEntityType);
                 aEvent.setCancelled(true);
             }
         }

@@ -30,6 +30,9 @@ public class WorldConfiguration extends DBRecord {
     public GameMode gameMode = GameMode.CREATIVE;
     public boolean playerVsPlayer = false;
     public String classificationName;
+    public boolean entitySpawnCheck = false;
+    public ArrayList<EntityType> naturalEntityTypes = new ArrayList<EntityType>();
+    public ArrayList<EntityType> customEntityTypes = new ArrayList<EntityType>();
     
     @Override
     protected void toCSVInternal(ArrayList aCols) {
@@ -47,6 +50,25 @@ public class WorldConfiguration extends DBRecord {
         aCols.add(gameMode);
         aCols.add(playerVsPlayer);
         aCols.add(classificationName);
+        aCols.add(entitySpawnCheck);
+        String lStr = "";
+        for(EntityType lType : naturalEntityTypes) {
+            if (lStr.isEmpty()) {
+                lStr = lType.toString();
+            } else {
+                lStr += "," + lType.toString();
+            }
+        }
+        aCols.add(lStr);
+        lStr = "";
+        for(EntityType lType : customEntityTypes) {
+            if (lStr.isEmpty()) {
+                lStr = lType.toString();
+            } else {
+                lStr += "," + lType.toString();
+            }
+        }
+        aCols.add(lStr);
     }
 
     @Override
@@ -65,6 +87,23 @@ public class WorldConfiguration extends DBRecord {
         gameMode = GameMode.valueOf(aCols.pop());
         playerVsPlayer = Boolean.parseBoolean(aCols.pop());
         classificationName = aCols.pop();
+        entitySpawnCheck = Boolean.parseBoolean(aCols.pop());
+        String lStr = aCols.pop();
+        naturalEntityTypes.clear();
+        if (lStr != null && !lStr.isEmpty()) {
+            String[] lParts = lStr.split("\\,");
+            for(String lPart : lParts) {
+                naturalEntityTypes.add(EntityType.valueOf(lPart));
+            }
+        }
+        lStr = aCols.pop();
+        customEntityTypes.clear();
+        if (lStr != null && !lStr.isEmpty()) {
+            String[] lParts = lStr.split("\\,");
+            for(String lPart : lParts) {
+                customEntityTypes.add(EntityType.valueOf(lPart));
+            }
+        }
     }
     
     public WorldCreator getCreator() {
@@ -114,9 +153,28 @@ public class WorldConfiguration extends DBRecord {
         difficulty = aWC.difficulty;
         playerVsPlayer = aWC.playerVsPlayer;
         classificationName = aWC.name;
+        entitySpawnCheck = aWC.entitySpawnCheck;
+        naturalEntityTypes.clear();
+        naturalEntityTypes.addAll(aWC.naturalEntityTypes);
+        customEntityTypes.clear();
+        customEntityTypes.addAll(aWC.customEntityTypes);
     }
     
     public boolean isEntityAllowed(boolean aNatural, EntityType aEntityType) {
-        return true;
+        boolean lResult = true;
+        if (entitySpawnCheck) {
+            if (aNatural) {
+                lResult = naturalEntityTypes.contains(aEntityType);
+            } else {
+                lResult = customEntityTypes.contains(aEntityType);
+            }
+        } else if (spawnAnimals && spawnMonsters) {
+            lResult = true;
+        } else if (!spawnAnimals && Framework.isAnimal(aEntityType)) {
+            lResult = false;
+        } else if (!spawnMonsters && !Framework.isAnimal(aEntityType) && aEntityType.isAlive()) {
+            lResult = false;
+        }
+        return lResult;
     }
 }

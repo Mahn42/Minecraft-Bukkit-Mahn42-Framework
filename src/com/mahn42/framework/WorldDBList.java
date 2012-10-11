@@ -37,6 +37,9 @@ public class WorldDBList<T extends DBSetWorld> implements DBSave, Iterable<T> {
     }
     
     public T getDB(World aWorld) {
+        if (aWorld == null) {
+            return null;
+        }
         String lWorldName = aWorld.getName();
         if (!fDBs.containsKey(lWorldName)) {
             File lFolder = aWorld.getWorldFolder();
@@ -74,7 +77,9 @@ public class WorldDBList<T extends DBSetWorld> implements DBSave, Iterable<T> {
         ArrayList<World> lResult = new ArrayList<World>();
         for (String lName : fDBs.keySet()) {
             World lWorld = Framework.plugin.getServer().getWorld(lName);
-            lResult.add(lWorld);
+            if (lWorld != null) {
+                lResult.add(lWorld);
+            }
         }
         return lResult;
     }

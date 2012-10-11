@@ -22,6 +22,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -404,4 +405,25 @@ public class Framework extends JavaPlugin {
         return false;
     }
     
+    public static EntityType[] animals;
+    {
+        animals = new EntityType[7];
+        animals[0] = EntityType.CHICKEN;
+        animals[1] = EntityType.COW;
+        animals[2] = EntityType.MUSHROOM_COW;
+        animals[3] = EntityType.OCELOT;
+        animals[4] = EntityType.PIG;
+        animals[5] = EntityType.SHEEP;
+        animals[6] = EntityType.WOLF;
+    }
+
+    public static boolean isAnimal(EntityType aEntityType) {
+        for(EntityType lT : animals) {
+            if (lT.equals(aEntityType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
