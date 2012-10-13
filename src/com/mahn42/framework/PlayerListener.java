@@ -73,7 +73,7 @@ public class PlayerListener implements Listener {
             for(Building lBuilding : lBuildings) {
                 if (!lPBuilds.inBuildings.contains(lBuilding)) {
                     lPBuilds.inBuildings.add(lBuilding);
-                    BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerEnter);
+                    BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerEnter, aEvent.getPlayer());
                     lEvent.raise();
                 }
             }
@@ -81,7 +81,7 @@ public class PlayerListener implements Listener {
             for(Building lBuilding : lInBuildings) {
                 if (!lBuildings.contains(lBuilding)) {
                     lPBuilds.inBuildings.remove(lBuilding);
-                    BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerLeave);
+                    BuildingEvent lEvent = new BuildingEvent(lBuilding, BuildingEvent.BuildingAction.PlayerLeave, aEvent.getPlayer());
                     lEvent.raise();
                 }
             }

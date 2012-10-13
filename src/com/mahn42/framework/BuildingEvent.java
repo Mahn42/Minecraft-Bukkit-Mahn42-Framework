@@ -4,6 +4,7 @@
  */
 package com.mahn42.framework;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
  
@@ -23,10 +24,17 @@ public class BuildingEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private Building building;
     private BuildingAction action;
+    private Player player;
     
     public BuildingEvent(Building aBuilding, BuildingAction aAction) {
         building = aBuilding;
         action = aAction;
+    }
+ 
+    public BuildingEvent(Building aBuilding, BuildingAction aAction, Player aPlayer) {
+        building = aBuilding;
+        action = aAction;
+        player = aPlayer;
     }
  
     public Building getBuilding() {
@@ -35,6 +43,10 @@ public class BuildingEvent extends Event {
  
     public BuildingAction getAction() {
         return action;
+    }
+    
+    public Player getPlayer() {
+        return player;
     }
  
     @Override

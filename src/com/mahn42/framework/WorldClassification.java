@@ -96,6 +96,9 @@ public class WorldClassification {
                 String lStr = lObj.toString();
                 if (lStr.equalsIgnoreCase("all")) {
                     naturalEntityTypes.addAll(java.util.Arrays.asList(EntityType.values()));
+                } else if (lStr.startsWith("-")) {
+                    lStr = lStr.substring(1);
+                    customEntityTypes.remove(EntityType.valueOf(lStr));
                 } else {
                     naturalEntityTypes.add(EntityType.valueOf(lStr));
                 }
@@ -112,6 +115,9 @@ public class WorldClassification {
                 String lStr = lObj.toString();
                 if (lStr.equalsIgnoreCase("all")) {
                     customEntityTypes.addAll(java.util.Arrays.asList(EntityType.values()));
+                } else if (lStr.startsWith("-")) {
+                    lStr = lStr.substring(1);
+                    customEntityTypes.remove(EntityType.valueOf(lStr));
                 } else {
                     customEntityTypes.add(EntityType.valueOf(lStr));
                 }
