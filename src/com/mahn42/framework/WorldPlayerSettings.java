@@ -73,7 +73,7 @@ public class WorldPlayerSettings extends DBRecordWorld {
                 if (lObj instanceof ArrayList) {
                     for(Object lItem : (ArrayList)lObj) {
                         if (lItem == null || lItem.toString().equals("null")) {
-                            aInv.addItem(null);
+                            aInv.addItem((ItemStack)null);
                         } else {
                             ItemStack lIStack = ItemStack.deserialize((Map)lItem);
                             aInv.addItem(lIStack);

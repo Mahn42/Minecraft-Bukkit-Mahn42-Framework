@@ -16,6 +16,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -259,6 +260,17 @@ public class Framework extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new WorldListener(), this);
+        List<World> lWorlds = getServer().getWorlds();
+        for(World lWorld :  lWorlds) {
+            WorldConfiguration lConf = getWorldConfigurationDB().getByName(lWorld.getName());
+            if (lConf == null) {
+                lConf = new WorldConfiguration();
+                lConf.name = lWorld.getName();
+                lConf.gameMode = GameMode.SURVIVAL; // for unknown worlds is SURVIVAL default 
+                lConf.updateFromWorld();
+                getWorldConfigurationDB().addRecord(lConf);
+            }
+        }
         for(WorldConfiguration lConf : getWorldConfigurationDB()) {
             World lWorld = getServer().getWorld(lConf.name);
             if (lWorld == null) {

@@ -31,14 +31,14 @@ public class PlayerListener implements Listener {
             if (lConf.gameMode != lPlayer.getGameMode()) {
                 lPlayer.setGameMode(lConf.gameMode);
             }
-            if (lConf.ownInventory) {
-                {
-                    WorldPlayerSettingsDB lSetDB = Framework.plugin.getWorldPlayerSettingsDB(aEvent.getFrom().getName());
-                    if (lSetDB != null) {
-                        WorldPlayerSettings lSet = lSetDB.getOrCreateByName(lPlayer.getName());
-                        lSet.setFromInventory(lPlayer.getInventory());
-                    }
+            {
+                WorldPlayerSettingsDB lSetDB = Framework.plugin.getWorldPlayerSettingsDB(aEvent.getFrom().getName());
+                if (lSetDB != null) {
+                    WorldPlayerSettings lSet = lSetDB.getOrCreateByName(lPlayer.getName());
+                    lSet.setFromInventory(lPlayer.getInventory());
                 }
+            }
+            if (lConf.ownInventory) {
                 {
                     WorldPlayerSettingsDB lSetDB = Framework.plugin.getWorldPlayerSettingsDB(lWorld.getName());
                     if (lSetDB != null) {
