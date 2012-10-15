@@ -36,7 +36,7 @@ commands:
    fw_world_create:
       description: create a new world. 
       usage: /fw_world_create <worldname> [worldclass]
-      aliases: newworld
+      aliases: [newworld, createworld]
       permission: fw.world_create
       permission-message: You don't have permission
    fw_world_remove:

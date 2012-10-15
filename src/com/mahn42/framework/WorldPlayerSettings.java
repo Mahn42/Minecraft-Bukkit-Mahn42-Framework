@@ -71,13 +71,15 @@ public class WorldPlayerSettings extends DBRecordWorld {
                 lYaml.loadFromString(lInvStr);
                 Object lObj = lYaml.get("Inventory");
                 if (lObj instanceof ArrayList) {
+                    int lIndex = 0;
                     for(Object lItem : (ArrayList)lObj) {
                         if (lItem == null || lItem.toString().equals("null")) {
-                            aInv.addItem((ItemStack)null);
+                            //aInv.addItem((ItemStack)null);
                         } else {
                             ItemStack lIStack = ItemStack.deserialize((Map)lItem);
-                            aInv.addItem(lIStack);
+                            aInv.setItem(lIndex, lIStack);
                         }
+                        lIndex++;
                     } 
                 }
             } catch (InvalidConfigurationException ex) {

@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -27,8 +28,10 @@ public class PlayerListener implements Listener {
         Player lPlayer = aEvent.getPlayer();
         World lWorld = lPlayer.getWorld();
         WorldConfiguration lConf = Framework.plugin.getWorldConfigurationDB().getByName(lWorld.getName());
+        WorldConfiguration lConfFrom = Framework.plugin.getWorldConfigurationDB().getByName(aEvent.getFrom().getName());
         if (lConf != null) {
             if (lConf.gameMode != lPlayer.getGameMode()) {
+                Logger.getLogger("xx").info("set gamemode = " + lConf.gameMode);
                 lPlayer.setGameMode(lConf.gameMode);
             }
             {
@@ -36,15 +39,16 @@ public class PlayerListener implements Listener {
                 if (lSetDB != null) {
                     WorldPlayerSettings lSet = lSetDB.getOrCreateByName(lPlayer.getName());
                     lSet.setFromInventory(lPlayer.getInventory());
+                Logger.getLogger("xx").info("set inventory for player " + lSet.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConf.name);
                 }
             }
-            if (lConf.ownInventory) {
+            if (lConf.ownInventory || (lConfFrom != null && lConfFrom.ownInventory)) {
                 {
                     WorldPlayerSettingsDB lSetDB = Framework.plugin.getWorldPlayerSettingsDB(lWorld.getName());
                     if (lSetDB != null) {
                         WorldPlayerSettings lSet = lSetDB.getOrCreateByName(lPlayer.getName());
                         lSet.setToInventory(lPlayer.getInventory());
-
+                Logger.getLogger("xx").info("get inventory for player " + lSet.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConf.name);
                     }
                 }
             }
