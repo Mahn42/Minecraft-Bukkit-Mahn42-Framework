@@ -23,7 +23,7 @@ public class CommandWorldCreate implements CommandExecutor{
             lConf.name = aStrings[0];
             if (aStrings.length > 1) {
                 WorldClassification lWC = Framework.plugin.getWorldClassification(aStrings[1]);
-                if (lWC != null) {
+                if (lWC == null) {
                     aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&aClassification %s is not registered.", aStrings[1]));
                     return true;
                 }
