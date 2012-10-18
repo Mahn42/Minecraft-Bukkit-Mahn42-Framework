@@ -62,17 +62,59 @@ public class CommandWorldSet implements CommandExecutor{
                 } else if (aStrings[0].equalsIgnoreCase("entitySpawnCheck")) {
                     lConf.entitySpawnCheck = Boolean.parseBoolean(aStrings[1]);
                 } else if (aStrings[0].equalsIgnoreCase("naturalEntityTypes")) {
-                    lConf.naturalEntityTypes.add(EntityType.valueOf(aStrings[1]));
+                    if (aStrings[1].startsWith("-")) {
+                        lConf.naturalEntityTypes.remove(EntityType.valueOf(aStrings[1].substring(1)));
+                    } else {
+                        lConf.naturalEntityTypes.add(EntityType.valueOf(aStrings[1]));
+                    }
                 } else if (aStrings[0].equalsIgnoreCase("customEntityTypes")) {
-                    lConf.customEntityTypes.add(EntityType.valueOf(aStrings[1]));
+                    if (aStrings[1].startsWith("-")) {
+                        lConf.customEntityTypes.remove(EntityType.valueOf(aStrings[1].substring(1)));
+                    } else {
+                        lConf.customEntityTypes.add(EntityType.valueOf(aStrings[1]));
+                    }
                 } else if (aStrings[0].equalsIgnoreCase("inventoryName")) {
                     lConf.inventoryName = aStrings[1];
+                } else if (aStrings[0].equalsIgnoreCase("noInventory")) {
+                    lConf.noInventory = Boolean.parseBoolean(aStrings[1]);
                 } else {
                     aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&cunkown attribute %s!", aStrings[0]));
                     return true;
                 }
                 lConf.updateToWorld();
                 aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "set %s to %s in world %s", aStrings[0], aStrings[1], lWorld.getName()));
+            } else {
+                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&cno configuration for world %s found!", lWorld.getName()));
+            }
+        } else {
+            if (aCommandSender instanceof Player) {
+                lWorld = ((Player)aCommandSender).getWorld();
+            } else if (aStrings.length > 0) {
+                lWorld = Framework.plugin.getServer().getWorld(aStrings[0]);
+            }
+            if (lWorld == null) {
+                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&cno world or unknown world!"));
+                return true;
+            }
+            WorldConfiguration lConf = Framework.plugin.getWorldConfigurationDB().getByName(lWorld.getName());
+            if (lConf != null) {
+                lConf.updateFromWorld();
+                aCommandSender.sendMessage("generateStructures:" + lConf.generateStructures);
+                aCommandSender.sendMessage("generator:" + lConf.generator);
+                aCommandSender.sendMessage("seed:" + lConf.seed);
+                aCommandSender.sendMessage("type:" + lConf.type);
+                aCommandSender.sendMessage("environment:" + lConf.environment);
+                aCommandSender.sendMessage("spawnMonsters:" + lConf.spawnMonsters);
+                aCommandSender.sendMessage("spawnAnimals:" + lConf.spawnAnimals);
+                aCommandSender.sendMessage("difficulty:" + lConf.difficulty);
+                aCommandSender.sendMessage("ownInventory:" + lConf.ownInventory);
+                aCommandSender.sendMessage("gameMode:" + lConf.gameMode);
+                aCommandSender.sendMessage("playerVsPlayer:" + lConf.playerVsPlayer);
+                aCommandSender.sendMessage("entitySpawnCheck:" + lConf.entitySpawnCheck);
+                aCommandSender.sendMessage("naturalEntityTypes:" + lConf.naturalEntityTypes);
+                aCommandSender.sendMessage("customEntityTypes:" + lConf.customEntityTypes);
+                aCommandSender.sendMessage("inventoryName:" + lConf.inventoryName);
+                aCommandSender.sendMessage("noInventory:" + lConf.noInventory);
             } else {
                 aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&cno configuration for world %s found!", lWorld.getName()));
             }
