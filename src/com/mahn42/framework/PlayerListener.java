@@ -40,7 +40,7 @@ public class PlayerListener implements Listener {
                 lInv.setFromInventory(lPlayer.getInventory());
                 Logger.getLogger("xx").info("set inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConfFrom.name);
             }
-            if (!lConf.inventoryName.equalsIgnoreCase(lConfFrom.inventoryName)) {
+            if (!lConf.noInventory && !lConf.inventoryName.equalsIgnoreCase(lConfFrom.inventoryName)) {
                 WorldPlayerInventory lInv = lInvDB.getOrCreate(lConf.inventoryName, lPlayer.getName());
                 lInv.setToInventory(lPlayer.getInventory());
                 Logger.getLogger("xx").info("get inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConf.name);

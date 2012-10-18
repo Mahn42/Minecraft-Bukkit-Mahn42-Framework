@@ -34,6 +34,7 @@ public class WorldConfiguration extends DBRecord {
     public ArrayList<EntityType> naturalEntityTypes = new ArrayList<EntityType>();
     public ArrayList<EntityType> customEntityTypes = new ArrayList<EntityType>();
     public String inventoryName;
+    public boolean noInventory = false;
     
     @Override
     protected void toCSVInternal(ArrayList aCols) {
@@ -71,6 +72,7 @@ public class WorldConfiguration extends DBRecord {
         }
         aCols.add(lStr);
         aCols.add(inventoryName);
+        aCols.add(noInventory);
     }
 
     @Override
@@ -107,6 +109,7 @@ public class WorldConfiguration extends DBRecord {
             }
         }
         inventoryName = aCols.pop();
+        noInventory = Boolean.parseBoolean(aCols.pop());
     }
     
     public WorldCreator getCreator() {
@@ -162,6 +165,8 @@ public class WorldConfiguration extends DBRecord {
         naturalEntityTypes.addAll(aWC.naturalEntityTypes);
         customEntityTypes.clear();
         customEntityTypes.addAll(aWC.customEntityTypes);
+        inventoryName = aWC.inventoryName;
+        noInventory = aWC.noInventory;
     }
     
     public boolean isEntityAllowed(boolean aNatural, EntityType aEntityType) {

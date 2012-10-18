@@ -37,6 +37,7 @@ public class WorldClassification {
     public ArrayList<EntityType> naturalEntityTypes = new ArrayList<EntityType>();
     public ArrayList<EntityType> customEntityTypes = new ArrayList<EntityType>();
     public String inventoryName = null; 
+    public boolean noInventory = false;
     
     public void fromSectionValue(Object aObject) {
         HashMap<String, Object> lMap = null;
@@ -81,6 +82,8 @@ public class WorldClassification {
                         setCustomEntityTypesFromSectionValue(lEntry.getValue());
                     } else if (lEntry.getKey().equalsIgnoreCase("inventoryName")) {
                         inventoryName = lValue;
+                    } else if (lEntry.getKey().equalsIgnoreCase("noInventory")) {
+                        noInventory = Boolean.parseBoolean(lValue);
                     } else {
                         Framework.plugin.getLogger().info("WC ? unkown attribute " + lEntry.getKey());
                     }
