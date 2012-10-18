@@ -99,6 +99,7 @@ public class Framework extends JavaPlugin {
     protected PlayerManager fPlayerManager = null;
     protected HashMap<World, RestrictedRegions> fRestrictedRegions = new HashMap<World, RestrictedRegions>();
     protected WorldConfigurationDB fWorldConfigurationDB;
+    protected WorldPlayerInventoryDB fWorldPlayerInventoryDB;
     protected WorldDBList<WorldPlayerSettingsDB> fWorldPlayerSettingsDB;
     protected HashMap<String, WorldClassification> fWorldClassifications = new HashMap<String, WorldClassification>();
     
@@ -138,6 +139,16 @@ public class Framework extends JavaPlugin {
             registerSaver(fWorldConfigurationDB);
         }
         return fWorldConfigurationDB;
+    }
+
+    public WorldPlayerInventoryDB getWorldPlayerInventoryDB() {
+        if (fWorldPlayerInventoryDB == null) {
+            fWorldPlayerInventoryDB = new WorldPlayerInventoryDB();
+            fWorldPlayerInventoryDB.load();
+            getLogger().info("Datafile " + fWorldPlayerInventoryDB.file.toString() + " loaded. (Records:" + fWorldPlayerInventoryDB.size() + ")");
+            registerSaver(fWorldPlayerInventoryDB);
+        }
+        return fWorldPlayerInventoryDB;
     }
 
     public RestrictedRegions getRestrictedRegions(World aWorld, boolean aCreate) {
@@ -255,6 +266,7 @@ public class Framework extends JavaPlugin {
         getCommand("fw_world_remove").setExecutor(new CommandWorldRemove());
         getCommand("fw_world_list").setExecutor(new CommandWorldList());
         getCommand("fw_world_clist").setExecutor(new CommandWorldClassificationList());
+        getCommand("fw_world_set").setExecutor(new CommandWorldSet());
         getCommand("fw_tp").setExecutor(new CommandTeleport());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
@@ -268,6 +280,11 @@ public class Framework extends JavaPlugin {
                 lConf.name = lWorld.getName();
                 lConf.gameMode = GameMode.SURVIVAL; // for unknown worlds is SURVIVAL default 
                 lConf.updateFromWorld();
+                lConf.inventoryName = lConf.name;
+                if (lConf.name.equalsIgnoreCase("world_nether")
+                        ||lConf.name.equalsIgnoreCase("world_the_end")) {
+                    lConf.inventoryName = "world";
+                } 
                 getWorldConfigurationDB().addRecord(lConf);
             }
         }

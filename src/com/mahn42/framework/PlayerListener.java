@@ -34,23 +34,16 @@ public class PlayerListener implements Listener {
                 Logger.getLogger("xx").info("set gamemode = " + lConf.gameMode);
                 lPlayer.setGameMode(lConf.gameMode);
             }
-            {
-                WorldPlayerSettingsDB lSetDB = Framework.plugin.getWorldPlayerSettingsDB(aEvent.getFrom().getName());
-                if (lSetDB != null) {
-                    WorldPlayerSettings lSet = lSetDB.getOrCreateByName(lPlayer.getName());
-                    lSet.setFromInventory(lPlayer.getInventory());
-                Logger.getLogger("xx").info("set inventory for player " + lSet.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConf.name);
-                }
+            WorldPlayerInventoryDB lInvDB = Framework.plugin.getWorldPlayerInventoryDB();
+            if (lInvDB != null) {
+                WorldPlayerInventory lInv = lInvDB.getOrCreate(lConfFrom.inventoryName, lPlayer.getName());
+                lInv.setFromInventory(lPlayer.getInventory());
+                Logger.getLogger("xx").info("set inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConfFrom.name);
             }
-            if (lConf.ownInventory || (lConfFrom != null && lConfFrom.ownInventory)) {
-                {
-                    WorldPlayerSettingsDB lSetDB = Framework.plugin.getWorldPlayerSettingsDB(lWorld.getName());
-                    if (lSetDB != null) {
-                        WorldPlayerSettings lSet = lSetDB.getOrCreateByName(lPlayer.getName());
-                        lSet.setToInventory(lPlayer.getInventory());
-                Logger.getLogger("xx").info("get inventory for player " + lSet.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConf.name);
-                    }
-                }
+            if (!lConf.inventoryName.equalsIgnoreCase(lConfFrom.inventoryName)) {
+                WorldPlayerInventory lInv = lInvDB.getOrCreate(lConf.inventoryName, lPlayer.getName());
+                lInv.setToInventory(lPlayer.getInventory());
+                Logger.getLogger("xx").info("get inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConf.name);
             }
         }
     }

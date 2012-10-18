@@ -33,6 +33,7 @@ public class WorldConfiguration extends DBRecord {
     public boolean entitySpawnCheck = false;
     public ArrayList<EntityType> naturalEntityTypes = new ArrayList<EntityType>();
     public ArrayList<EntityType> customEntityTypes = new ArrayList<EntityType>();
+    public String inventoryName;
     
     @Override
     protected void toCSVInternal(ArrayList aCols) {
@@ -69,6 +70,7 @@ public class WorldConfiguration extends DBRecord {
             }
         }
         aCols.add(lStr);
+        aCols.add(inventoryName);
     }
 
     @Override
@@ -104,6 +106,7 @@ public class WorldConfiguration extends DBRecord {
                 customEntityTypes.add(EntityType.valueOf(lPart));
             }
         }
+        inventoryName = aCols.pop();
     }
     
     public WorldCreator getCreator() {

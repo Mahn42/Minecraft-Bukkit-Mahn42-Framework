@@ -4,7 +4,6 @@
  */
 package com.mahn42.framework;
 
-import java.util.ArrayList;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,10 +17,10 @@ public class CommandWorldList implements CommandExecutor{
     @Override
     public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {
         WorldConfigurationDB lDB = Framework.plugin.getWorldConfigurationDB();
-        aCommandSender.sendMessage("NAME                |TYPE |ENV  |MODE |STR|ANI|MON|ENC|OIV|N#|C#");
+        aCommandSender.sendMessage("NAME                |TYPE |ENV  |MODE |STR|ANI|MON|ENC|INVENTORY           |N#|C#");
         for(WorldConfiguration lConf : lDB) {
             aCommandSender.sendMessage(String.format(
-                    "%1$20s|%5$5s|%6$5s|%7$5s| %2$1s | %3$1s | %4$1s | %8$1s | %11$1s |%9$d|%10$d",
+                    "%1$20s|%5$5s|%6$5s|%7$5s| %2$1s | %3$1s | %4$1s | %8$1s |%11$10s|%9$d|%10$d",
                     (lConf.name + "                    ").substring(0, 20),
                     lConf.generateStructures?"X":"-",
                     lConf.spawnAnimals?"X":"-",
@@ -32,7 +31,8 @@ public class CommandWorldList implements CommandExecutor{
                     lConf.entitySpawnCheck?"X":"-",
                     lConf.naturalEntityTypes.size(),
                     lConf.customEntityTypes.size(),
-                    lConf.ownInventory?"X":"-")
+                    (lConf.inventoryName + "                    ").substring(0, 20)
+                    )
                     );
         }
         return true;
