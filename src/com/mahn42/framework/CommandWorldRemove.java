@@ -4,6 +4,7 @@
  */
 package com.mahn42.framework;
 
+import java.util.ArrayList;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,6 +27,14 @@ public class CommandWorldRemove implements CommandExecutor{
                 return true;
             }
             Framework.plugin.getWorldConfigurationDB().remove(lConf);
+            WorldPlayerSettingsDB lPSetDB = Framework.plugin.getWorldPlayerSettingsDB(lConf.name);
+            ArrayList<WorldPlayerSettings> lSets = new ArrayList<WorldPlayerSettings>();
+            for(WorldPlayerSettings lSet : lPSetDB) {
+                lSets.add(lSet);
+            }
+            for(WorldPlayerSettings lSet : lSets) {
+                lPSetDB.remove(lSet);
+            }
             World lWorld = Framework.plugin.getServer().getWorld(lConf.name);
             if (lWorld != null) {
                 Framework.plugin.getServer().unloadWorld(lWorld, true);
