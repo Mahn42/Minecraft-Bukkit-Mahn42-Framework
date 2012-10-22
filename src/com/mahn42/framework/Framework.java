@@ -258,15 +258,18 @@ public class Framework extends JavaPlugin {
         
         getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
         getCommand("fw_bd_create").setExecutor(new CommandBD_Create());
+        getCommand("fw_bd_createfromarea").setExecutor(new CommandBD_CreateFromArea());
         getCommand("fw_bd_detect").setExecutor(new CommandBD_Detect());
         getCommand("fw_set_spawn").setExecutor(new CommandSetSpawn());
         getCommand("fw_save").setExecutor(new CommandSave());
         getCommand("fw_debug").setExecutor(new CommandDebugSet());
         getCommand("fw_world_create").setExecutor(new CommandWorldCreate());
         getCommand("fw_world_remove").setExecutor(new CommandWorldRemove());
+        getCommand("fw_world_regenerate").setExecutor(new CommandWorldRegenerate());
         getCommand("fw_world_list").setExecutor(new CommandWorldList());
         getCommand("fw_world_clist").setExecutor(new CommandWorldClassificationList());
         getCommand("fw_world_set").setExecutor(new CommandWorldSet());
+        getCommand("fw_world_pinv").setExecutor(new CommandWorldPlayerInventory());
         getCommand("fw_tp").setExecutor(new CommandTeleport());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);

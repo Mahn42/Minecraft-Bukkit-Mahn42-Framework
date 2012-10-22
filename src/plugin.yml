@@ -13,6 +13,12 @@ commands:
       usage: /fw_bd_create <descname>
       permission: fw.bd_create
       permission-message: You don't have permission
+   fw_bd_createfromarea:
+      description: only for testing, create a buildingdescription for a given area.
+      usage: /fw_bd_createfromarea <descname> <areafilename>
+      aliases: bd_cfa
+      permission: fw.bd_createfromarea
+      permission-message: You don't have permission
    fw_bd_detect:
       description: only for testing, detect a building for a given building description.
       usage: /fw_bd_detect <descname>
@@ -60,6 +66,18 @@ commands:
       usage: /fw_world_set name value [worldname]
       permission: fw.world_set
       permission-message: You don't have permission
+   fw_world_regenerate:
+      description: regenerate a region of a world. 
+      usage: /fw_world_regenerate [<x> <z> <radius> <worldname>] | [<radius> [<worldname>]]
+      aliases: wreg
+      permission: fw.world_regenerate
+      permission-message: You don't have permission
+   fw_world_pinv:
+      description: list player inventory for player in a world. 
+      usage: /fw_world_pinv [<playername> [<worldname>]]
+      aliases: wpinv
+      permission: fw.world_pinv
+      permission-message: You don't have permission
    fw_tp:
       description: teleport to position and a world. 
       usage: /fw_tp [<worldname>] [<x> <y> <z>]
@@ -71,6 +89,7 @@ permissions:
         children:
             fw.bd_dump: true
             fw.bd_create: true
+            fw.bd_createfromarea: true
             fw.bd_detect: true
             fw.set_spawn: true
             fw.save: true
@@ -83,15 +102,20 @@ permissions:
             fw.we_fill: true
             fw.world_create: true
             fw.world_remove: true
+            fw.world_regenerate: true
             fw.world_list: true
             fw.world_clist: true
             fw.world_set: true
+            fw.world_pinv: true
             fw.tp: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
     fw.bd_create:
         description: Allows you to create a building based on a building description
+        default: false
+    fw.bd_createfromarea:
+        description: Allows you to create a building description based on a area
         default: false
     fw.bd_detect:
         description: Allows you to detect a building based on a building description
@@ -111,6 +135,9 @@ permissions:
     fw.world_remove:
         description: Allows you to remove a world
         default: false
+    fw.world_regenerate:
+        description: Allows you to regenerate a region of a world
+        default: false
     fw.world_clist:
         description: Allows you to list all registered worldclassifications
         default: false
@@ -119,6 +146,9 @@ permissions:
         default: false
     fw.world_set:
         description: Allows you to set properties of a world
+        default: false
+    fw.world_pinv:
+        description: Allows you to list a playerinventory of a world
         default: false
     fw.tp:
         description: Allows you to teleport to position in a world

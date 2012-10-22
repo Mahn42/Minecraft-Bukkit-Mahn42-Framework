@@ -21,6 +21,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -622,5 +623,36 @@ public class BlockArea {
                 }
             }
         }
+    }
+    
+    public BuildingDescription createDescription(String aName) {
+        BuildingDescription lDesc = new BuildingDescription(aName);
+        BuildingDescription.BlockDescription lBlock = null;
+        int lx;
+        int ly;
+        int lz;
+        lx = ly = lz = 0;
+        for(int x=0;x<width;x++) {
+            for(int y=0;y<width;y++) {
+                for(int z=0;z<width;z++) {
+                    BlockAreaItem lItem = get(x, y, z);
+                    if (lItem.id != Material.AIR.getId()) {
+                        if (lBlock == null) {
+                            lx = x; ly = y; lz = z;
+                            lBlock = lDesc.newBlockDescription("B" + x + "-" + y + "-" + z);
+                            lBlock.materials.add(Material.getMaterial(lItem.id));
+                        } else {
+                            BuildingDescription.BlockDescription lNext = null;
+                            lNext = lDesc.newBlockDescription("B" + x + "-" + y + "-" + z);
+                            lNext.materials.add(Material.getMaterial(lItem.id));
+                            lBlock.newRelatedTo(new Vector(x - lx, y - ly, z - lz), lNext.name);
+                            lx = x; ly = y; lz = z;
+                            lBlock = lNext;
+                        }
+                    }
+                }
+            }
+        }
+        return lDesc;
     }
 }

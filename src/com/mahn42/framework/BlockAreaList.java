@@ -21,7 +21,7 @@ import org.bukkit.World;
  */
 public class BlockAreaList extends ArrayList<BlockArea> {
     
-    public void load(File aFile) {
+    public boolean load(File aFile) {
         clear();
         if (aFile.exists()) {
             try {
@@ -46,7 +46,11 @@ public class BlockAreaList extends ArrayList<BlockArea> {
                 lReader.close();
             } catch (IOException ex) {
                 Framework.plugin.getLogger().log(Level.SEVERE, null, ex);
-            }            
+                return false;
+            }     
+            return true;
+        } else {
+            return false;
         }
     }
     

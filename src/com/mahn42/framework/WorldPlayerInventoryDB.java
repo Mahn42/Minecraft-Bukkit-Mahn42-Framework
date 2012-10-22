@@ -21,7 +21,7 @@ public class WorldPlayerInventoryDB extends DBSet<WorldPlayerInventory> {
 
     public WorldPlayerInventory get(String aInvenoryName, String aPlayerName) {
         for(WorldPlayerInventory lInv : this) {
-            if(lInv.inventoryName.equals(aInvenoryName) && lInv.playerName.equals(aPlayerName)) {
+            if ((lInv.inventoryName == null ? aInvenoryName == null : lInv.inventoryName.equals(aInvenoryName)) && (lInv.playerName == null ? aPlayerName == null : lInv.playerName.equals(aPlayerName))) {
                 return lInv;
             }
         }

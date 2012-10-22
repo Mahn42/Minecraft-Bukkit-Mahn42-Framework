@@ -18,6 +18,7 @@ WorldClassifications:
     spawnAnimals: false
     difficulty: NORMAL
     ownInventory: true
+    inventoryName: creative
     gameMode: CREATIVE
     playerVsPlayer: false
   -
@@ -31,6 +32,7 @@ WorldClassifications:
     spawnAnimals: false
     difficulty: NORMAL
     ownInventory: true
+    inventoryName: creative
     gameMode: CREATIVE
     playerVsPlayer: false
   -
@@ -44,6 +46,7 @@ WorldClassifications:
     spawnAnimals: false
     difficulty: NORMAL
     ownInventory: true
+    inventoryName: creative
     gameMode: CREATIVE
     playerVsPlayer: false
     
