@@ -107,8 +107,11 @@ public class Framework extends JavaPlugin {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        BlockArea lArea = new BlockArea(10, 10, 10);
-        Logger.getAnonymousLogger().info("Area Item 0 = " + lArea.items.get(0));
+        BlockRect lRect = new BlockRect();
+        lRect.fromCSV("1,2,3 - 4,5,6", ",");
+        Logger.getLogger("xxx").info(lRect.toString());
+        lRect.fromCSV("1,2,3", ",");
+        Logger.getLogger("xxx").info(lRect.toString());
     }
     
     public void registerWorldClassification(WorldClassification aClassification) {

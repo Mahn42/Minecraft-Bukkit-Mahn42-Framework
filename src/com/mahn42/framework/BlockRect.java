@@ -26,6 +26,17 @@ public class BlockRect {
                 && aPos.z >= edge1.z && aPos.z <= edge2.z;
     }
     
+    public void cloneFrom(BlockRect aRect) {
+        edge1.cloneFrom(aRect.edge1);
+        edge2.cloneFrom(aRect.edge2);
+    }
+    
+    public BlockRect clone() {
+        BlockRect lRect = new BlockRect();
+        lRect.cloneFrom(this);
+        return lRect;
+    }
+    
     public BlockPosition[] getEdges() {
         BlockPosition[] lEdges = new BlockPosition[8];
         lEdges[0] = edge1.clone();
@@ -49,8 +60,37 @@ public class BlockRect {
         return false;
     }
     
+    public void fromCSV(String aText, String aSep) {
+        String[] lParts = aText.replaceAll("(", "").replaceAll(")", "").split(" - ");
+        if (lParts.length > 1) {
+            edge1.fromCSV(lParts[0], aSep);
+            edge2.fromCSV(lParts[1], aSep);
+        } else if (lParts.length > 0) {
+            edge1.fromCSV(lParts[0], aSep);
+            edge2.cloneFrom(edge1);
+        }
+    }
+    
     @Override
     public String toString() {
-        return edge1.toString() + "-" + edge2.toString();
+        return edge1.toString() + " - " + edge2.toString();
     }
+    
+    @Override
+    public boolean equals(Object aObject) {
+        if (aObject instanceof BlockRect) {
+            return edge1.equals(((BlockRect)aObject).edge1) && edge2.equals(((BlockRect)aObject).edge2);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (this.edge1 != null ? this.edge1.hashCode() : 0);
+        hash = 89 * hash + (this.edge2 != null ? this.edge2.hashCode() : 0);
+        return hash;
+    }
+
 }
