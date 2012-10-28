@@ -303,6 +303,8 @@ public class BuildingDescription {
     public double influenceRadiusFactor = 0;
     public BuildingHandler handler = null;
     public int detectPriority = -1;
+    public String iconName = null;
+    public boolean visibleOnMap = true;
     
     public BuildingDescription() {
     }
@@ -334,6 +336,8 @@ public class BuildingDescription {
         if (name == null || name.isEmpty()) {
             name = aDesc.name;
         }
+        iconName = aDesc.iconName;
+        visibleOnMap = aDesc.visibleOnMap;
         position = aDesc.position;
         blocks.clear();
         for(BlockDescription lBDesc : aDesc.blocks) {
