@@ -310,7 +310,7 @@ public class BlockArea {
         }
 
         public void fromFileString(String aString) {
-            pos.fromCSV(aString, ",");
+            pos.fromCSV(aString, "\\,");
         }
 
         public void toList(SyncBlockList aList, BlockPosition aEdge1) {

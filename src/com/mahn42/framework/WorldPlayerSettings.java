@@ -37,7 +37,7 @@ public class WorldPlayerSettings extends DBRecordWorld {
         super.fromCSVInternal(aCols);
         playerName = aCols.pop();
         inventory = aCols.pop();
-        position.fromCSV(aCols.pop(), ",");
+        position.fromCSV(aCols.pop(), "\\,");
     }
     
     public void setFromInventory(Inventory aInv) {

@@ -84,6 +84,14 @@ public class WorldDBList<T extends DBSetWorld> implements DBSave, Iterable<T> {
         return lResult;
     }
     
+    public ArrayList<T> getDBs() {
+        ArrayList<T> lResult = new ArrayList<T>();
+        for(T lDB : fDBs.values()) {
+            lResult.add(lDB);
+        }
+        return lResult;
+    }
+    
     @Override
     public void save() {
         for(T lDB : fDBs.values()) {

@@ -108,9 +108,9 @@ public class Framework extends JavaPlugin {
      */
     public static void main(String[] args) {
         BlockRect lRect = new BlockRect();
-        lRect.fromCSV("1,2,3 - 4,5,6", ",");
+        lRect.fromCSV("1,2,3 - 4,5,6", "\\,");
         Logger.getLogger("xxx").info(lRect.toString());
-        lRect.fromCSV("1,2,3", ",");
+        lRect.fromCSV("1,2,3", "\\,");
         Logger.getLogger("xxx").info(lRect.toString());
     }
     
@@ -245,6 +245,11 @@ public class Framework extends JavaPlugin {
         return fWorldPlayerSettingsDB.getDB(aWorldName);
     }
     
+    /**********************************************************
+     * 
+     *  STARTUP 
+     * 
+     **********************************************************/
     @Override
     public void onEnable() { 
         plugin = this;

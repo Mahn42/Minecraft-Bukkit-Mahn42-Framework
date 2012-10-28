@@ -27,8 +27,8 @@ public class CommandDebugSet implements CommandExecutor {
                 BlockPosition lEdge1 = new BlockPosition();
                 BlockPosition lEdge2 = new BlockPosition();
                 if (aStrings.length > 3) {
-                    lEdge1.fromCSV(aStrings[2], ",");
-                    lEdge2.fromCSV(aStrings[3], ",");
+                    lEdge1.fromCSV(aStrings[2], "\\,");
+                    lEdge2.fromCSV(aStrings[3], "\\,");
                 } else {
                     int lRad = Integer.parseInt(aStrings[2]);
                     BlockPosition lPos = new BlockPosition(((Player)aCommandSender).getLocation());

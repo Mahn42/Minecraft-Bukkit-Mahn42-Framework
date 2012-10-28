@@ -61,7 +61,7 @@ public class BlockRect {
     }
     
     public void fromCSV(String aText, String aSep) {
-        String[] lParts = aText.replaceAll("(", "").replaceAll(")", "").split(" - ");
+        String[] lParts = aText.replaceAll("\\(", "").replaceAll("\\)", "").split(" - ");
         if (lParts.length > 1) {
             edge1.fromCSV(lParts[0], aSep);
             edge2.fromCSV(lParts[1], aSep);
