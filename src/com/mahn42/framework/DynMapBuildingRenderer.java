@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.dynmap.DynmapAPI;
+import org.dynmap.markers.CircleMarker;
 import org.dynmap.markers.MarkerAPI;
 import org.dynmap.markers.MarkerSet;
 import org.dynmap.markers.PolyLineMarker;
@@ -59,6 +60,10 @@ public class DynMapBuildingRenderer implements Runnable {
                     if (lBuilding.description.iconName != null) {
                         lMarkerSet.createMarker(lBuilding.key, lBuilding.getName(), lDB.world.getName(), lBuilding.edge1.x, lBuilding.edge1.y, lBuilding.edge1.z, lMarkerAPI.getMarkerIcon(lBuilding.description.iconName), false);
                         lCount++;
+                    } else if (lBuilding.description.circleRadius > 0) {
+                        CircleMarker lCircleMarker = lMarkerSet.createCircleMarker(lBuilding.key, lBuilding.getName(), false, lDB.world.getName(), lBuilding.edge1.x, lBuilding.edge1.y, lBuilding.edge1.z, lBuilding.description.circleRadius, lBuilding.description.circleRadius, false);
+                        lCircleMarker.setLineStyle(1, 1.0, lBuilding.description.color);
+                        lCircleMarker.setFillStyle(0.5, lBuilding.description.color);
                     } else {
                         lXs[0] = lBuilding.edge1.x;
                         lYs[0] = lBuilding.edge2.y;

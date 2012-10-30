@@ -305,6 +305,8 @@ public class BuildingDescription {
     public int detectPriority = -1;
     public String iconName = null;
     public boolean visibleOnMap = true;
+    public int circleRadius = 0;
+    public int color = 0x80A000;
     
     public BuildingDescription() {
     }
