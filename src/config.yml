@@ -6,6 +6,10 @@ SyncBlockSetter:
   Ticks: 2
 DBSaver:
   Ticks: 18000
+ProjectionAreas:
+  Ticks: 10
+DynMap:
+  Ticks: 40
 WorldClassifications:
   -
     name: empty_flat

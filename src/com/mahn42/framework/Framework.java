@@ -85,19 +85,23 @@ public class Framework extends JavaPlugin {
     
     public static Framework plugin;
     public int configSyncBlockSetterTicks = 2;
+    public int configDynMapTicks = 40;
     public int configDBSaverTicks = 18000;
     public String configLanguage = "DE_de";
+    public int configProjectionTicks = 10;
     
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected HashMap<String, Properties> fPluginLangs = new HashMap<String, Properties>();
     protected SyncBlockSetter fSyncBlockSetter;
     protected DBSaverTask fSaverTask;
     protected DynMapBuildingRenderer fDynMapTask;
+    protected ProjectionAreasRunner fProjectionRunner;
     protected BuildingDetector fBuildingDetector;
     protected HashMap<String, PlayerBuildings> fPlayerBuildings;
     protected Messenger fMessenger = null;
     protected PlayerManager fPlayerManager = null;
     protected HashMap<World, RestrictedRegions> fRestrictedRegions = new HashMap<World, RestrictedRegions>();
+    protected HashMap<World, ProjectionAreas> fProjectionAreas = new HashMap<World, ProjectionAreas>();
     protected WorldConfigurationDB fWorldConfigurationDB;
     protected WorldPlayerInventoryDB fWorldPlayerInventoryDB;
     protected WorldDBList<WorldPlayerSettingsDB> fWorldPlayerSettingsDB;
@@ -159,6 +163,15 @@ public class Framework extends JavaPlugin {
         if (lResult == null && aCreate) {
             lResult = new RestrictedRegions();
             fRestrictedRegions.put(aWorld, lResult);
+        }
+        return lResult;
+    }
+    
+    public ProjectionAreas getProjectionAreas(World aWorld, boolean aCreate) {
+        ProjectionAreas lResult = fProjectionAreas.get(aWorld);
+        if (lResult == null && aCreate) {
+            lResult = new ProjectionAreas(aWorld);
+            fProjectionAreas.put(aWorld, lResult);
         }
         return lResult;
     }
@@ -263,6 +276,7 @@ public class Framework extends JavaPlugin {
         fSyncBlockSetter = new SyncBlockSetter();
         fSaverTask = new DBSaverTask();
         fDynMapTask = new DynMapBuildingRenderer();
+        fProjectionRunner = new ProjectionAreasRunner();
         
         getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
         getCommand("fw_bd_create").setExecutor(new CommandBD_Create());
@@ -309,7 +323,8 @@ public class Framework extends JavaPlugin {
         registerSaver(fWorldPlayerSettingsDB);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSaverTask, 100, configDBSaverTicks);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, 20);
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, configDynMapTicks);
+        getServer().getScheduler().scheduleAsyncRepeatingTask(this, fProjectionRunner, 10, configProjectionTicks);
     }
 
     @Override
@@ -373,8 +388,11 @@ public class Framework extends JavaPlugin {
 
     private void readFrameworkConfig() {
         FileConfiguration lConfig = getConfig();
-        configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks");
+        configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks", configSyncBlockSetterTicks);
         configLanguage = lConfig.getString("Language");
+        configProjectionTicks = lConfig.getInt("ProjectionAreas.Ticks", configProjectionTicks);
+        configDBSaverTicks = lConfig.getInt("DBSaver.Ticks", configDBSaverTicks);
+        configDynMapTicks = lConfig.getInt("DynMap.Ticks", configDynMapTicks);
         List lWorldClasses = lConfig.getList("WorldClassifications");
         for(Object lItem : lWorldClasses) {
             WorldClassification lWC = new WorldClassification();

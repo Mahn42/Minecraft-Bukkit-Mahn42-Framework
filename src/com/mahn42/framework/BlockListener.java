@@ -48,8 +48,12 @@ public class BlockListener implements Listener {
             RestrictedRegions lRegions = Framework.plugin.getRestrictedRegions(lWorld, false);
             if (lRegions != null && lPlayer != null && !lRegions.allowed(lBlock, lPlayer.getName())) {
                 aEvent.setCancelled(true);
-            } else {
-
+            }
+            if (!aEvent.isCancelled()) {
+                ProjectionAreas lAreas = Framework.plugin.getProjectionAreas(lWorld, false);
+                if (lAreas != null) {
+                    lAreas.addForScan(new BlockPosition(lBlock.getLocation()));
+                }
             }
         }
     }
@@ -83,6 +87,12 @@ public class BlockListener implements Listener {
                                 }
                             }
                         }
+                    }
+                }
+                if (!aEvent.isCancelled()) {
+                    ProjectionAreas lAreas = Framework.plugin.getProjectionAreas(lWorld, false);
+                    if (lAreas != null) {
+                        lAreas.addForScan(new BlockPosition(lBlock.getLocation()));
                     }
                 }
             }

@@ -191,4 +191,10 @@ public class BlockPosition {
                 && y >= lEdge1.y && y <= lEdge2.y
                 && z >= lEdge1.z && z <= lEdge2.z;
     }
+
+    public void multiply(Vector aVector) {
+        x *= aVector.getBlockX();
+        y *= aVector.getBlockY();
+        z *= aVector.getBlockZ();
+    }
 }
