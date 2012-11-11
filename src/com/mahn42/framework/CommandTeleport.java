@@ -31,6 +31,7 @@ public class CommandTeleport implements CommandExecutor {
                 lWorld = lPlayer.getWorld();
             }
             if (lWorld != null) {
+                //Framework.plugin.teleportPlayerToWorld(lPlayer, lWorld);
                 Location lLocation;
                 WorldPlayerSettingsDB lDB = Framework.plugin.getWorldPlayerSettingsDB(lWorld.getName());
                 if (lDB != null) {

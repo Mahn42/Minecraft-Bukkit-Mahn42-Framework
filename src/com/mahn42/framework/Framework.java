@@ -25,6 +25,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -482,6 +483,30 @@ public class Framework extends JavaPlugin {
             }
         }
         return false;
+    }
+    
+    public void teleportPlayerToWorld(Player aPlayer, World aWorld) {
+        teleportPlayerToWorld(aPlayer, aWorld, null);
+    }
+    
+    public void teleportPlayerToWorld(Player aPlayer, World aWorld, BlockPosition aPos) {
+        Location lLocation;
+        if (aPos != null) {
+            lLocation = aPos.getLocation(aWorld);
+        } else {
+            WorldPlayerSettingsDB lDB = Framework.plugin.getWorldPlayerSettingsDB(aWorld.getName());
+            if (lDB != null) {
+                WorldPlayerSettings lSet = lDB.getByName(aPlayer.getName());
+                if (lSet != null) {
+                    lLocation = lSet.position.getLocation(aWorld);
+                } else {
+                    lLocation = aWorld.getSpawnLocation();
+                }
+            } else {
+                lLocation = aWorld.getSpawnLocation();
+            }
+        }
+        aPlayer.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
 }

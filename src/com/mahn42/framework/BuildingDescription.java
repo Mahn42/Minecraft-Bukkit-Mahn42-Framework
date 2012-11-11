@@ -326,6 +326,7 @@ public class BuildingDescription {
         aLogger.info("active = " + active);
         aLogger.info("influenceRadiusFactor = " + influenceRadiusFactor);
         aLogger.info("handler = " + handler == null ? "no" : handler.getClass().getName());
+        aLogger.info("detectPriority = " + detectPriority);
         aLogger.info("blocks { // count = " + blocks.size());
         for(BlockDescription lB : blocks) {
             lB.dump(aLogger);
