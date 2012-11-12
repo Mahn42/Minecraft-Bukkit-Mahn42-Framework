@@ -63,15 +63,35 @@ public class CommandWorldSet implements CommandExecutor{
                     lConf.entitySpawnCheck = Boolean.parseBoolean(aStrings[1]);
                 } else if (aStrings[0].equalsIgnoreCase("naturalEntityTypes")) {
                     if (aStrings[1].startsWith("-")) {
-                        lConf.naturalEntityTypes.remove(EntityType.valueOf(aStrings[1].substring(1)));
+                        if (aStrings[1].equalsIgnoreCase("-all")) {
+                            lConf.naturalEntityTypes.clear();
+                        } else {
+                            lConf.naturalEntityTypes.remove(EntityType.valueOf(aStrings[1].substring(1)));
+                        }
                     } else {
-                        lConf.naturalEntityTypes.add(EntityType.valueOf(aStrings[1]));
+                        if (aStrings[1].equalsIgnoreCase("all")) {
+                            for(EntityType lType : EntityType.values()) {
+                                lConf.naturalEntityTypes.add(lType);
+                            }
+                        } else {
+                            lConf.naturalEntityTypes.add(EntityType.valueOf(aStrings[1]));
+                        }
                     }
                 } else if (aStrings[0].equalsIgnoreCase("customEntityTypes")) {
                     if (aStrings[1].startsWith("-")) {
-                        lConf.customEntityTypes.remove(EntityType.valueOf(aStrings[1].substring(1)));
+                        if (aStrings[1].equalsIgnoreCase("-all")) {
+                            lConf.customEntityTypes.clear();
+                        } else {
+                            lConf.customEntityTypes.remove(EntityType.valueOf(aStrings[1].substring(1)));
+                        }
                     } else {
-                        lConf.customEntityTypes.add(EntityType.valueOf(aStrings[1]));
+                        if (aStrings[1].equalsIgnoreCase("all")) {
+                            for(EntityType lType : EntityType.values()) {
+                                lConf.customEntityTypes.add(lType);
+                            }
+                        } else {
+                            lConf.customEntityTypes.add(EntityType.valueOf(aStrings[1]));
+                        }
                     }
                 } else if (aStrings[0].equalsIgnoreCase("inventoryName")) {
                     lConf.inventoryName = aStrings[1];
