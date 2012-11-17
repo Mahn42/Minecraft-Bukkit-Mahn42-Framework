@@ -107,6 +107,7 @@ public class Framework extends JavaPlugin {
     protected WorldPlayerInventoryDB fWorldPlayerInventoryDB;
     protected WorldDBList<WorldPlayerSettingsDB> fWorldPlayerSettingsDB;
     protected HashMap<String, WorldClassification> fWorldClassifications = new HashMap<String, WorldClassification>();
+    protected ArrayList<IMarkerStorage> fMarkerStorages = new ArrayList<IMarkerStorage>();
     
     /**
      * @param args the command line arguments
@@ -147,6 +148,32 @@ public class Framework extends JavaPlugin {
             registerSaver(fWorldConfigurationDB);
         }
         return fWorldConfigurationDB;
+    }
+    
+    public void registerMarkerStorage(IMarkerStorage aStorage) {
+        fMarkerStorages.add(aStorage);
+    }
+
+    public void unregisterMarkerStorage(IMarkerStorage aStorage) {
+        fMarkerStorages.remove(aStorage);
+    }
+    
+    public List<IMarker> findMarkers(World aWorld, String aName) {
+        ArrayList<IMarker> lResult = new ArrayList<IMarker>();
+        for(IMarkerStorage lStore : fMarkerStorages) {
+            List<IMarker> lMarkers = lStore.findMarkers(aWorld, aName);
+            lResult.addAll(lMarkers);
+        }
+        return lResult;
+    }
+
+    public List<IMarker> findMarkers(World aWorld, BlockRect aArea) {
+        ArrayList<IMarker> lResult = new ArrayList<IMarker>();
+        for(IMarkerStorage lStore : fMarkerStorages) {
+            List<IMarker> lMarkers = lStore.findMarkers(aWorld, aArea);
+            lResult.addAll(lMarkers);
+        }
+        return lResult;
     }
 
     public WorldPlayerInventoryDB getWorldPlayerInventoryDB() {
@@ -293,6 +320,7 @@ public class Framework extends JavaPlugin {
         getCommand("fw_world_clist").setExecutor(new CommandWorldClassificationList());
         getCommand("fw_world_set").setExecutor(new CommandWorldSet());
         getCommand("fw_world_pinv").setExecutor(new CommandWorldPlayerInventory());
+        getCommand("fw_marker_list").setExecutor(new CommandMarkerList());
         getCommand("fw_tp").setExecutor(new CommandTeleport());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
@@ -466,7 +494,7 @@ public class Framework extends JavaPlugin {
     
     public static EntityType[] animals;
     {
-        animals = new EntityType[7];
+        animals = new EntityType[8];
         animals[0] = EntityType.CHICKEN;
         animals[1] = EntityType.COW;
         animals[2] = EntityType.MUSHROOM_COW;
@@ -474,6 +502,7 @@ public class Framework extends JavaPlugin {
         animals[4] = EntityType.PIG;
         animals[5] = EntityType.SHEEP;
         animals[6] = EntityType.WOLF;
+        animals[7] = EntityType.BAT;
     }
 
     public static boolean isAnimal(EntityType aEntityType) {
@@ -485,8 +514,17 @@ public class Framework extends JavaPlugin {
         return false;
     }
     
+    public void teleportPlayerToWorld(Player aPlayer, World aWorld, String aMarkname) {
+        List<IMarker> lMarkers = findMarkers(aWorld, aMarkname);
+        BlockPosition lPos = null;
+        if (lMarkers.size() == 1) {
+            lPos = lMarkers.get(0).getPosition();
+        }
+        teleportPlayerToWorld(aPlayer, aWorld, lPos);
+    }
+    
     public void teleportPlayerToWorld(Player aPlayer, World aWorld) {
-        teleportPlayerToWorld(aPlayer, aWorld, null);
+        teleportPlayerToWorld(aPlayer, aWorld, (BlockPosition)null);
     }
     
     public void teleportPlayerToWorld(Player aPlayer, World aWorld, BlockPosition aPos) {

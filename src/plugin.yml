@@ -1,7 +1,7 @@
 ## YAML Template.
 name: MAHN42-Framework
 main: com.mahn42.framework.Framework
-version: 0.50
+version: 0.51
 softdepend: [dynmap]
 commands:
    fw_bd_dump:
@@ -79,6 +79,12 @@ commands:
       aliases: wpinv
       permission: fw.world_pinv
       permission-message: You don't have permission
+   fw_marker_list:
+      description: list markers with name or in area of world. 
+      usage: /fw_marker_list <markername>|(<from> - <to>) [<worldname>]
+      aliases: mlist
+      permission: fw.marker_list
+      permission-message: You don't have permission
    fw_tp:
       description: teleport to position and a world. 
       usage: /fw_tp [<worldname>] [<x> <y> <z>]
@@ -108,6 +114,7 @@ permissions:
             fw.world_clist: true
             fw.world_set: true
             fw.world_pinv: true
+            fw.marker_list: true
             fw.tp: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
@@ -151,6 +158,9 @@ permissions:
     fw.world_pinv:
         description: Allows you to list a playerinventory of a world
         default: false
+    fw.marker_list:
+        description: Allows you to list markers of a world
+        default: true
     fw.tp:
         description: Allows you to teleport to position in a world
         default: false
