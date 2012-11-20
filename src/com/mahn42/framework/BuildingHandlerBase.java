@@ -4,6 +4,7 @@
  */
 package com.mahn42.framework;
 
+import java.util.logging.Logger;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -47,7 +48,9 @@ public class BuildingHandlerBase implements BuildingHandler {
 
     @Override
     public boolean nameChanged(SignChangeEvent aEvent, Building aBuilding) {
-        aBuilding.name = aEvent.getLine(0);
+        String aNewName = aEvent.getLine(0) + aEvent.getLine(1);
+        Logger.getLogger("xxx").info("rename building " + aBuilding.getName() + " to " + aNewName);
+        aBuilding.name = aNewName;
         return true;
     }
 

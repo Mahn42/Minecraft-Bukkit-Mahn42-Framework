@@ -53,4 +53,17 @@ WorldClassifications:
     inventoryName: creative
     gameMode: CREATIVE
     playerVsPlayer: false
+  -
+    name: empty_large
+    generateStructures: true
+    generator:
+    type: LARGE_BIOMES
+    environment: NORMAL
+    spawnMonsters: false
+    spawnAnimals: false
+    difficulty: NORMAL
+    ownInventory: true
+    inventoryName: creative
+    gameMode: CREATIVE
+    playerVsPlayer: false
     
