@@ -31,19 +31,19 @@ public class PlayerListener implements Listener {
         WorldConfiguration lConfFrom = Framework.plugin.getWorldConfigurationDB().getByName(aEvent.getFrom().getName());
         if (lConf != null) {
             if (lConf.gameMode != lPlayer.getGameMode()) {
-                Logger.getLogger("xx").info("set gamemode = " + lConf.gameMode);
+                //Logger.getLogger("xx").info("set gamemode = " + lConf.gameMode);
                 lPlayer.setGameMode(lConf.gameMode);
             }
             WorldPlayerInventoryDB lInvDB = Framework.plugin.getWorldPlayerInventoryDB();
             if (lInvDB != null) {
                 WorldPlayerInventory lInv = lInvDB.getOrCreate(lConfFrom.inventoryName, lPlayer.getName());
                 lInv.setFromInventory(lPlayer.getInventory());
-                Logger.getLogger("xx").info("set inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConfFrom.name);
+                //Logger.getLogger("xx").info("set inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConfFrom.name);
             }
             if (!lConf.noInventory && !lConf.inventoryName.equalsIgnoreCase(lConfFrom.inventoryName)) {
                 WorldPlayerInventory lInv = lInvDB.getOrCreate(lConf.inventoryName, lPlayer.getName());
                 lInv.setToInventory(lPlayer.getInventory());
-                Logger.getLogger("xx").info("get inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConf.name);
+                //Logger.getLogger("xx").info("get inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConf.name);
             }
         }
     }
@@ -98,15 +98,18 @@ public class PlayerListener implements Listener {
           lInHand = aEvent.getItem().getType();
         }
         if (lBlock != null
+                && lInHand != null
                 && aEvent.getAction().equals(Action.RIGHT_CLICK_BLOCK)
-                && aEvent.hasItem()
-                && lInHand.equals(Material.BOOK)) {
-            BuildingDetectTask lTask = new BuildingDetectTask();
-            lTask.player = lPlayer;
-            lTask.world = lWorld;
-            lTask.event = aEvent;
-            lTask.position = new BlockPosition(lBlock.getLocation());
-            Framework.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(Framework.plugin, lTask);
+                && aEvent.hasItem()) {
+            //if (lInHand.equals(Material.BOOK)) {
+                BuildingDetectTask lTask = new BuildingDetectTask();
+                lTask.player = lPlayer;
+                lTask.world = lWorld;
+                lTask.event = aEvent;
+                lTask.inHand = lInHand;
+                lTask.position = new BlockPosition(lBlock.getLocation());
+                Framework.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(Framework.plugin, lTask);
+            //}
         }
         /*
         if (lBlock != null

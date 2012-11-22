@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -19,6 +20,7 @@ public class BuildingDetectTask implements Runnable {
     public PlayerInteractEvent event;
     public World world;
     public BlockPosition position;
+    public Material inHand;
     
     @Override
     public void run() {
@@ -26,21 +28,28 @@ public class BuildingDetectTask implements Runnable {
         lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithNoneShareableBlock(position);
         if (lBuildings.size() == 1) {
             if (lBuildings.get(0).description.handler != null) {
-                lBuildings.get(0).description.handler.nextConfiguration(lBuildings.get(0), position, player);
+                if (inHand.equals(Material.BOOK)) {
+                    lBuildings.get(0).description.handler.nextConfiguration(lBuildings.get(0), position, player);
+                } else {
+                    lBuildings.get(0).description.handler.playerInteractWith(lBuildings.get(0), position, player, inHand);
+                }
                 return;
             }
         } else if (lBuildings.size() > 1) {
-            if (player != null) {
-                for(Building lBuilding : lBuildings) {
-                    player.sendMessage(Framework.plugin.getText(player, "Here is always the building %s!", lBuilding.getName()));
-                }
-            } else {
-                for(Building lBuilding : lBuildings) {
-                    Framework.plugin.getLogger().info("Here is always the building " + lBuilding.getName());
+            if (inHand.equals(Material.BOOK)) {
+                if (player != null) {
+                    for(Building lBuilding : lBuildings) {
+                        player.sendMessage(Framework.plugin.getText(player, "Here is always the building %s!", lBuilding.getName()));
+                    }
+                } else {
+                    for(Building lBuilding : lBuildings) {
+                        Framework.plugin.getLogger().info("Here is always the building " + lBuilding.getName());
+                    }
                 }
             }
         }
-        if (lBuildings.isEmpty()) {
+        if (inHand.equals(Material.BOOK)
+                && lBuildings.isEmpty()) {
             lBuildings = Framework.plugin.getBuildingDetector().detect(world, position, position);
             boolean lFound = false;
             for(Building lBuilding : lBuildings) {

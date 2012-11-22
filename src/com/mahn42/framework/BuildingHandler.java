@@ -4,6 +4,7 @@
  */
 package com.mahn42.framework;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -28,5 +29,6 @@ public interface BuildingHandler {
     public boolean signChanged(SignChangeEvent aEvent, Building aBuilding);
     public BuildingDB getDB(World aWorld);
     public void nextConfiguration(Building aBuilding, BlockPosition position, Player aPlayer);
+    public void playerInteractWith(Building aBuilding, BlockPosition position, Player aPlayer, Material aInHand);
     public JavaPlugin getPlugin();
 }

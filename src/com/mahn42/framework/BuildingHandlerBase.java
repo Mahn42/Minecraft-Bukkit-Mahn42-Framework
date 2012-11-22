@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.logging.Logger;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -84,4 +85,10 @@ public class BuildingHandlerBase implements BuildingHandler {
         return Framework.plugin;
     }
     
+    @Override
+    public void playerInteractWith(Building aBuilding, BlockPosition position, Player aPlayer, Material aInHand) {
+        if (aPlayer != null) {
+            aPlayer.sendMessage(Framework.plugin.getText(aPlayer, "You interact with building %s.", aBuilding.getName()));
+        }
+    }
 }
