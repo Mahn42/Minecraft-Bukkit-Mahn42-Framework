@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -48,11 +49,14 @@ public class PlayerListener implements Listener {
         }
     }
     
+    HashMap<String, BlockPosition> fPlayerBlockPosList = new HashMap<String, BlockPosition>();
+    
     static Block lLastBlock;
     
     @EventHandler
     public void playerMove(PlayerMoveEvent aEvent) {
         Player lPlayer = aEvent.getPlayer();
+
         if (Framework.plugin.isDebugSet("targetblock")) {
             Block lTargetBlock = lPlayer.getTargetBlock(null, 100);
             if (!lTargetBlock.equals(lLastBlock)) {
@@ -61,10 +65,23 @@ public class PlayerListener implements Listener {
             }
         }
         
-        PlayerBuildings lPBuilds = Framework.plugin.getPlayerBuildings(lPlayer);
         BlockPosition lPPos = new BlockPosition(lPlayer.getLocation());
-        if (!lPPos.equals(lPBuilds.playerPos)) {
-            lPBuilds.playerPos = lPPos;
+
+        WorldPlayerSettingsDB lPSDB = Framework.plugin.getWorldPlayerSettingsDB(lPlayer.getWorld().getName());
+        WorldPlayerSettings lSet = lPSDB.getOrCreateByName(lPlayer.getName());
+        if (!lSet.position.equals(lPPos)) {
+            PlayerPositionChangedEvent lEvent = new PlayerPositionChangedEvent(lPlayer, lSet.position, lPPos);
+            lSet.position.cloneFrom(lPPos);
+            lEvent.raise();
+        }
+    }
+    
+    @EventHandler
+    public void playerPositionChanged(PlayerPositionChangedEvent aEvent) {
+        Player lPlayer = aEvent.getPlayer();
+        PlayerBuildings lPBuilds = Framework.plugin.getPlayerBuildings(lPlayer);
+        if (!aEvent.getTo().equals(lPBuilds.playerPos)) {
+            lPBuilds.playerPos = aEvent.getTo();
             ArrayList<Building> lBuildings;
             lBuildings = Framework.plugin.getBuildingDetector().getBuildings(lPBuilds.playerPos);
             for(Building lBuilding : lBuildings) {
@@ -83,9 +100,6 @@ public class PlayerListener implements Listener {
                 }
             }
         }
-        WorldPlayerSettingsDB lPSDB = Framework.plugin.getWorldPlayerSettingsDB(lPlayer.getWorld().getName());
-        WorldPlayerSettings lSet = lPSDB.getOrCreateByName(lPlayer.getName());
-        lSet.position.cloneFrom(lPPos);
     }
     
     @EventHandler
