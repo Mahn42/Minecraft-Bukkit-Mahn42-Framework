@@ -2,8 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mahn42.framework;
+package com.mahn42.framework.commands;
 
+import com.mahn42.framework.BlockPosition;
+import com.mahn42.framework.Framework;
+import com.mahn42.framework.IMarker;
+import com.mahn42.framework.WorldPlayerSettings;
+import com.mahn42.framework.WorldPlayerSettingsDB;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

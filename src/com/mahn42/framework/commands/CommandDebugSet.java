@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mahn42.framework;
+package com.mahn42.framework.commands;
 
+import com.mahn42.framework.BlockPosition;
+import com.mahn42.framework.Framework;
 import java.util.Random;
 import org.bukkit.Material;
 import org.bukkit.World;

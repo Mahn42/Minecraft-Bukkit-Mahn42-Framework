@@ -2,8 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mahn42.framework;
+package com.mahn42.framework.commands;
 
+import com.mahn42.framework.BlockPosition;
+import com.mahn42.framework.BlockRect;
+import com.mahn42.framework.Framework;
+import com.mahn42.framework.IMarker;
 import java.util.List;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -43,9 +47,9 @@ public class CommandMarkerList implements CommandExecutor {
                     int lSize;
                     try {
                         lSize = Integer.parseInt(aStrings[0]);
-                        lArea = new BlockRect(lPos, lPos);
-                        lArea.edge1.add(lSize, lSize, lSize);
-                        lArea.edge2.add(-lSize, -lSize, -lSize);
+                        BlockPosition le1 = new BlockPosition(lPos); le1.add(lSize, lSize, lSize);
+                        BlockPosition le2 = new BlockPosition(lPos); le1.add(-lSize, -lSize, -lSize);
+                        lArea = new BlockRect(le1, le2);
                     } catch(Exception e) {
                         lName = aStrings[0];
                     }
@@ -58,9 +62,9 @@ public class CommandMarkerList implements CommandExecutor {
                     int lSize;
                     try {
                         lSize = Integer.parseInt(aStrings[0]);
-                        lArea = new BlockRect(lPos, lPos);
-                        lArea.edge1.add(lSize, lSize, lSize);
-                        lArea.edge2.add(-lSize, -lSize, -lSize);
+                        BlockPosition le1 = new BlockPosition(lPos); le1.add(lSize, lSize, lSize);
+                        BlockPosition le2 = new BlockPosition(lPos); le1.add(-lSize, -lSize, -lSize);
+                        lArea = new BlockRect(le1, le2);
                     } catch(Exception e) {
                         lName = aStrings[0];
                     }

@@ -1,0 +1,75 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.mahn42.framework;
+
+import net.minecraft.server.EntityCreature;
+import net.minecraft.server.Navigation;
+import net.minecraft.server.PathEntity;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.Entity;
+
+/**
+ *
+ * @author andre
+ */
+public class EntityControl {
+    
+    public int id;
+    public Entity entity;
+    public boolean active = true;
+    public boolean remove = false;
+    
+    public EntityControlPath path = new EntityControlPath();
+
+    protected EntityControlPathItem pathItem;
+    
+    public EntityControl(Entity aEntity) {
+        entity = aEntity;
+        id = entity.getEntityId();
+    }
+    
+    public void run() {
+        if (entity.isDead()) {
+            remove = true;
+            return;
+        }
+        if (pathItem == null) {
+            getNextPathItem();
+        }
+        if (pathItem != null) {
+            BlockPosition lDest = pathItem.getDestination(entity);
+            BlockPosition lEntityPos = new BlockPosition(entity.getLocation());
+            while (pathItem != null && lDest.equals(lEntityPos)) {
+                if (pathItem.shouldStay(entity)) {
+                    break;
+                }
+                getNextPathItem();
+                lDest = pathItem.getDestination(entity);
+            }
+            if (pathItem != null) {
+                net.minecraft.server.Entity lMCEntitiy = ((CraftEntity)entity).getHandle();
+                if (lMCEntitiy instanceof EntityCreature) {
+                    EntityCreature lCreature = (EntityCreature)lMCEntitiy;
+                    PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lCreature, lDest.x, lDest.y, lDest.z, 100.0f, true, false, false, true);
+                    lCreature.setPathEntity(lPE);
+                    Navigation lNavigation = lCreature.getNavigation();
+                    lNavigation.a(lPE, pathItem.getSpeed(entity));
+                } else {
+                    //todo
+                }
+            }
+        }
+    }
+
+    protected void getNextPathItem() {
+        if (!path.isEmpty()) {
+            pathItem = path.get(0);
+            path.remove(0);
+        } else {
+            pathItem = null;
+        }
+    }
+}

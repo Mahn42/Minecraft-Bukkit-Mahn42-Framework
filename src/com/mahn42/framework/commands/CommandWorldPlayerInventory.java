@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mahn42.framework;
+package com.mahn42.framework.commands;
 
+import com.mahn42.framework.Framework;
+import com.mahn42.framework.WorldPlayerInventory;
 import java.util.ArrayList;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;

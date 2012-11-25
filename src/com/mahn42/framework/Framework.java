@@ -4,6 +4,22 @@
  */
 package com.mahn42.framework;
 
+import com.mahn42.framework.commands.CommandWorldCreate;
+import com.mahn42.framework.commands.CommandMarkerList;
+import com.mahn42.framework.commands.CommandSave;
+import com.mahn42.framework.commands.CommandWorldRegenerate;
+import com.mahn42.framework.commands.CommandBD_Create;
+import com.mahn42.framework.commands.CommandTeleport;
+import com.mahn42.framework.commands.CommandWorldPlayerInventory;
+import com.mahn42.framework.commands.CommandWorldSet;
+import com.mahn42.framework.commands.CommandWorldRemove;
+import com.mahn42.framework.commands.CommandDebugSet;
+import com.mahn42.framework.commands.CommandWorldClassificationList;
+import com.mahn42.framework.commands.CommandBD_CreateFromArea;
+import com.mahn42.framework.commands.CommandBD_Detect;
+import com.mahn42.framework.commands.CommandSetSpawn;
+import com.mahn42.framework.commands.CommandWorldList;
+import com.mahn42.framework.commands.CommandBD_Dump;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +49,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author andre
  */
 public class Framework extends JavaPlugin {
+    private EntityController fEntityController;
 
     protected class __Messenger implements Messenger {
         @Override
@@ -286,6 +303,10 @@ public class Framework extends JavaPlugin {
         return fWorldPlayerSettingsDB.getDB(aWorldName);
     }
     
+    public EntityController getEntityController() {
+        return fEntityController;
+    }
+    
     /**********************************************************
      * 
      *  STARTUP 
@@ -305,6 +326,7 @@ public class Framework extends JavaPlugin {
         fSaverTask = new DBSaverTask();
         fDynMapTask = new DynMapBuildingRenderer();
         fProjectionRunner = new ProjectionAreasRunner();
+        fEntityController = new EntityController();
         
         getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
         getCommand("fw_bd_create").setExecutor(new CommandBD_Create());
@@ -326,6 +348,7 @@ public class Framework extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new WorldListener(), this);
+        getServer().getPluginManager().registerEvents(fEntityController, this);
         List<World> lWorlds = getServer().getWorlds();
         for(World lWorld :  lWorlds) {
             WorldConfiguration lConf = getWorldConfigurationDB().getByName(lWorld.getName());
@@ -354,6 +377,7 @@ public class Framework extends JavaPlugin {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSaverTask, 100, configDBSaverTicks);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, configDynMapTicks);
         getServer().getScheduler().scheduleAsyncRepeatingTask(this, fProjectionRunner, 10, configProjectionTicks);
+        getServer().getScheduler().scheduleAsyncRepeatingTask(this, fEntityController, 10, 10); // TODO config
     }
 
     @Override
@@ -413,6 +437,10 @@ public class Framework extends JavaPlugin {
     
     public void unregisterSaver(DBSave aSaver) {
         fSaverTask.unregisterSaver(aSaver);
+    }
+    
+    public void runSave() {
+        fSaverTask.run();
     }
 
     private void readFrameworkConfig() {
