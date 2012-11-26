@@ -42,14 +42,18 @@ public class EntityControl {
         if (pathItem != null) {
             BlockPosition lDest = pathItem.getDestination(entity);
             BlockPosition lEntityPos = new BlockPosition(entity.getLocation());
-            while (pathItem != null && lDest.equals(lEntityPos)) {
+            while (pathItem != null && lDest != null && lDest.equals(lEntityPos)) {
+                EntityReachedPathItemEvent lEvent = new EntityReachedPathItemEvent(entity, this, pathItem);
+                lEvent.raise();
                 if (pathItem.shouldStay(entity)) {
                     break;
                 }
                 getNextPathItem();
-                lDest = pathItem.getDestination(entity);
+                if (pathItem != null) {
+                    lDest = pathItem.getDestination(entity);
+                }
             }
-            if (pathItem != null) {
+            if (pathItem != null && lDest != null) {
                 net.minecraft.server.Entity lMCEntitiy = ((CraftEntity)entity).getHandle();
                 if (lMCEntitiy instanceof EntityCreature) {
                     EntityCreature lCreature = (EntityCreature)lMCEntitiy;
@@ -70,6 +74,7 @@ public class EntityControl {
             path.remove(0);
         } else {
             pathItem = null;
+            remove = true;
         }
     }
 }

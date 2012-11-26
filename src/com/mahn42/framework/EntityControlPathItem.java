@@ -10,33 +10,18 @@ import org.bukkit.entity.Entity;
  *
  * @author andre
  */
-public class EntityControlPathItem {
-    protected BlockPosition destination;
-    protected float speed = 0.3f;
+public abstract class EntityControlPathItem {
     public long maxTicks = -1;
     public long stayTicks = 0;
     
     public EntityControlPathItem() {
     }
 
-    public EntityControlPathItem(BlockPosition aDestination) {
-        destination = aDestination;
-    }
+    public abstract BlockPosition getDestination(Entity entity);
 
-    public EntityControlPathItem(BlockPosition aDestination, float aSpeed) {
-        destination = aDestination;
-        speed = aSpeed;
-    }
-
-    public BlockPosition getDestination(Entity entity) {
-        return destination;
-    }
-
-    public float getSpeed(Entity entity) {
-        return speed;
-    }
+    public abstract float getSpeed(Entity aEntity);
     
-    public boolean shouldStay(Entity entity) {
+    public boolean shouldStay(Entity aEntity) {
         stayTicks--;
         return stayTicks > 0;
     }

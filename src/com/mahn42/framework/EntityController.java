@@ -4,6 +4,7 @@
  */
 package com.mahn42.framework;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import org.bukkit.entity.Entity;
@@ -36,8 +37,18 @@ public class EntityController implements Listener, Runnable  {
         synchronized(controlledEntities) {
             lControls = controlledEntities.values();
         }
+        ArrayList<EntityControl> lRemoves = new ArrayList<EntityControl>();
         for(EntityControl lControl : lControls) {
             lControl.run();
+            if (lControl.remove) {
+                lRemoves.add(lControl);
+            }
+        }
+        synchronized(controlledEntities) {
+            for(EntityControl lControl : lRemoves) {
+                Framework.plugin.getLogger().info("entity emoved from EC: " + lControl.entity.getEntityId());
+                controlledEntities.remove(lControl.id);
+            }
         }
     }
     
