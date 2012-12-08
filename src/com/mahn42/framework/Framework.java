@@ -20,6 +20,7 @@ import com.mahn42.framework.commands.CommandBD_Detect;
 import com.mahn42.framework.commands.CommandSetSpawn;
 import com.mahn42.framework.commands.CommandWorldList;
 import com.mahn42.framework.commands.CommandBD_Dump;
+import com.mahn42.framework.commands.CommandChunkRegenerate;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -344,6 +345,7 @@ public class Framework extends JavaPlugin {
         getCommand("fw_world_pinv").setExecutor(new CommandWorldPlayerInventory());
         getCommand("fw_marker_list").setExecutor(new CommandMarkerList());
         getCommand("fw_tp").setExecutor(new CommandTeleport());
+        getCommand("fw_chunk_regenerate").setExecutor(new CommandChunkRegenerate());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);

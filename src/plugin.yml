@@ -90,6 +90,11 @@ commands:
       usage: /fw_tp [<worldname>] [<x> <y> <z>]
       permission: fw.tp
       permission-message: You don't have permission
+   fw_chunk_regenerate:
+      description: regenerate chunks in the world. 
+      usage: /fw_chunk_regenerate [<chunkradius>]
+      permission: fw.chunk_regenerate
+      permission-message: You don't have permission
 permissions:
     fw.*:
         description: Gives access to all framework commands
@@ -116,6 +121,7 @@ permissions:
             fw.world_pinv: true
             fw.marker_list: true
             fw.tp: true
+            fw.chunk_regenerate: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
@@ -163,4 +169,7 @@ permissions:
         default: true
     fw.tp:
         description: Allows you to teleport to position in a world
+        default: false
+    fw.chunk_regenerate:
+        description: Allows you regenerate chunks in the world
         default: false
