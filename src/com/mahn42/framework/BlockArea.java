@@ -7,10 +7,13 @@ package com.mahn42.framework;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
@@ -19,6 +22,9 @@ import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -38,11 +44,27 @@ public class BlockArea {
         public EntityType type;
         public BlockPosition location;
         public ItemStack[] itemStacks;
+        public Art art;
+        public Rotation rotation = Rotation.NONE;
 
         private void fromEntity(Entity lEntity, BlockPosition aEdge1) {
             location = new BlockPosition(lEntity.getLocation());
             location.add(-aEdge1.x, -aEdge1.y, -aEdge1.z);
             type = lEntity.getType();
+            if (lEntity instanceof Hanging) {
+                BlockFace attachedFace = ((Hanging)lEntity).getAttachedFace();
+                location.add(attachedFace.getModX(), attachedFace.getModY(), attachedFace.getModZ());
+                if (lEntity instanceof Painting) {
+                    art = ((Painting)lEntity).getArt();
+                } else if (lEntity instanceof ItemFrame) {
+                    ItemStack item = ((ItemFrame)lEntity).getItem();
+                    rotation = ((ItemFrame)lEntity).getRotation();
+                    if (item != null) {
+                        itemStacks = new ItemStack[1];
+                        itemStacks[0] = item;
+                    }
+                }
+            }
         }
 
         private void toWorld(World aWorld, BlockPosition aEdge1) {
@@ -61,16 +83,32 @@ public class BlockArea {
 
         private void fromFileString(String aText) {
             String[] lParts = aText.split(",");
-            type = EntityType.fromId(Integer.parseInt(lParts[0]));
-            location = new BlockPosition(Integer.parseInt(lParts[1]), Integer.parseInt(lParts[2]), Integer.parseInt(lParts[3]));
-            if (lParts.length > 4) {
-                itemStacks = new ItemStack[lParts.length - 4];
-                for(int lIndex = 4; lIndex < lParts.length; lIndex++) {
-                    int lId = Integer.parseInt(lParts[lIndex]);
+            int lPos = 0;
+            type = EntityType.fromId(Integer.parseInt(lParts[lPos++]));
+            location = new BlockPosition(Integer.parseInt(lParts[lPos]), Integer.parseInt(lParts[lPos+1]), Integer.parseInt(lParts[lPos+2]));
+            lPos+=3;
+            if (lPos < lParts.length) {
+                int litemlength = Integer.parseInt(lParts[lPos++]);
+                itemStacks = new ItemStack[litemlength];
+                for(int lIndex = 0; lIndex < litemlength; lIndex++) {
+                    int lId = Integer.parseInt(lParts[lPos]);
                     if (lId >= 0) {
-                        itemStacks[lIndex-4] = new ItemStack(lId, Integer.parseInt(lParts[lIndex+2]), (short)0, Byte.parseByte(lParts[lIndex+1]));
+                        itemStacks[lIndex] = new ItemStack(lId, Integer.parseInt(lParts[lPos+2]), (short)0, Byte.parseByte(lParts[lPos+1]));
                     } else {
-                        itemStacks[lIndex-4] = null;
+                        itemStacks[lIndex] = null;
+                    }
+                    lPos+=3;
+                }
+                if (lPos < lParts.length) {
+                    String lValue = lParts[lPos++];
+                    if (!lValue.isEmpty()) {
+                        art = Art.valueOf(lValue);
+                    }
+                }
+                if (lPos < lParts.length) {
+                    String lValue = lParts[lPos++];
+                    if (!lValue.isEmpty()) {
+                        rotation = Rotation.valueOf(lValue);
                     }
                 }
             }
@@ -79,7 +117,7 @@ public class BlockArea {
         private void toList(SyncBlockList aList, BlockPosition aEdge1) {
             BlockPosition lLoc = location.clone();
             lLoc.add(aEdge1.x, aEdge1.y, aEdge1.z);
-            aList.add(lLoc, null, (byte)0, true, 0, null, null, null, null, itemStacks, type);
+            aList.add(lLoc, null, (byte)0, true, 0, null, null, null, null, itemStacks, type, art);
         }
 
         private void toStringBuilder(StringBuilder lBuilder) {
@@ -91,6 +129,8 @@ public class BlockArea {
             lBuilder.append(",");
             lBuilder.append(Integer.toString(location.z));
             if (itemStacks != null) {
+                lBuilder.append(",");
+                lBuilder.append(Integer.toString(itemStacks.length));
                 for(ItemStack lStack : itemStacks) {
                     if (lStack != null) {
                         lBuilder.append(",");
@@ -103,7 +143,15 @@ public class BlockArea {
                         lBuilder.append(",-1,0,0");
                     }
                 }
+            } else {
+                lBuilder.append(",0");
             }
+            lBuilder.append(",");
+            if (art != null) {
+                lBuilder.append(art.toString());
+            }
+            lBuilder.append(",");
+            lBuilder.append(rotation.toString());
         }
     }
 
@@ -321,7 +369,7 @@ public class BlockArea {
             lTask.position = pos.clone();
             lTask.position.add(aEdge1);
             //Framework.plugin.getLogger().info("will detect building at " + lTask.position);
-            Framework.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(Framework.plugin, lTask, 10);
+            Framework.plugin.getServer().getScheduler().runTaskLaterAsynchronously(Framework.plugin, lTask, 10);// scheduleAsyncDelayedTask(Framework.plugin, lTask, 10);
         }
     }
     

@@ -95,6 +95,11 @@ commands:
       usage: /fw_chunk_regenerate [<chunkradius>]
       permission: fw.chunk_regenerate
       permission-message: You don't have permission
+   fw_test:
+      description: for testing. 
+      usage: /fw_test playerspawn <name>
+      permission: fw.test
+      permission-message: You don't have permission
 permissions:
     fw.*:
         description: Gives access to all framework commands
@@ -122,6 +127,7 @@ permissions:
             fw.marker_list: true
             fw.tp: true
             fw.chunk_regenerate: true
+            fw.test: true
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
@@ -172,4 +178,7 @@ permissions:
         default: false
     fw.chunk_regenerate:
         description: Allows you regenerate chunks in the world
+        default: false
+    fw.test:
+        description: Allows you to test something
         default: false

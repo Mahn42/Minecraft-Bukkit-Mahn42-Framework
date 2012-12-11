@@ -4,11 +4,13 @@
  */
 package com.mahn42.framework;
 
-import net.minecraft.server.EntityCreature;
-import net.minecraft.server.Navigation;
-import net.minecraft.server.PathEntity;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftEntity;
+import net.minecraft.server.v1_4_5.EntityCreature;
+import net.minecraft.server.v1_4_5.EntityLiving;
+import net.minecraft.server.v1_4_5.EntityPlayer;
+import net.minecraft.server.v1_4_5.Navigation;
+import net.minecraft.server.v1_4_5.PathEntity;
+import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
 /**
@@ -42,7 +44,7 @@ public class EntityControl {
         if (pathItem != null) {
             BlockPosition lDest = pathItem.getDestination(entity);
             BlockPosition lEntityPos = new BlockPosition(entity.getLocation());
-            while (pathItem != null && lDest != null && lDest.equals(lEntityPos)) {
+            while (pathItem != null && lDest != null && lDest.nearly(lEntityPos)) {
                 EntityReachedPathItemEvent lEvent = new EntityReachedPathItemEvent(entity, this, pathItem);
                 lEvent.raise();
                 if (pathItem.shouldStay(entity)) {
@@ -54,11 +56,17 @@ public class EntityControl {
                 }
             }
             if (pathItem != null && lDest != null) {
-                net.minecraft.server.Entity lMCEntitiy = ((CraftEntity)entity).getHandle();
+                net.minecraft.server.v1_4_5.Entity lMCEntitiy = ((CraftEntity)entity).getHandle();
                 if (lMCEntitiy instanceof EntityCreature) {
                     EntityCreature lCreature = (EntityCreature)lMCEntitiy;
                     PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lCreature, lDest.x, lDest.y, lDest.z, 100.0f, true, false, false, true);
                     lCreature.setPathEntity(lPE);
+                    Navigation lNavigation = lCreature.getNavigation();
+                    lNavigation.a(lPE, pathItem.getSpeed(entity));
+                } else if (lMCEntitiy instanceof EntityPlayer) {
+                    EntityPlayer lCreature = (EntityPlayer)lMCEntitiy;
+                    PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lCreature, lDest.x, lDest.y, lDest.z, 100.0f, true, false, false, true);
+                    //lCreature.setPathEntity(lPE);
                     Navigation lNavigation = lCreature.getNavigation();
                     lNavigation.a(lPE, pathItem.getSpeed(entity));
                 } else {

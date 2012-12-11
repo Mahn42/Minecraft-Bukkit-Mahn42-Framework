@@ -7,6 +7,7 @@ package com.mahn42.framework;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -16,6 +17,8 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -25,6 +28,7 @@ import org.bukkit.inventory.ItemStack;
 public class SyncBlockSetter implements Runnable {
 
     public int maxItems = 5000;
+    public long calls = 0;
     
     protected int fCount = 0;
     
@@ -38,6 +42,7 @@ public class SyncBlockSetter implements Runnable {
         public String signLine1 = null;
         public String signLine2 = null;
         public String signLine3 = null;
+        public Art art = Art.BOMB;
         public ItemStack[] itemStacks = null;
         public EntityType entityType = EntityType.UNKNOWN;
 
@@ -100,8 +105,20 @@ public class SyncBlockSetter implements Runnable {
                 try {
                     //Framework.plugin.getLogger().info("try to spawn " + entityType + " at " + location);
                     if (entityType == EntityType.DROPPED_ITEM) {
-                        if (itemStacks != null && itemStacks.length > 0) {
-                            location.getWorld().dropItem(location, itemStacks[0]);
+                        if (itemStacks != null) {
+                            for(ItemStack lis : itemStacks) {
+                                if (lis != null) {
+                                    location.getWorld().dropItem(location, lis);
+                                }
+                            }
+                        }
+                    } else if (entityType == EntityType.PAINTING) {
+                        Painting lEntity = (Painting)location.getWorld().spawnEntity(location, entityType);
+                        lEntity.setArt(art, true);
+                    } else if (entityType == EntityType.ITEM_FRAME) {
+                        ItemFrame lEntity = (ItemFrame)location.getWorld().spawnEntity(location, entityType);
+                        if (itemStacks.length > 0 && itemStacks[0] != null) {
+                            lEntity.setItem(itemStacks[0]);
                         }
                     } else {
                         location.getWorld().spawnEntity(location, entityType);
@@ -146,6 +163,7 @@ public class SyncBlockSetter implements Runnable {
                 lItem.signLine3 = lBlock.signLine3;
                 lItem.itemStacks = lBlock.itemStacks;
                 lItem.entityType = lBlock.entityType;
+                lItem.art = lBlock.art;
                 fItems.add(lItem);
             }
         }
@@ -154,6 +172,7 @@ public class SyncBlockSetter implements Runnable {
     @Override
     public void run() {
         try {
+            calls++;
             if (!fItems.isEmpty()) {
                 ArrayList<SyncBlockSetterItem> lWorking;
                 synchronized(fsync) {

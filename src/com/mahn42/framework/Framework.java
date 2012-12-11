@@ -21,6 +21,7 @@ import com.mahn42.framework.commands.CommandSetSpawn;
 import com.mahn42.framework.commands.CommandWorldList;
 import com.mahn42.framework.commands.CommandBD_Dump;
 import com.mahn42.framework.commands.CommandChunkRegenerate;
+import com.mahn42.framework.commands.CommandTest;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.minecraft.server.v1_4_5.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -40,9 +42,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.v1_4_5.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -108,6 +112,7 @@ public class Framework extends JavaPlugin {
     public int configDBSaverTicks = 18000;
     public String configLanguage = "DE_de";
     public int configProjectionTicks = 10;
+    public int configEntityControllerTicks = 10;
     
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected HashMap<String, Properties> fPluginLangs = new HashMap<String, Properties>();
@@ -131,11 +136,17 @@ public class Framework extends JavaPlugin {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        BlockAreaList lList = new BlockAreaList();
+        lList.load(new File("/Users/andre/craftbukkit/test.frm"));
         BlockRect lRect = new BlockRect();
         lRect.fromCSV("1,2,3 - 4,5,6", "\\,");
         Logger.getLogger("xxx").info(lRect.toString());
         lRect.fromCSV("1,2,3", "\\,");
         Logger.getLogger("xxx").info(lRect.toString());
+    }
+    
+    public long getSyncCallCount() {
+        return fSyncBlockSetter.calls;
     }
     
     public void registerWorldClassification(WorldClassification aClassification) {
@@ -346,6 +357,7 @@ public class Framework extends JavaPlugin {
         getCommand("fw_marker_list").setExecutor(new CommandMarkerList());
         getCommand("fw_tp").setExecutor(new CommandTeleport());
         getCommand("fw_chunk_regenerate").setExecutor(new CommandChunkRegenerate());
+        getCommand("fw_test").setExecutor(new CommandTest());
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
@@ -375,11 +387,18 @@ public class Framework extends JavaPlugin {
             }
         }
         registerSaver(fWorldPlayerSettingsDB);
+        /*
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fSaverTask, 100, configDBSaverTicks);
         getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, configDynMapTicks);
         getServer().getScheduler().scheduleAsyncRepeatingTask(this, fProjectionRunner, 10, configProjectionTicks);
         getServer().getScheduler().scheduleAsyncRepeatingTask(this, fEntityController, 10, 10); // TODO config
+        */
+        getServer().getScheduler().runTaskTimer(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
+        getServer().getScheduler().runTaskTimer(this, fSaverTask, 100, configDBSaverTicks);
+        getServer().getScheduler().runTaskTimer(this, fDynMapTask, 100, configDynMapTicks);
+        getServer().getScheduler().runTaskTimerAsynchronously(this, fProjectionRunner, 10, configProjectionTicks);
+        getServer().getScheduler().runTaskTimerAsynchronously(this, fEntityController, 10, configEntityControllerTicks);
     }
 
     @Override
@@ -450,6 +469,7 @@ public class Framework extends JavaPlugin {
         configSyncBlockSetterTicks = lConfig.getInt("SyncBlockSetter.Ticks", configSyncBlockSetterTicks);
         configLanguage = lConfig.getString("Language");
         configProjectionTicks = lConfig.getInt("ProjectionAreas.Ticks", configProjectionTicks);
+        configEntityControllerTicks = lConfig.getInt("EnityController.Ticks", configEntityControllerTicks);
         configDBSaverTicks = lConfig.getInt("DBSaver.Ticks", configDBSaverTicks);
         configDynMapTicks = lConfig.getInt("DynMap.Ticks", configDynMapTicks);
         List lWorldClasses = lConfig.getList("WorldClassifications");
@@ -575,6 +595,30 @@ public class Framework extends JavaPlugin {
             }
         }
         aPlayer.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+    }
+    
+    public ItemStack setItemStackColor(ItemStack aItem, int aColor) {
+        CraftItemStack craftStack = null;
+        net.minecraft.server.v1_4_5.ItemStack itemStack = null;
+        if (aItem instanceof CraftItemStack) {
+            craftStack = (CraftItemStack) aItem;
+            itemStack = craftStack.getHandle();
+        }
+        else if (aItem instanceof ItemStack) {
+            craftStack = new CraftItemStack(aItem);
+            itemStack = craftStack.getHandle();
+        }
+        NBTTagCompound tag = itemStack.tag;
+        if (tag == null) {
+            tag = new NBTTagCompound();
+            tag.setCompound("display", new NBTTagCompound());
+            itemStack.tag = tag;
+        }
+ 
+        tag = itemStack.tag.getCompound("display");
+        tag.setInt("color", aColor);
+        itemStack.tag.setCompound("display", tag);
+        return craftStack;        
     }
 
 }

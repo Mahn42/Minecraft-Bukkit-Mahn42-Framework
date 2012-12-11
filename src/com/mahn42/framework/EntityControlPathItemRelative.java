@@ -4,7 +4,11 @@
  */
 package com.mahn42.framework;
 
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -14,7 +18,7 @@ public class EntityControlPathItemRelative extends EntityControlPathItem {
 
     protected BlockPositionDelta delta;
     protected BlockPosition destination;
-    protected float speed = 0.3f;
+    protected float speed = 0.5f;
     
     public EntityControlPathItemRelative(BlockPositionDelta aDelta) {
         delta = aDelta;
@@ -36,7 +40,18 @@ public class EntityControlPathItemRelative extends EntityControlPathItem {
 
     @Override
     public float getSpeed(Entity aEntity) {
-        return speed;
+        if (aEntity instanceof Player) {
+            Player lPlayer = (Player)aEntity;
+            if (lPlayer.isSneaking()) {
+                return ((CraftPlayer)aEntity).getWalkSpeed() * 0.5f;
+            } else if (lPlayer.isSprinting()) {
+                return ((CraftPlayer)aEntity).getWalkSpeed() * 1.5f;
+            } else {
+                return ((CraftPlayer)aEntity).getWalkSpeed();
+            }
+        } else {
+            return speed;
+        }
     }
     
 }
