@@ -95,7 +95,17 @@ public class WorldDBList<T extends DBSetWorld> implements DBSave, Iterable<T> {
     @Override
     public void save() {
         for(T lDB : fDBs.values()) {
+            IBeforeAfterExecute lx = null;
+            if (lDB instanceof IBeforeAfterExecute) {
+                lx = (IBeforeAfterExecute)lDB;
+            }
+            if (lx != null) {
+                lx.beforeExecute(this);
+            }
             lDB.save();
+            if (lx != null) {
+                lx.afterExecute(this);
+            }
         }
     }
 

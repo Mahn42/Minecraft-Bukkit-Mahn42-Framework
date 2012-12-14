@@ -394,6 +394,7 @@ public class Framework extends JavaPlugin {
         getServer().getScheduler().scheduleAsyncRepeatingTask(this, fProjectionRunner, 10, configProjectionTicks);
         getServer().getScheduler().scheduleAsyncRepeatingTask(this, fEntityController, 10, 10); // TODO config
         */
+        //getServer().getScheduler().runTaskTimer(this, new Runnable() {  }, 1, 1);
         getServer().getScheduler().runTaskTimer(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
         getServer().getScheduler().runTaskTimer(this, fSaverTask, 100, configDBSaverTicks);
         getServer().getScheduler().runTaskTimer(this, fDynMapTask, 100, configDynMapTicks);
@@ -621,4 +622,35 @@ public class Framework extends JavaPlugin {
         return craftStack;        
     }
 
+    public static ArrayList<Material> dependsOnOtherBlock;
+    {
+        dependsOnOtherBlock = new ArrayList<Material>();
+        dependsOnOtherBlock.add(Material.PAINTING);
+        dependsOnOtherBlock.add(Material.REDSTONE_WIRE);
+        dependsOnOtherBlock.add(Material.REDSTONE_TORCH_ON);
+        dependsOnOtherBlock.add(Material.REDSTONE_TORCH_OFF);
+        dependsOnOtherBlock.add(Material.TORCH);
+        dependsOnOtherBlock.add(Material.LEVER);
+        dependsOnOtherBlock.add(Material.CACTUS);
+        dependsOnOtherBlock.add(Material.DEAD_BUSH);
+        dependsOnOtherBlock.add(Material.DETECTOR_RAIL);
+        dependsOnOtherBlock.add(Material.LONG_GRASS);
+        dependsOnOtherBlock.add(Material.TRIPWIRE);
+        dependsOnOtherBlock.add(Material.TRIPWIRE_HOOK);
+        dependsOnOtherBlock.add(Material.RAILS);
+        dependsOnOtherBlock.add(Material.POWERED_RAIL);
+        dependsOnOtherBlock.add(Material.SAPLING);
+        dependsOnOtherBlock.add(Material.VINE);
+        dependsOnOtherBlock.add(Material.WHEAT);
+        dependsOnOtherBlock.add(Material.SEEDS);
+        dependsOnOtherBlock.add(Material.SUGAR_CANE_BLOCK);
+        dependsOnOtherBlock.add(Material.WEB);
+        dependsOnOtherBlock.add(Material.WATER_LILY);
+        dependsOnOtherBlock.add(Material.LADDER);
+        dependsOnOtherBlock.add(Material.STONE_BUTTON);
+        dependsOnOtherBlock.add(Material.YELLOW_FLOWER);
+        dependsOnOtherBlock.add(Material.RED_ROSE);
+        dependsOnOtherBlock.add(Material.BROWN_MUSHROOM);
+        dependsOnOtherBlock.add(Material.RED_MUSHROOM);
+    }
 }

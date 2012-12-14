@@ -55,6 +55,10 @@ public class SyncBlockList implements Iterable<SyncBlockList.SyncBlockItem> {
             entityType = aEntityType;
             art = aArt;
         }
+
+        public boolean isDependantBlock() {
+            return Framework.dependsOnOtherBlock.contains(material);
+        }
     }
     
     protected ArrayList<SyncBlockItem> fList = new ArrayList<SyncBlockItem>();
@@ -87,6 +91,21 @@ public class SyncBlockList implements Iterable<SyncBlockList.SyncBlockItem> {
         fList.add(new SyncBlockItem(aPos, null, (byte)0, false, 0, null, null, null, null, null, aEntityType, null));
     }
     
+    public void moveDependantBlocksAtEnd() {
+        ArrayList<SyncBlockItem> lDeps = new ArrayList<SyncBlockItem>();
+        for(SyncBlockItem lItem : fList) {
+            if (lItem.isDependantBlock()) {
+                lDeps.add(lItem);
+            }
+        }
+        for(SyncBlockItem lItem : lDeps) {
+            fList.remove(lItem);
+        }
+        for(SyncBlockItem lItem : lDeps) {
+            fList.add(lItem);
+        }
+    }
+
     public void execute() {
         Framework.plugin.fSyncBlockSetter.addList(this);
     }

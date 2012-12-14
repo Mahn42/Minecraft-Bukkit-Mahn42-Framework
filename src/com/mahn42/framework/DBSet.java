@@ -30,9 +30,13 @@ public class DBSet<T extends DBRecord> implements Iterable<T>, DBSave {
         file = aStore;
     }
     
-    public void load() {
+    public void clear() {
         fRecords.clear();
         fKeyIndex.clear();
+    }
+    
+    public void load() {
+        clear();
         if (file.exists()) {
             try {
                 BufferedReader lReader = new BufferedReader(new FileReader(file));

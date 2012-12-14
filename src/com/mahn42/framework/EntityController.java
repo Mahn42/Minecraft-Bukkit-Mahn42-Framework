@@ -7,7 +7,6 @@ package com.mahn42.framework;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -18,7 +17,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
  */
 public class EntityController implements Listener, Runnable  {
     
-    protected HashMap<Integer, EntityControl> controlledEntities = new HashMap<Integer, EntityControl>();
+    protected final HashMap<Integer, EntityControl> controlledEntities = new HashMap<Integer, EntityControl>();
     
     @EventHandler
     public void entityTargetEvent(EntityTargetEvent aEvent) {
@@ -46,7 +45,7 @@ public class EntityController implements Listener, Runnable  {
         }
         synchronized(controlledEntities) {
             for(EntityControl lControl : lRemoves) {
-                Framework.plugin.getLogger().info("entity emoved from EC: " + lControl.entity.getEntityId());
+                Framework.plugin.getLogger().info("entity removed from EC: " + lControl.entity.getEntityId());
                 controlledEntities.remove(lControl.id);
             }
         }

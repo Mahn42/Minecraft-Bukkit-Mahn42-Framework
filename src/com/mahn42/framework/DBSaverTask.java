@@ -30,7 +30,17 @@ public class DBSaverTask implements Runnable {
     public void run() {
         Framework.plugin.getLogger().info("Saving DBs...");
         for(DBSave lSaver : fSaver) {
-            lSaver.save();
+            IBeforeAfterExecute lx = null;
+            if (lSaver instanceof IBeforeAfterExecute) {
+                lx = (IBeforeAfterExecute)lSaver;
+            }
+            if (lx != null) {
+                lx.beforeExecute(this);
+            }
+            lSaver.save(); 
+            if (lx != null) {
+                lx.afterExecute(this);
+            }
         }
         Framework.plugin.getLogger().info("Saving DBs done.");
     }

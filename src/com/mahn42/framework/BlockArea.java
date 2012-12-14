@@ -505,47 +505,15 @@ public class BlockArea {
     public void toListMixed(SyncBlockList aList, BlockPosition aEdge1) {
         toList(aList, aEdge1, false, false, false, false, BlockAreaPlaceMode.mixed);
     }
-    
-    public static ArrayList<Material> dependsOnOtherBlock;
-    {
-        dependsOnOtherBlock = new ArrayList<Material>();
-        dependsOnOtherBlock.add(Material.PAINTING);
-        dependsOnOtherBlock.add(Material.REDSTONE_WIRE);
-        dependsOnOtherBlock.add(Material.REDSTONE_TORCH_ON);
-        dependsOnOtherBlock.add(Material.REDSTONE_TORCH_OFF);
-        dependsOnOtherBlock.add(Material.TORCH);
-        dependsOnOtherBlock.add(Material.LEVER);
-        dependsOnOtherBlock.add(Material.CACTUS);
-        dependsOnOtherBlock.add(Material.DEAD_BUSH);
-        dependsOnOtherBlock.add(Material.DETECTOR_RAIL);
-        dependsOnOtherBlock.add(Material.LONG_GRASS);
-        dependsOnOtherBlock.add(Material.TRIPWIRE);
-        dependsOnOtherBlock.add(Material.TRIPWIRE_HOOK);
-        dependsOnOtherBlock.add(Material.RAILS);
-        dependsOnOtherBlock.add(Material.POWERED_RAIL);
-        dependsOnOtherBlock.add(Material.SAPLING);
-        dependsOnOtherBlock.add(Material.VINE);
-        dependsOnOtherBlock.add(Material.WHEAT);
-        dependsOnOtherBlock.add(Material.SEEDS);
-        dependsOnOtherBlock.add(Material.SUGAR_CANE_BLOCK);
-        dependsOnOtherBlock.add(Material.WEB);
-        dependsOnOtherBlock.add(Material.WATER_LILY);
-        dependsOnOtherBlock.add(Material.LADDER);
-        dependsOnOtherBlock.add(Material.STONE_BUTTON);
-        dependsOnOtherBlock.add(Material.YELLOW_FLOWER);
-        dependsOnOtherBlock.add(Material.RED_ROSE);
-        dependsOnOtherBlock.add(Material.BROWN_MUSHROOM);
-        dependsOnOtherBlock.add(Material.RED_MUSHROOM);
-    }
-    
+   
     public boolean isStep(int aId, int aStep) {
         boolean lResult; 
         switch (aStep) {
             case 0:
-                lResult = !dependsOnOtherBlock.contains(Material.getMaterial(aId));
+                lResult = !Framework.dependsOnOtherBlock.contains(Material.getMaterial(aId));
                 break;
             case 1:
-                lResult = dependsOnOtherBlock.contains(Material.getMaterial(aId));
+                lResult = Framework.dependsOnOtherBlock.contains(Material.getMaterial(aId));
                 break;
             default:
                 lResult = true;
@@ -573,7 +541,7 @@ public class BlockArea {
                             lPos.x = lPos.z;
                             lPos.z = lSwap;
                         }
-                        if (dependsOnOtherBlock.contains(lPos.getBlockType(aList.world))) { // isStep(lPos.getBlockTypeId(aList.world), 1)) {
+                        if (Framework.dependsOnOtherBlock.contains(lPos.getBlockType(aList.world))) { // isStep(lPos.getBlockTypeId(aList.world), 1)) {
                             aList.add(lPos, Material.AIR, (byte)0);
                             lCount++;
                         }
