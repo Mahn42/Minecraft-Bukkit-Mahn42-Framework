@@ -86,8 +86,8 @@ public class EntityHumanNPC extends EntityPlayer {
         }
         */
         if (bukkitEntity == null) {
-            Logger.getAnonymousLogger().info("new PlayerNPC");
-            bukkitEntity = new PlayerNPC(this);
+            Logger.getAnonymousLogger().info("new NPCEntity");
+            bukkitEntity = new NPCEntity(this);
         }
         return super.getBukkitEntity();
     }
@@ -201,33 +201,6 @@ public class EntityHumanNPC extends EntityPlayer {
         }
     }
     */
-
-    public static class PlayerNPC extends CraftPlayer {
-
-        private PlayerNPC(EntityHumanNPC entity) {
-            super((CraftServer) Bukkit.getServer(), entity);
-        }
-
-        @Override
-        public List<MetadataValue> getMetadata(String metadataKey) {
-            return server.getEntityMetadata().getMetadata(this, metadataKey);
-        }
-
-        @Override
-        public boolean hasMetadata(String metadataKey) {
-            return server.getEntityMetadata().hasMetadata(this, metadataKey);
-        }
-
-        @Override
-        public void removeMetadata(String metadataKey, Plugin owningPlugin) {
-            server.getEntityMetadata().removeMetadata(this, metadataKey, owningPlugin);
-        }
-
-        @Override
-        public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
-            server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
-        }
-    }
 
     private static final float EPSILON = 0.005F;
 }

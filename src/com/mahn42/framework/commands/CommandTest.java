@@ -4,11 +4,13 @@
  */
 package com.mahn42.framework.commands;
 
+import com.mahn42.framework.BlockPosition;
 import com.mahn42.framework.BlockPositionDelta;
 import com.mahn42.framework.EntityControl;
 import com.mahn42.framework.EntityControlPathItemRelative;
 import com.mahn42.framework.Framework;
 import com.mahn42.framework.npc.entity.EntityHumanNPC;
+import com.mahn42.framework.npc.entity.NPCEntity;
 import java.util.Random;
 import net.minecraft.server.v1_4_5.ItemInWorldManager;
 import net.minecraft.server.v1_4_5.WorldServer;
@@ -38,14 +40,8 @@ public class CommandTest implements CommandExecutor {
             Player player = (Player)aCommandSender;
             Location loc = player.getLocation();
             if (aStrings[0].equalsIgnoreCase("playerspawn")) {
-                WorldServer ws = ((CraftWorld) loc.getWorld()).getHandle();
-                EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, aStrings[1], new ItemInWorldManager(ws));
-                final CraftPlayer bukkitEntity = handle.getBukkitEntity();
-                ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
-                bukkitEntity.teleport(loc);
-                bukkitEntity.setSleepingIgnored(true);
+                final NPCEntity bukkitEntity = Framework.plugin.createNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
                 bukkitEntity.setItemInHand(new ItemStack(Material.IRON_PICKAXE));
-                bukkitEntity.setGameMode(GameMode.SURVIVAL);
                 PlayerInventory inventory = bukkitEntity.getInventory();
                 Random r = new Random();
                 inventory.setLeggings(Framework.plugin.setItemStackColor(new ItemStack(Material.LEATHER_LEGGINGS),r.nextInt()));
@@ -85,14 +81,8 @@ public class CommandTest implements CommandExecutor {
                 Framework.plugin.getEntityController().add(lC);
                 player.sendMessage("entity " + bukkitEntity);
             } else if (aStrings[0].equalsIgnoreCase("fisher")) {
-                WorldServer ws = ((CraftWorld) loc.getWorld()).getHandle();
-                EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, aStrings[1], new ItemInWorldManager(ws));
-                final CraftPlayer bukkitEntity = handle.getBukkitEntity();
-                ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
-                bukkitEntity.teleport(loc);
-                bukkitEntity.setSleepingIgnored(true);
+                final NPCEntity bukkitEntity = Framework.plugin.createNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
                 bukkitEntity.setItemInHand(new ItemStack(Material.FISHING_ROD));
-                bukkitEntity.setGameMode(GameMode.SURVIVAL);
                 PlayerInventory inventory = bukkitEntity.getInventory();
                 inventory.setLeggings(Framework.plugin.setItemStackColor(new ItemStack(Material.LEATHER_LEGGINGS),0x8080F0));
                 EntityControl lC = new EntityControl(bukkitEntity);

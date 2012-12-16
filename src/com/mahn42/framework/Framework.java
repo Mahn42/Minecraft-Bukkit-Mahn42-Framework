@@ -4,24 +4,26 @@
  */
 package com.mahn42.framework;
 
-import com.mahn42.framework.commands.CommandWorldCreate;
-import com.mahn42.framework.commands.CommandMarkerList;
-import com.mahn42.framework.commands.CommandSave;
-import com.mahn42.framework.commands.CommandWorldRegenerate;
 import com.mahn42.framework.commands.CommandBD_Create;
-import com.mahn42.framework.commands.CommandTeleport;
-import com.mahn42.framework.commands.CommandWorldPlayerInventory;
-import com.mahn42.framework.commands.CommandWorldSet;
-import com.mahn42.framework.commands.CommandWorldRemove;
-import com.mahn42.framework.commands.CommandDebugSet;
-import com.mahn42.framework.commands.CommandWorldClassificationList;
 import com.mahn42.framework.commands.CommandBD_CreateFromArea;
 import com.mahn42.framework.commands.CommandBD_Detect;
-import com.mahn42.framework.commands.CommandSetSpawn;
-import com.mahn42.framework.commands.CommandWorldList;
 import com.mahn42.framework.commands.CommandBD_Dump;
 import com.mahn42.framework.commands.CommandChunkRegenerate;
+import com.mahn42.framework.commands.CommandDebugSet;
+import com.mahn42.framework.commands.CommandMarkerList;
+import com.mahn42.framework.commands.CommandSave;
+import com.mahn42.framework.commands.CommandSetSpawn;
+import com.mahn42.framework.commands.CommandTeleport;
 import com.mahn42.framework.commands.CommandTest;
+import com.mahn42.framework.commands.CommandWorldClassificationList;
+import com.mahn42.framework.commands.CommandWorldCreate;
+import com.mahn42.framework.commands.CommandWorldList;
+import com.mahn42.framework.commands.CommandWorldPlayerInventory;
+import com.mahn42.framework.commands.CommandWorldRegenerate;
+import com.mahn42.framework.commands.CommandWorldRemove;
+import com.mahn42.framework.commands.CommandWorldSet;
+import com.mahn42.framework.npc.entity.EntityHumanNPC;
+import com.mahn42.framework.npc.entity.NPCEntity;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +35,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.minecraft.server.v1_4_5.ItemInWorldManager;
 import net.minecraft.server.v1_4_5.NBTTagCompound;
+import net.minecraft.server.v1_4_5.WorldServer;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -42,9 +46,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
 import org.bukkit.craftbukkit.v1_4_5.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -652,5 +658,17 @@ public class Framework extends JavaPlugin {
         dependsOnOtherBlock.add(Material.RED_ROSE);
         dependsOnOtherBlock.add(Material.BROWN_MUSHROOM);
         dependsOnOtherBlock.add(Material.RED_MUSHROOM);
+    }
+    
+    public NPCEntity createNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
+        WorldServer ws = ((CraftWorld) aWorld).getHandle();
+        EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, aName, new ItemInWorldManager(ws));
+        NPCEntity bukkitEntity = (NPCEntity)handle.getBukkitEntity();
+        bukkitEntity.setDataObject(aDataObject);
+        ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        bukkitEntity.teleport(aPos.getLocation(aWorld));
+        bukkitEntity.setSleepingIgnored(true);
+        bukkitEntity.setGameMode(GameMode.SURVIVAL);
+        return bukkitEntity;
     }
 }
