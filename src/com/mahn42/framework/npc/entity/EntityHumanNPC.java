@@ -9,7 +9,6 @@ import com.mahn42.framework.npc.network.EmptyNetworkManager;
 import com.mahn42.framework.npc.network.EmptySocket;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.v1_4_5.EntityPlayer;
@@ -20,11 +19,7 @@ import net.minecraft.server.v1_4_5.Navigation;
 import net.minecraft.server.v1_4_5.NetHandler;
 import net.minecraft.server.v1_4_5.NetworkManager;
 import net.minecraft.server.v1_4_5.World;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_4_5.CraftServer;
 import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -80,24 +75,12 @@ public class EntityHumanNPC extends EntityPlayer {
 
     @Override
     public CraftPlayer getBukkitEntity() {
-        /*
-        if (npc != null && bukkitEntity == null) {
-            bukkitEntity = new CraftPlayer((CraftServer) Bukkit.getServer(), this);
-        }
-        */
         if (bukkitEntity == null) {
-            Logger.getAnonymousLogger().info("new NPCEntity");
+            //Logger.getAnonymousLogger().info("new NPCEntity");
             bukkitEntity = new NPCEntity(this);
         }
         return super.getBukkitEntity();
     }
-
-    /*
-    @Override
-    public NPC getNPC() {
-        return npc;
-    }
-    */
 
     private void initialize(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
@@ -112,7 +95,6 @@ public class EntityHumanNPC extends EntityPlayer {
             netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
             netMgr.a(netServerHandler);
         } catch (IOException e) {
-            // swallow
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "initialize", e);
         }
 
@@ -123,37 +105,26 @@ public class EntityHumanNPC extends EntityPlayer {
         try {
             socket.close();
         } catch (IOException ex) {
-            // swallow
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "initialize", ex);
         }
     }
 
     @Override
     public void j_() {
-        //super.j_();
-        //if (npc == null)
-        //    return;
-
-        //updateEquipment();
+        super.j_();
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
-
         this.aA().a();
-        //if (npc.getNavigator().isNavigating()) {
-            Navigation navigation = getNavigation();
-            if (navigation != null) {
-                if (!navigation.f())
-                    navigation.e();
-            }
-            moveOnCurrentHeading();
-        //} else 
+        Navigation navigation = getNavigation();
+        if (navigation != null) {
+            if (!navigation.f())
+                navigation.e();
+        }
+        moveOnCurrentHeading();
         if (motX != 0 || motZ != 0 || motY != 0)
             e(0, 0); // is this necessary? it does controllable but sometimes
-                     // players sink into the ground
-
-        //if (noDamageTicks > 0)
-        //    --noDamageTicks;
-        //npc.update();
+        if (noDamageTicks > 0)
+            --noDamageTicks;
     }
 
     private void moveOnCurrentHeading() {
@@ -188,19 +159,6 @@ public class EntityHumanNPC extends EntityPlayer {
         //NMS.setHeadYaw(this, yaw);
         this.ay = yaw;
     }
-/*
-    private void updateEquipment() {
-        for (int i = 0; i < previousEquipment.length; i++) {
-            net.minecraft.server.ItemStack previous = previousEquipment[i];
-            net.minecraft.server.ItemStack current = getEquipment(i);
-            if (previous != current) {
-                Util.sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i,
-                        current));
-                previousEquipment[i] = current;
-            }
-        }
-    }
-    */
 
     private static final float EPSILON = 0.005F;
 }

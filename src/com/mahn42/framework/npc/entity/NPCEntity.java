@@ -5,6 +5,7 @@
 package com.mahn42.framework.npc.entity;
 
 import java.util.List;
+import net.minecraft.server.v1_4_5.EntityPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_4_5.CraftServer;
 import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
@@ -55,5 +56,29 @@ public class NPCEntity extends CraftPlayer {
         public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
             server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
         }
+        
+        public void swingArm() {
+            EntityPlayer humanHandle = getHandle();
+            PlayerAnimation.ARM_SWING.play(humanHandle.getBukkitEntity());
+        }
+        
+        public void sitDown() {
+            EntityPlayer humanHandle = getHandle();
+            PlayerAnimation.SIT.play(humanHandle.getBukkitEntity());
+        }
     
+        public void standUp() {
+            EntityPlayer humanHandle = getHandle();
+            PlayerAnimation.STOP_SITTING.play(humanHandle.getBukkitEntity());
+        }
+    
+        public void goSleep() {
+            EntityPlayer humanHandle = getHandle();
+            PlayerAnimation.SLEEP.play(humanHandle.getBukkitEntity());
+        }
+        
+        public void awake() {
+            EntityPlayer humanHandle = getHandle();
+            PlayerAnimation.STOP_SLEEPING.play(humanHandle.getBukkitEntity());
+        }
 }
