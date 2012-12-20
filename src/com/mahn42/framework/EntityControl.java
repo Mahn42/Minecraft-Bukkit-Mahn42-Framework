@@ -4,13 +4,12 @@
  */
 package com.mahn42.framework;
 
-import net.minecraft.server.v1_4_5.EntityCreature;
-import net.minecraft.server.v1_4_5.EntityLiving;
-import net.minecraft.server.v1_4_5.EntityPlayer;
-import net.minecraft.server.v1_4_5.Navigation;
-import net.minecraft.server.v1_4_5.PathEntity;
-import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftEntity;
+import net.minecraft.server.v1_4_6.EntityCreature;
+import net.minecraft.server.v1_4_6.EntityPlayer;
+import net.minecraft.server.v1_4_6.Navigation;
+import net.minecraft.server.v1_4_6.PathEntity;
+import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
 /**
@@ -56,7 +55,7 @@ public class EntityControl {
                 }
             }
             if (pathItem != null && lDest != null) {
-                net.minecraft.server.v1_4_5.Entity lMCEntitiy = ((CraftEntity)entity).getHandle();
+                net.minecraft.server.v1_4_6.Entity lMCEntitiy = ((CraftEntity)entity).getHandle();
                 if (lMCEntitiy instanceof EntityCreature) {
                     EntityCreature lCreature = (EntityCreature)lMCEntitiy;
                     PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lCreature, lDest.x, lDest.y, lDest.z, 100.0f, true, false, false, true);

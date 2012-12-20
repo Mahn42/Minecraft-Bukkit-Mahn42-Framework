@@ -4,22 +4,25 @@
  */
 package com.mahn42.framework.npc.entity;
 
-import com.mahn42.framework.npc.network.EmptyNetHandler;
+import com.mahn42.framework.npc.network.EmptyConnection;
 import com.mahn42.framework.npc.network.EmptyNetworkManager;
 import com.mahn42.framework.npc.network.EmptySocket;
 import java.io.IOException;
 import java.net.Socket;
+import java.security.PrivateKey;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_4_5.EntityPlayer;
-import net.minecraft.server.v1_4_5.EnumGamemode;
-import net.minecraft.server.v1_4_5.ItemInWorldManager;
-import net.minecraft.server.v1_4_5.MinecraftServer;
-import net.minecraft.server.v1_4_5.Navigation;
-import net.minecraft.server.v1_4_5.NetHandler;
-import net.minecraft.server.v1_4_5.NetworkManager;
-import net.minecraft.server.v1_4_5.World;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
+import net.minecraft.server.v1_4_6.Connection;
+import net.minecraft.server.v1_4_6.EntityPlayer;
+import net.minecraft.server.v1_4_6.EnumGamemode;
+import net.minecraft.server.v1_4_6.INetworkManager;
+import net.minecraft.server.v1_4_6.MinecraftServer;
+import net.minecraft.server.v1_4_6.Navigation;
+import net.minecraft.server.v1_4_6.NetworkManager;
+import net.minecraft.server.v1_4_6.PlayerConnection;
+import net.minecraft.server.v1_4_6.PlayerInteractManager;
+import net.minecraft.server.v1_4_6.World;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
 
 /**
  *
@@ -27,10 +30,9 @@ import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
  */
 public class EntityHumanNPC extends EntityPlayer {
     
-    public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string,
-            ItemInWorldManager itemInWorldManager) {
-        super(minecraftServer, world, string, itemInWorldManager);
-        itemInWorldManager.setGameMode(EnumGamemode.SURVIVAL);
+    public EntityHumanNPC(MinecraftServer minecraftServer, World world, String string, PlayerInteractManager manager) {
+        super(minecraftServer, world, string, manager);
+        manager.setGameMode(EnumGamemode.SURVIVAL);
         initialize(minecraftServer);
     }
 
@@ -40,7 +42,7 @@ public class EntityHumanNPC extends EntityPlayer {
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_4_5.Entity entity) {
+    public void collide(net.minecraft.server.v1_4_6.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);
@@ -85,17 +87,25 @@ public class EntityHumanNPC extends EntityPlayer {
     private void initialize(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
         NetworkManager netMgr = null;
+        Connection lConn = new Connection() {
+            @Override
+            public boolean a() {
+                return false;
+            }
+        };
         try {
-            netMgr = new EmptyNetworkManager(socket, "npc mgr", new NetHandler() {
-                @Override
-                public boolean a() {
-                    return false;
-                }
-            }, server.F().getPrivate());
-            netServerHandler = new EmptyNetHandler(minecraftServer, netMgr, this);
-            netMgr.a(netServerHandler);
-        } catch (IOException e) {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "initialize", e);
+            netMgr = new EmptyNetworkManager(socket, "npc mgr", lConn, server.F().getPrivate());
+//            {
+//                @Override
+//                public boolean a() {
+//                    return false;
+//                }
+//            };
+            server.F().getPrivate();
+            playerConnection = new EmptyConnection(minecraftServer, netMgr, this);
+            netMgr.a(playerConnection);
+        } catch (IOException ex) {
+            Logger.getLogger(EntityHumanNPC.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         getNavigation().e(true);
@@ -136,7 +146,7 @@ public class EntityHumanNPC extends EntityPlayer {
         this.getControllerLook().a();
         this.getControllerJump().b();
         // taken from EntityLiving update method
-        if (bE) {
+        if (be()) {
             boolean inLiquid = H() || J();
             if (inLiquid) {
                 motY += 0.04;
@@ -161,4 +171,5 @@ public class EntityHumanNPC extends EntityPlayer {
     }
 
     private static final float EPSILON = 0.005F;
+
 }

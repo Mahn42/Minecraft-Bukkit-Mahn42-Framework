@@ -35,10 +35,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_4_5.ItemInWorldManager;
-import net.minecraft.server.v1_4_5.NBTTagCompound;
-import net.minecraft.server.v1_4_5.WorldServer;
+import net.minecraft.server.v1_4_6.NBTTagCompound;
+import net.minecraft.server.v1_4_6.PlayerInteractManager;
+import net.minecraft.server.v1_4_6.WorldServer;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,13 +47,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_4_5.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_5.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_6.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -605,8 +607,12 @@ public class Framework extends JavaPlugin {
     }
     
     public ItemStack setItemStackColor(ItemStack aItem, int aColor) {
+        LeatherArmorMeta lMeta = (LeatherArmorMeta) aItem.getItemMeta();
+        lMeta.setColor(Color.fromRGB(aColor));
+        return aItem;
+        /*
         CraftItemStack craftStack = null;
-        net.minecraft.server.v1_4_5.ItemStack itemStack = null;
+        net.minecraft.server.v1_4_6.ItemStack itemStack = null;
         if (aItem instanceof CraftItemStack) {
             craftStack = (CraftItemStack) aItem;
             itemStack = craftStack.getHandle();
@@ -625,13 +631,15 @@ public class Framework extends JavaPlugin {
         tag = itemStack.tag.getCompound("display");
         tag.setInt("color", aColor);
         itemStack.tag.setCompound("display", tag);
-        return craftStack;        
+        return craftStack;
+        */
     }
 
     public static ArrayList<Material> dependsOnOtherBlock;
     {
         dependsOnOtherBlock = new ArrayList<Material>();
         dependsOnOtherBlock.add(Material.PAINTING);
+        dependsOnOtherBlock.add(Material.ITEM_FRAME);
         dependsOnOtherBlock.add(Material.REDSTONE_WIRE);
         dependsOnOtherBlock.add(Material.REDSTONE_TORCH_ON);
         dependsOnOtherBlock.add(Material.REDSTONE_TORCH_OFF);
@@ -662,7 +670,7 @@ public class Framework extends JavaPlugin {
     
     public NPCEntity createNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
         WorldServer ws = ((CraftWorld) aWorld).getHandle();
-        EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, aName, new ItemInWorldManager(ws));
+        EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, aName, new PlayerInteractManager(ws));
         NPCEntity bukkitEntity = (NPCEntity)handle.getBukkitEntity();
         bukkitEntity.setDataObject(aDataObject);
         ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);

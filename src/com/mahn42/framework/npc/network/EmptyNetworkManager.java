@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.Socket;
 import java.security.PrivateKey;
-import net.minecraft.server.v1_4_5.NetHandler;
-import net.minecraft.server.v1_4_5.NetworkManager;
-import net.minecraft.server.v1_4_5.Packet;
+import net.minecraft.server.v1_4_6.Connection;
+import net.minecraft.server.v1_4_6.NetworkManager;
+import net.minecraft.server.v1_4_6.Packet;
 
 /**
  *
@@ -18,12 +18,12 @@ import net.minecraft.server.v1_4_5.Packet;
  */
 public class EmptyNetworkManager extends NetworkManager {
 
-    public EmptyNetworkManager(Socket socket, String string, NetHandler netHandler, PrivateKey key)
+    public EmptyNetworkManager(Socket socket, String string, Connection connection, PrivateKey key)
             throws IOException {
-        super(socket, string, netHandler, key);
+        super(socket, string, connection, key);
         //NMS.stopNetworkThreads(this);
-        Field f = null;
         try {
+            Field f = null;
             f = NetworkManager.class.getDeclaredField("m");
             f.setAccessible(true);
             f.set(this, false);
@@ -36,7 +36,7 @@ public class EmptyNetworkManager extends NetworkManager {
     }
 
     @Override
-    public void a(NetHandler netHandler) {
+    public void a(Connection connection) {
     }
 
     @Override

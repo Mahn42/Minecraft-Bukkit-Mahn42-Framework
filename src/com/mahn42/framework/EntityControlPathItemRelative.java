@@ -4,10 +4,8 @@
  */
 package com.mahn42.framework;
 
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 /**

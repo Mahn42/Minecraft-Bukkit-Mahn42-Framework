@@ -4,15 +4,15 @@
  */
 package com.mahn42.framework.npc.entity;
 
-import net.minecraft.server.v1_4_5.EntityPlayer;
-import net.minecraft.server.v1_4_5.Packet;
-import net.minecraft.server.v1_4_5.Packet17EntityLocationAction;
-import net.minecraft.server.v1_4_5.Packet18ArmAnimation;
-import net.minecraft.server.v1_4_5.Packet40EntityMetadata;
+import net.minecraft.server.v1_4_6.EntityPlayer;
+import net.minecraft.server.v1_4_6.Packet;
+import net.minecraft.server.v1_4_6.Packet17EntityLocationAction;
+import net.minecraft.server.v1_4_6.Packet18ArmAnimation;
+import net.minecraft.server.v1_4_6.Packet40EntityMetadata;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_4_5.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
@@ -112,6 +112,6 @@ public enum PlayerAnimation {
     }
 
     public static void sendPacket(Player player, Packet packet) {
-        ((CraftPlayer) player).getHandle().netServerHandler.sendPacket(packet);
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
     }
 }
