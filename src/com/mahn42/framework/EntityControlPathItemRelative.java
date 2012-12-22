@@ -16,7 +16,7 @@ public class EntityControlPathItemRelative extends EntityControlPathItem {
 
     protected BlockPositionDelta delta;
     protected BlockPosition destination;
-    protected float speed = 0.5f;
+    protected float speed = 0.25f;
     
     public EntityControlPathItemRelative(BlockPositionDelta aDelta) {
         delta = aDelta;

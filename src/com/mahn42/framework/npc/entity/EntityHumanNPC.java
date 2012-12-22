@@ -9,17 +9,14 @@ import com.mahn42.framework.npc.network.EmptyNetworkManager;
 import com.mahn42.framework.npc.network.EmptySocket;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.PrivateKey;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.v1_4_6.Connection;
 import net.minecraft.server.v1_4_6.EntityPlayer;
 import net.minecraft.server.v1_4_6.EnumGamemode;
-import net.minecraft.server.v1_4_6.INetworkManager;
 import net.minecraft.server.v1_4_6.MinecraftServer;
 import net.minecraft.server.v1_4_6.Navigation;
 import net.minecraft.server.v1_4_6.NetworkManager;
-import net.minecraft.server.v1_4_6.PlayerConnection;
 import net.minecraft.server.v1_4_6.PlayerInteractManager;
 import net.minecraft.server.v1_4_6.World;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
@@ -78,8 +75,8 @@ public class EntityHumanNPC extends EntityPlayer {
     @Override
     public CraftPlayer getBukkitEntity() {
         if (bukkitEntity == null) {
-            //Logger.getAnonymousLogger().info("new NPCEntity");
             bukkitEntity = new NPCEntity(this);
+            //Logger.getAnonymousLogger().info("new NPCEntity " + bukkitEntity.getEntityId());
         }
         return super.getBukkitEntity();
     }
@@ -87,7 +84,8 @@ public class EntityHumanNPC extends EntityPlayer {
     private void initialize(MinecraftServer minecraftServer) {
         Socket socket = new EmptySocket();
         NetworkManager netMgr = null;
-        Connection lConn = new Connection() {
+        Connection lConn = new Connection()
+        {
             @Override
             public boolean a() {
                 return false;
@@ -95,13 +93,6 @@ public class EntityHumanNPC extends EntityPlayer {
         };
         try {
             netMgr = new EmptyNetworkManager(socket, "npc mgr", lConn, server.F().getPrivate());
-//            {
-//                @Override
-//                public boolean a() {
-//                    return false;
-//                }
-//            };
-            server.F().getPrivate();
             playerConnection = new EmptyConnection(minecraftServer, netMgr, this);
             netMgr.a(playerConnection);
         } catch (IOException ex) {
@@ -122,19 +113,23 @@ public class EntityHumanNPC extends EntityPlayer {
     @Override
     public void j_() {
         super.j_();
-        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
+        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
             motX = motY = motZ = 0;
+        }
         this.aA().a();
         Navigation navigation = getNavigation();
         if (navigation != null) {
-            if (!navigation.f())
+            if (!navigation.f()) {
                 navigation.e();
+            }
         }
         moveOnCurrentHeading();
-        if (motX != 0 || motZ != 0 || motY != 0)
-            e(0, 0); // is this necessary? it does controllable but sometimes
-        if (noDamageTicks > 0)
+        if (motX != 0 || motZ != 0 || motY != 0) {
+            e(0, 0);
+        } // is this necessary? it does controllable but sometimes
+        if (noDamageTicks > 0) {
             --noDamageTicks;
+        }
     }
 
     private void moveOnCurrentHeading() {

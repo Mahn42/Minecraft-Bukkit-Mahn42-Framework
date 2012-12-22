@@ -6,9 +6,12 @@ package com.mahn42.framework;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 
 /**
  *
@@ -31,11 +34,17 @@ public class BuildingDetector {
     }
     
     public ArrayList<Building> detect(World aWorld, BlockPosition aPos1, BlockPosition aPos2) {
+        HashMap<BlockPosition, Entity> lEntities = new HashMap<BlockPosition, Entity>();
         ArrayList<Building> lResult = new ArrayList<Building>();
         int dx = aPos1.x > aPos2.x ? -1 : 1;
         int dy = aPos1.y > aPos2.y ? -1 : 1;
         int dz = aPos1.z > aPos2.z ? -1 : 1;
         getHandlers();
+        List<Entity> lents = aWorld.getEntities();
+        for(Entity lent : lents) {
+            BlockPosition lPos = new BlockPosition(lent.getLocation());
+            lEntities.put(lPos, lent);
+        }
         for(BuildingDescription lDesc : fDescriptions) {
             if (lDesc.active) {
                 for(int lX = aPos1.x; lX <= aPos2.x; lX+=dx) {
@@ -43,7 +52,7 @@ public class BuildingDetector {
                         for(int lZ = aPos1.z; lZ <= aPos2.z; lZ+=dz) {
                             //Logger.getLogger("detect").info("teste " + new Integer(lX) + "," + new Integer(lY) + "," + new Integer(lZ));
                             if (getBuildingsWithNoneShareableBlock(new BlockPosition(lX, lY, lZ)).isEmpty()) {
-                                Building aBuilding = matchDescription(lDesc, aWorld, lX, lY, lZ);
+                                Building aBuilding = matchDescription(lDesc, aWorld, lEntities, lX, lY, lZ);
                                 if (aBuilding != null) {
                                     lResult.add(aBuilding);
                                     Framework.plugin.getLogger().info("detected " + aBuilding.getName());
@@ -59,8 +68,8 @@ public class BuildingDetector {
         return lResult;
     }
 
-    private Building matchDescription(BuildingDescription lDesc, World aWorld, int lX, int lY, int lZ) {
-        return lDesc.matchDescription(aWorld, lX, lY, lZ);
+    private Building matchDescription(BuildingDescription lDesc, World aWorld, Map<BlockPosition, Entity> aEntities, int lX, int lY, int lZ) {
+        return lDesc.matchDescription(aWorld, aEntities, lX, lY, lZ);
     }
 
     protected boolean fShouldUpdateHandlers = false;

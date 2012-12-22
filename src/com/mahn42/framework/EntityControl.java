@@ -68,6 +68,7 @@ public class EntityControl {
                     //lCreature.setPathEntity(lPE);
                     Navigation lNavigation = lCreature.getNavigation();
                     lNavigation.a(lPE, pathItem.getSpeed(entity));
+                    //lNavigation.a(lDest.x, lDest.y, lDest.z, pathItem.getSpeed(entity));
                 } else {
                     //todo
                 }

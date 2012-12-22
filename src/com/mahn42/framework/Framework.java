@@ -668,6 +668,13 @@ public class Framework extends JavaPlugin {
         dependsOnOtherBlock.add(Material.RED_MUSHROOM);
     }
     
+    public static ArrayList<Material> entityBlocks;
+    {
+        entityBlocks = new ArrayList<Material>();
+        entityBlocks.add(Material.PAINTING);
+        entityBlocks.add(Material.ITEM_FRAME);
+    }
+
     public NPCEntity createNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
         WorldServer ws = ((CraftWorld) aWorld).getHandle();
         EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, aName, new PlayerInteractManager(ws));

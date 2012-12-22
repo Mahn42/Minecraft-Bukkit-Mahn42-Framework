@@ -6,10 +6,17 @@ package com.mahn42.framework;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.util.Vector;
 
 /**
@@ -95,9 +102,10 @@ public class BuildingDescription {
     }
     
     public class BlockMaterial {
-        public Material material;
+        public Material material = null;
         public boolean withData = false;
         public byte data = 0;
+        public EntityType entityType = EntityType.UNKNOWN;
 
         public BlockMaterial() {
         }
@@ -112,14 +120,44 @@ public class BuildingDescription {
             data = aData;
         }
         
+        public BlockMaterial(Entity aEntity) {
+            entityType = aEntity.getType();
+            switch(entityType) {
+                case DROPPED_ITEM:
+                    Item lItem = (Item)aEntity;
+                    material = lItem.getItemStack().getType();
+                    break;
+                case ITEM_FRAME:
+                    ItemFrame lFrame = (ItemFrame)aEntity;
+                    material = lFrame.getItem().getType();
+            }
+        }
+        
+        public BlockMaterial(EntityType aEntityType) {
+            entityType = aEntityType;
+        }
+        
+        public BlockMaterial(EntityType aEntityType, Material aMaterial) {
+            entityType = aEntityType;
+            material = aMaterial;
+        }
+        
         @Override
         public boolean equals(Object aObject) {
             if (aObject instanceof BlockMaterial) {
                 BlockMaterial lMat = (BlockMaterial)aObject;
-                if (withData) {
-                    return material.equals(lMat.material) && (data == lMat.data);
+                if (entityType != EntityType.UNKNOWN) {
+                    if (material != null) {
+                        return entityType.equals(lMat.entityType) && material.equals(lMat.material);
+                    } else {
+                        return entityType.equals(lMat.entityType);
+                    }
                 } else {
-                    return material.equals(lMat.material);
+                    if (withData) {
+                        return material.equals(lMat.material) && (data == lMat.data);
+                    } else {
+                        return material.equals(lMat.material);
+                    }
                 }
             } else if (aObject instanceof Material) {
                 return material.equals(aObject) && !withData;
@@ -141,6 +179,9 @@ public class BuildingDescription {
             if (withData) {
                 lResult += "(" + data + ")";
             }
+            if (entityType != EntityType.UNKNOWN) {
+                lResult = entityType.toString() + " with " + lResult;
+            }
             return lResult;
         }
 
@@ -155,6 +196,12 @@ public class BuildingDescription {
         }
         public boolean add(Material aMaterial, byte aData) {
             return add(new BlockMaterial(aMaterial, aData));
+        }
+        public boolean add(EntityType aEntityType) {
+            return add(new BlockMaterial(aEntityType));
+        }
+        public boolean add(EntityType aEntityType, Material aMaterial) {
+            return add(new BlockMaterial(aEntityType, aMaterial));
         }
         public void add(BlockMaterialArray aList) {
             for(BlockMaterial lMat : aList) {
@@ -176,6 +223,15 @@ public class BuildingDescription {
             }
             return false;
             //return contains(new BlockMaterial(aBlock.getType(), aBlock.getData()));
+        }
+
+        public boolean contains(BlockMaterial aBMat) {
+            for(BlockMaterial lItem : this) {
+                if (lItem.equals(aBMat)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void dump(Logger aLogger) {
@@ -468,19 +524,21 @@ public class BuildingDescription {
         active = true;
     }
 
-    public Building matchDescription(World aWorld, int lX, int lY, int lZ) {
-        Block lBlock = aWorld.getBlockAt(lX, lY, lZ);
+    public Building matchDescription(World aWorld, Map<BlockPosition, Entity> aEntities, int lX, int lY, int lZ) {
+        //Block lBlock = aWorld.getBlockAt(lX, lY, lZ);
+        BlockMaterial lBMat = getBlockMaterial(aWorld, aEntities, new BlockPosition(lX, lY, lZ));
         ArrayList<BlockDescription> lExcludes = new ArrayList<BlockDescription>();
         Framework.plugin.log("bd", this.name);
         for(BlockDescription lBlockDesc : blocks) {
             if (lBlockDesc.detectSensible) {
-                if (lBlockDesc.materials.contains(lBlock)) {
+//                if (lBlockDesc.materials.contains(lBlock)) {
+                if (lBlockDesc.materials.contains(lBMat)) {
                     lExcludes.clear();
                     Building aBuilding = new Building();
                     aBuilding.description = this;
                     aBuilding.setWorld(aWorld);
                     //Logger.getLogger("detect").info("mat " + lMat.name());
-                    if (!canFollowRelateds(lExcludes, aBuilding, aWorld, lBlockDesc, lX, lY, lZ)) {
+                    if (!canFollowRelateds(lExcludes, aBuilding, aWorld, aEntities, lBlockDesc, lX, lY, lZ)) {
                         Framework.plugin.log("bd", "not ok, excludes " + lExcludes.size());
                         //return null;
                     } else {
@@ -503,7 +561,26 @@ public class BuildingDescription {
         BlockPosition pos;
         BlockDescription desc;
     }
-    private boolean canFollowRelateds(ArrayList<BlockDescription> aExcludes, Building aBuilding, World aWorld, BlockDescription lBlockDesc, int lX, int lY, int lZ) {
+    
+    private static List<Entity> fEntities = null;
+    
+    private BlockMaterial getBlockMaterial(World aWorld, Map<BlockPosition, Entity> aEntities, BlockPosition aPos) {
+        BlockMaterial lMat = null;
+        Block lBlock = aPos.getBlock(aWorld);
+        if (lBlock.getType().equals(Material.AIR) && aEntities != null) {
+            Entity lEntity = aEntities.get(aPos);
+            if (lEntity != null) {
+                lMat = new BlockMaterial(lEntity);
+            } else {
+                lMat = new BlockMaterial(lBlock.getType(), lBlock.getData());
+            }
+        } else {
+            lMat = new BlockMaterial(lBlock.getType(), lBlock.getData());
+        }
+        return lMat;
+    }
+    
+    private boolean canFollowRelateds(ArrayList<BlockDescription> aExcludes, Building aBuilding, World aWorld, Map<BlockPosition, Entity> aEntities, BlockDescription lBlockDesc, int lX, int lY, int lZ) {
         if (!aExcludes.contains(lBlockDesc)) {
             BlockPosition lStartPos = new BlockPosition(lX, lY, lZ);
             aBuilding.blocks.add(new BuildingBlock(lBlockDesc, new BlockPosition(lStartPos)));
@@ -529,18 +606,19 @@ public class BuildingDescription {
                             for(int lIndex = lPoss.size() - 1; lIndex >= 0; lIndex--) {
                                 //Logger.getLogger("detect").info("rel " + lRel.description.name + " index " + lIndex);
                                 BlockPosition lPos = lPoss.get(lIndex);
-                                Block lBlock = lPos.getBlock(aWorld);
+                                //Block lBlock = lPos.getBlock(aWorld);
+                                BlockMaterial lBMat = getBlockMaterial(aWorld, aEntities, lPos);
                                 if (!lRelated && lIndex < lRel.minDistance) {
                                     Framework.plugin.log("bd", "break rel " + lRel.description.name + " mindist " + lIndex);
                                     break;
                                 }
-                                if (lRelated && !lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                    Framework.plugin.log("bd", "break rel " + lRel.description.name + " mat " + lBlock.getType());
+                                if (lRelated && !lRel.materials.isEmpty() && !lRel.materials.contains(lBMat)) {
+                                    Framework.plugin.log("bd", "break rel " + lRel.description.name + " mat " + lBMat);
                                     lRelatedPos = null;
                                     lRelated = false;
                                     lIndex = lLastRel-1;
                                 }
-                                if (!lRelated && lRel.description.materials.contains(lBlock)) {
+                                if (!lRelated && lRel.description.materials.contains(lBMat)) {
                                     Framework.plugin.log("bd", "found rel " + lRel.description.name);
                                     lRelatedPos = lPos;
                                     lRelated = true;
@@ -591,22 +669,23 @@ public class BuildingDescription {
                                     if (lFirst) {
                                         lFirst = false;
                                     } else {
-                                        Block lBlock = lPos.getBlock(aWorld);
+                                        //Block lBlock = lPos.getBlock(aWorld);
+                                        BlockMaterial lBMat = getBlockMaterial(aWorld, aEntities, lPos);
                                         if (lSkip == 0) {
-                                            Framework.plugin.log("bd", "check rel " + lRel.description.name + " at " + lPos + " mat " + lBlock.getType() + " " + lBlock.getData() + " -> " + lRel.description.materials.get(0));
-                                            if (lRel.description.materials.contains(lBlock)) {
+                                            Framework.plugin.log("bd", "check rel " + lRel.description.name + " at " + lPos + " mat " + lBMat + " -> " + lRel.description.materials.get(0));
+                                            if (lRel.description.materials.contains(lBMat)) {
                                                 Framework.plugin.log("bd", "found rel " + lRel.description.name);
                                                 lRelatedPos = lPos;
                                                 lRelated = true;
                                                 break;
-                                            } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                                Framework.plugin.log("bd", "break rel " + lRel.description.name + " mat " + lBlock.getType() + " " + lRel.materials.get(0));
+                                            } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBMat)) {
+                                                Framework.plugin.log("bd", "break rel " + lRel.description.name + " mat " + lBMat + " " + lRel.materials.get(0));
                                                 break;
                                             }
                                         } else {
                                             lSkip--;
-                                            if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBlock)) {
-                                                Framework.plugin.log("bd", "break rel " + lRel.description.name + " mat " + lBlock.getType());
+                                            if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBMat)) {
+                                                Framework.plugin.log("bd", "break rel " + lRel.description.name + " mat " + lBMat);
                                                 break;
                                             }
                                         }
@@ -632,14 +711,15 @@ public class BuildingDescription {
                             break;
                         case Nearby:
                             for(BlockPosition lPos : new BlockPositionWalkAround(lStartPos, BlockPositionDelta.HorizontalAndVertical)) {
-                                Block lBlock = lPos.getBlock(aWorld);
-                                if (lRel.description.materials.contains(lBlock)) {
+                                //Block lBlock = lPos.getBlock(aWorld);
+                                BlockMaterial lBMat = getBlockMaterial(aWorld, aEntities, lPos);
+                                if (lRel.description.materials.contains(lBMat)) {
                                     Framework.plugin.log("bd", "found rel nearby " + lRel.description.name);
                                     lRelated = true;
                                     lRelatedPos = lPos.clone();
                                     break;
                                 } else {
-                                    Framework.plugin.log("bd", "break rel nearby " + lRel.description.name + " mat " + lBlock.getType());
+                                    Framework.plugin.log("bd", "break rel nearby " + lRel.description.name + " mat " + lBMat);
                                 }
                             }
                             break;
@@ -662,7 +742,7 @@ public class BuildingDescription {
                 }
                 for(RelFollower lF : lFs) {
                     Framework.plugin.log("bd", "follow rel " + lF.desc.name);
-                    if (!canFollowRelateds(aExcludes, aBuilding, aWorld, lF.desc, lF.pos.x, lF.pos.y, lF.pos.z)) {
+                    if (!canFollowRelateds(aExcludes, aBuilding, aWorld, aEntities, lF.desc, lF.pos.x, lF.pos.y, lF.pos.z)) {
                         Framework.plugin.log("bd", "rel2 " + lF.desc.name + " not match");
                         return false;
                     }
