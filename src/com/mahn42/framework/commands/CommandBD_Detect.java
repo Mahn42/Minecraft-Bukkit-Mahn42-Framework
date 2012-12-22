@@ -29,7 +29,7 @@ public class CommandBD_Detect implements CommandExecutor {
                 World lWorld = lPlayer.getWorld();
                 BuildingDescription lDesc = Framework.plugin.getBuildingDescription(lName);
                 Block lBlock = lPlayer.getTargetBlock(null, 100);
-                Building lBuilding = lDesc.matchDescription(lWorld, lBlock.getX(), lBlock.getY(), lBlock.getZ());
+                Building lBuilding = lDesc.matchDescription(lWorld, null, lBlock.getX(), lBlock.getY(), lBlock.getZ());
                 if (lBuilding != null) {
                     lPlayer.sendMessage("match ok.");
                 } else {
