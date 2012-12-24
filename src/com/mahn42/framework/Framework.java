@@ -443,6 +443,16 @@ public class Framework extends JavaPlugin {
         return null;
     }
     
+    public List<BuildingDescription> getBuildingDescriptionByMatch(String aNamePattern) {
+        ArrayList<BuildingDescription> lResult = new ArrayList<BuildingDescription>();
+        for(BuildingDescription lDesc : fBuildingDetector.fDescriptions) {
+            if (aNamePattern.matches(aNamePattern)) {
+                lResult.add(lDesc);
+            }
+        }
+        return lResult;
+    }
+    
     public BuildingDetector getBuildingDetector() {
         return fBuildingDetector;
     }
@@ -668,11 +678,11 @@ public class Framework extends JavaPlugin {
         dependsOnOtherBlock.add(Material.RED_MUSHROOM);
     }
     
-    public static ArrayList<Material> entityBlocks;
+    public static HashMap<Material, EntityType> materialToEntity;
     {
-        entityBlocks = new ArrayList<Material>();
-        entityBlocks.add(Material.PAINTING);
-        entityBlocks.add(Material.ITEM_FRAME);
+        materialToEntity = new HashMap<Material, EntityType>();
+        materialToEntity.put(Material.PAINTING, EntityType.PAINTING);
+        materialToEntity.put(Material.ITEM_FRAME, EntityType.ITEM_FRAME);
     }
 
     public NPCEntity createNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
@@ -685,5 +695,62 @@ public class Framework extends JavaPlugin {
         bukkitEntity.setSleepingIgnored(true);
         bukkitEntity.setGameMode(GameMode.SURVIVAL);
         return bukkitEntity;
+    }
+    
+    public enum ItemType {
+        Block,
+        Tool,
+        Helmet,
+        Chestplate,
+        Leggings,
+        Boots
+    }
+    
+    public ItemType getItemType(Material aMaterial) {
+        switch(aMaterial) {
+            case WOOD_AXE:
+            case WOOD_HOE:
+            case WOOD_PICKAXE:
+            case WOOD_SPADE:
+            case WOOD_SWORD:
+            case IRON_AXE:
+            case IRON_HOE:
+            case IRON_PICKAXE:
+            case IRON_SPADE:
+            case IRON_SWORD:
+            case DIAMOND_AXE:
+            case DIAMOND_HOE:
+            case DIAMOND_PICKAXE:
+            case DIAMOND_SPADE:
+            case DIAMOND_SWORD:
+            case GOLD_AXE:
+            case GOLD_HOE:
+            case GOLD_PICKAXE:
+            case GOLD_SPADE:
+            case GOLD_SWORD:
+                return ItemType.Tool;
+            case LEATHER_HELMET:
+            case IRON_HELMET:
+            case GOLD_HELMET:
+            case DIAMOND_HELMET:
+                return ItemType.Helmet;
+            case LEATHER_CHESTPLATE:
+            case IRON_CHESTPLATE:
+            case GOLD_CHESTPLATE:
+            case DIAMOND_CHESTPLATE:
+                return ItemType.Chestplate;
+            case LEATHER_BOOTS:
+            case IRON_BOOTS:
+            case GOLD_BOOTS:
+            case DIAMOND_BOOTS:
+                return ItemType.Boots;
+            case LEATHER_LEGGINGS:
+            case IRON_LEGGINGS:
+            case GOLD_LEGGINGS:
+            case DIAMOND_LEGGINGS:
+                return ItemType.Leggings;
+            default:
+                return ItemType.Block;
+        }
     }
 }

@@ -111,7 +111,11 @@ public class BuildingDescription {
         }
         
         public BlockMaterial(Material aMaterial) {
-            material = aMaterial;
+            if (Framework.materialToEntity.containsKey(aMaterial)) {
+                entityType = Framework.materialToEntity.get(aMaterial);
+            } else {
+                material = aMaterial;
+            }
         }
         
         public BlockMaterial(Material aMaterial, byte aData) {
@@ -538,7 +542,7 @@ public class BuildingDescription {
                     aBuilding.description = this;
                     aBuilding.setWorld(aWorld);
                     //Logger.getLogger("detect").info("mat " + lMat.name());
-                    if (!canFollowRelateds(lExcludes, aBuilding, aWorld, aEntities, lBlockDesc, lX, lY, lZ)) {
+                    if (!canFollowRelateds(lExcludes, aBuilding, aWorld, aEntities, lBlockDesc, lX, lY, lZ, lBMat)) {
                         Framework.plugin.log("bd", "not ok, excludes " + lExcludes.size());
                         //return null;
                     } else {
@@ -560,6 +564,7 @@ public class BuildingDescription {
     protected class RelFollower {
         BlockPosition pos;
         BlockDescription desc;
+        BlockMaterial bmat;
     }
     
     private static List<Entity> fEntities = null;
@@ -580,16 +585,17 @@ public class BuildingDescription {
         return lMat;
     }
     
-    private boolean canFollowRelateds(ArrayList<BlockDescription> aExcludes, Building aBuilding, World aWorld, Map<BlockPosition, Entity> aEntities, BlockDescription lBlockDesc, int lX, int lY, int lZ) {
+    private boolean canFollowRelateds(ArrayList<BlockDescription> aExcludes, Building aBuilding, World aWorld, Map<BlockPosition, Entity> aEntities, BlockDescription lBlockDesc, int lX, int lY, int lZ, BlockMaterial aMat) {
         if (!aExcludes.contains(lBlockDesc)) {
             BlockPosition lStartPos = new BlockPosition(lX, lY, lZ);
-            aBuilding.blocks.add(new BuildingBlock(lBlockDesc, new BlockPosition(lStartPos)));
+            aBuilding.blocks.add(new BuildingBlock(lBlockDesc, new BlockPosition(lStartPos), aMat == null ? null : aMat.material));
             if (lBlockDesc.relatedTo.size() > 0) {
                 Framework.plugin.log("bd", "check desc " + lBlockDesc.name + " at " + lStartPos);
                 ArrayList<RelFollower> lFs = new ArrayList<RelFollower>();
                 for(RelatedTo lRel : lBlockDesc.relatedTo) {
                     boolean lRelated = false;
                     boolean lFirst = true;
+                    BlockMaterial lRelatedMaterial = null;
                     BlockPosition lRelatedPos = null;
                     BlockPosition lPos1 = lStartPos.clone();
                     BlockPosition lPos2 = lStartPos.clone();
@@ -621,6 +627,7 @@ public class BuildingDescription {
                                 if (!lRelated && lRel.description.materials.contains(lBMat)) {
                                     Framework.plugin.log("bd", "found rel " + lRel.description.name);
                                     lRelatedPos = lPos;
+                                    lRelatedMaterial = lBMat;
                                     lRelated = true;
                                     lLastRel = lIndex;
                                 }
@@ -676,6 +683,7 @@ public class BuildingDescription {
                                             if (lRel.description.materials.contains(lBMat)) {
                                                 Framework.plugin.log("bd", "found rel " + lRel.description.name);
                                                 lRelatedPos = lPos;
+                                                lRelatedMaterial = lBMat;
                                                 lRelated = true;
                                                 break;
                                             } else if (!lRel.materials.isEmpty() && !lRel.materials.contains(lBMat)) {
@@ -716,6 +724,7 @@ public class BuildingDescription {
                                 if (lRel.description.materials.contains(lBMat)) {
                                     Framework.plugin.log("bd", "found rel nearby " + lRel.description.name);
                                     lRelated = true;
+                                    lRelatedMaterial = lBMat;
                                     lRelatedPos = lPos.clone();
                                     break;
                                 } else {
@@ -732,6 +741,7 @@ public class BuildingDescription {
                         RelFollower lF = new RelFollower();
                         lF.pos = lRelatedPos;
                         lF.desc = lRel.description;
+                        lF.bmat = lRelatedMaterial;
                         lFs.add(lF);
                         //Logger.getLogger("detect").info("found rel2 " + lF.desc.name);
                     }
@@ -742,7 +752,7 @@ public class BuildingDescription {
                 }
                 for(RelFollower lF : lFs) {
                     Framework.plugin.log("bd", "follow rel " + lF.desc.name);
-                    if (!canFollowRelateds(aExcludes, aBuilding, aWorld, aEntities, lF.desc, lF.pos.x, lF.pos.y, lF.pos.z)) {
+                    if (!canFollowRelateds(aExcludes, aBuilding, aWorld, aEntities, lF.desc, lF.pos.x, lF.pos.y, lF.pos.z, lF.bmat)) {
                         Framework.plugin.log("bd", "rel2 " + lF.desc.name + " not match");
                         return false;
                     }

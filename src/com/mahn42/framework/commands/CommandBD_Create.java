@@ -14,6 +14,8 @@ import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 /**
@@ -71,9 +73,13 @@ public class CommandBD_Create implements CommandExecutor {
                 Framework.plugin.getLogger().info("Block " + aBDesc.name + " no BlockState! " + aPos);
                 return;
             }
-            lState.setType(aBDesc.materials.get(0).material);
-            if (aBDesc.materials.get(0).withData) {
-                lState.setRawData(aBDesc.materials.get(0).data);
+            if (aBDesc.materials.get(0).entityType != EntityType.UNKNOWN) {
+                Framework.plugin.getLogger().info("Entity spawn not supported! " + aBDesc.name + " at " + aPos + " " + aBDesc.materials.get(0).entityType);
+            } else {
+                lState.setType(aBDesc.materials.get(0).material);
+                if (aBDesc.materials.get(0).withData) {
+                    lState.setRawData(aBDesc.materials.get(0).data);
+                }
             }
             try {
                 lState.update(true);
