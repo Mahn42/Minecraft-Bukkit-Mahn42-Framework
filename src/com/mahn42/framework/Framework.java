@@ -23,13 +23,16 @@ import com.mahn42.framework.commands.CommandWorldRegenerate;
 import com.mahn42.framework.commands.CommandWorldRemove;
 import com.mahn42.framework.commands.CommandWorldSet;
 import com.mahn42.framework.npc.entity.EntityHumanNPC;
-import com.mahn42.framework.npc.entity.NPCEntity;
+import com.mahn42.framework.npc.entity.EntityPlayerNPC;
+import com.mahn42.framework.npc.entity.NPCEntityHuman;
+import com.mahn42.framework.npc.entity.NPCEntityPlayer;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -678,17 +681,17 @@ public class Framework extends JavaPlugin {
         dependsOnOtherBlock.add(Material.RED_MUSHROOM);
     }
     
-    public static HashMap<Material, EntityType> materialToEntity;
+    public static EnumMap<Material, EntityType> materialToEntity;
     {
-        materialToEntity = new HashMap<Material, EntityType>();
+        materialToEntity = new EnumMap<Material, EntityType>(Material.class);
         materialToEntity.put(Material.PAINTING, EntityType.PAINTING);
         materialToEntity.put(Material.ITEM_FRAME, EntityType.ITEM_FRAME);
     }
 
-    public NPCEntity createNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
+    public NPCEntityPlayer createPlayerNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
         WorldServer ws = ((CraftWorld) aWorld).getHandle();
-        EntityHumanNPC handle = new EntityHumanNPC(ws.getServer().getServer(), ws, aName, new PlayerInteractManager(ws));
-        NPCEntity bukkitEntity = (NPCEntity)handle.getBukkitEntity();
+        EntityPlayerNPC handle = new EntityPlayerNPC(ws.getServer().getServer(), ws, aName, new PlayerInteractManager(ws));
+        NPCEntityPlayer bukkitEntity = (NPCEntityPlayer)handle.getBukkitEntity();
         bukkitEntity.setDataObject(aDataObject);
         ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
         bukkitEntity.teleport(aPos.getLocation(aWorld));
@@ -697,6 +700,18 @@ public class Framework extends JavaPlugin {
         return bukkitEntity;
     }
     
+    public NPCEntityHuman createHumanNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
+        WorldServer ws = ((CraftWorld) aWorld).getHandle();
+        EntityHumanNPC handle = new EntityHumanNPC(ws, aName);
+        NPCEntityHuman bukkitEntity = (NPCEntityHuman)handle.getBukkitEntity();
+        bukkitEntity.setDataObject(aDataObject);
+        ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
+        ws.players.remove(handle);
+        bukkitEntity.teleport(aPos.getLocation(aWorld));
+        bukkitEntity.setGameMode(GameMode.SURVIVAL);
+        return bukkitEntity;
+    }
+
     public enum ItemType {
         Block,
         Tool,

@@ -9,7 +9,8 @@ import com.mahn42.framework.BlockPositionDelta;
 import com.mahn42.framework.EntityControl;
 import com.mahn42.framework.EntityControlPathItemRelative;
 import com.mahn42.framework.Framework;
-import com.mahn42.framework.npc.entity.NPCEntity;
+import com.mahn42.framework.npc.entity.NPCEntityHuman;
+import com.mahn42.framework.npc.entity.NPCEntityPlayer;
 import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,7 +34,7 @@ public class CommandTest implements CommandExecutor {
             Player player = (Player)aCommandSender;
             Location loc = player.getLocation();
             if (aStrings[0].equalsIgnoreCase("playerspawn")) {
-                final NPCEntity bukkitEntity = Framework.plugin.createNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
+                final NPCEntityPlayer bukkitEntity = Framework.plugin.createPlayerNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
                 bukkitEntity.setItemInHand(new ItemStack(Material.IRON_PICKAXE));
                 PlayerInventory inventory = bukkitEntity.getInventory();
                 Random r = new Random();
@@ -74,13 +75,22 @@ public class CommandTest implements CommandExecutor {
                 Framework.plugin.getEntityController().add(lC);
                 player.sendMessage("entity " + bukkitEntity);
             } else if (aStrings[0].equalsIgnoreCase("fisher")) {
-                final NPCEntity bukkitEntity = Framework.plugin.createNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
+                final NPCEntityPlayer bukkitEntity = Framework.plugin.createPlayerNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
                 bukkitEntity.setItemInHand(new ItemStack(Material.FISHING_ROD));
                 PlayerInventory inventory = bukkitEntity.getInventory();
                 inventory.setLeggings(Framework.plugin.setItemStackColor(new ItemStack(Material.LEATHER_LEGGINGS),0x8080F0));
                 EntityControl lC = new EntityControl(bukkitEntity);
                 lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta( 1,  0,   0)));
                 Framework.plugin.getEntityController().add(lC);
+            } else if (aStrings[0].equalsIgnoreCase("human")) {
+                final NPCEntityHuman bukkitEntity = Framework.plugin.createHumanNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
+                bukkitEntity.getAsHuman().setItemInHand(new ItemStack(Material.IRON_PICKAXE));
+                PlayerInventory inventory = bukkitEntity.getInventory();
+                inventory.setLeggings(Framework.plugin.setItemStackColor(new ItemStack(Material.LEATHER_LEGGINGS),0x8080F0));
+                EntityControl lC = new EntityControl(bukkitEntity);
+                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta( 10,  0,   0)));
+                Framework.plugin.getEntityController().add(lC);
+                player.sendMessage("entity " + bukkitEntity);
             } else {
                 player.sendMessage("unkown " + aStrings[0]);
             }

@@ -567,8 +567,6 @@ public class BuildingDescription {
         BlockMaterial bmat;
     }
     
-    private static List<Entity> fEntities = null;
-    
     private BlockMaterial getBlockMaterial(World aWorld, Map<BlockPosition, Entity> aEntities, BlockPosition aPos) {
         BlockMaterial lMat = null;
         Block lBlock = aPos.getBlock(aWorld);

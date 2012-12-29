@@ -17,7 +17,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author andre
  */
-public class NPCEntity extends CraftPlayer {
+public class NPCEntityPlayer extends CraftPlayer {
 
         protected Object fDataObject =null;
         
@@ -33,7 +33,14 @@ public class NPCEntity extends CraftPlayer {
             return this;
         }
         
-        public NPCEntity(EntityHumanNPC entity) {
+        public void setMot(float x, float y, float z) {
+            EntityPlayerNPC lNPC = (EntityPlayerNPC)getHandle();
+            lNPC.motX = x;
+            lNPC.motY = y;
+            lNPC.motZ = z;
+        }
+        
+        public NPCEntityPlayer(EntityPlayer entity) {
             super((CraftServer) Bukkit.getServer(), entity);
         }
 
@@ -81,4 +88,5 @@ public class NPCEntity extends CraftPlayer {
             EntityPlayer humanHandle = getHandle();
             PlayerAnimation.STOP_SLEEPING.play(humanHandle.getBukkitEntity());
         }
+    
 }
