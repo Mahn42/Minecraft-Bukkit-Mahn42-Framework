@@ -7,6 +7,7 @@ package com.mahn42.framework;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetEvent;
@@ -54,6 +55,12 @@ public class EntityController implements Listener, Runnable  {
     public void add(EntityControl aControl) {
         synchronized(controlledEntities) {
             controlledEntities.put(aControl.id, aControl);
+        }
+    }
+
+    public void remove(int aEntityId) {
+        synchronized(controlledEntities) {
+            controlledEntities.remove(aEntityId);
         }
     }
 }

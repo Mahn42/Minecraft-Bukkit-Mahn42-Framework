@@ -12,7 +12,7 @@ import org.bukkit.entity.Entity;
  */
 public class EntityControlPathItemDestination extends EntityControlPathItem {
     protected BlockPosition destination;
-    protected float speed = 0.3f;
+    protected float speed = -1.0f;
     
     public EntityControlPathItemDestination() {
     }
@@ -33,7 +33,7 @@ public class EntityControlPathItemDestination extends EntityControlPathItem {
 
     @Override
     public float getSpeed(Entity aEntity) {
-        return speed;
+        return getDefaultSpeed(aEntity, speed);
     }
 
 }

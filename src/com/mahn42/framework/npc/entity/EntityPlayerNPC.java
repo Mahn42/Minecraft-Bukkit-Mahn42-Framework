@@ -4,7 +4,6 @@
  */
 package com.mahn42.framework.npc.entity;
 
-import com.mahn42.framework.Framework;
 import com.mahn42.framework.npc.network.EmptyConnection;
 import com.mahn42.framework.npc.network.EmptyNetworkManager;
 import com.mahn42.framework.npc.network.EmptySocket;
@@ -20,9 +19,13 @@ import net.minecraft.server.v1_4_6.MathHelper;
 import net.minecraft.server.v1_4_6.MinecraftServer;
 import net.minecraft.server.v1_4_6.Navigation;
 import net.minecraft.server.v1_4_6.NetworkManager;
+import net.minecraft.server.v1_4_6.Packet32EntityLook;
 import net.minecraft.server.v1_4_6.PlayerInteractManager;
 import net.minecraft.server.v1_4_6.World;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -37,6 +40,7 @@ public class EntityPlayerNPC extends EntityPlayer {
         initialize(minecraftServer);
     }
 
+    /*
     @Override
     public float bB() {
         return super.bB(); // * npc.getNavigator().getDefaultParameters().speed();
@@ -50,7 +54,8 @@ public class EntityPlayerNPC extends EntityPlayer {
         //if (npc != null)
         //    Util.callCollisionEvent(npc, entity);
     }
-
+    */
+    
     @Override
     public CraftPlayer getBukkitEntity() {
         if (bukkitEntity == null) {
@@ -92,6 +97,22 @@ public class EntityPlayerNPC extends EntityPlayer {
     @Override
     public void j_() {
         super.j_();
+        
+        Packet32EntityLook packet = new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper.d(pitch * 256.0F / 360.0F));
+        double radius = 64.0d * 64.0d;
+        Location location = getBukkitEntity().getLocation();
+        final org.bukkit.World lworld = location.getWorld();
+        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
+            if (ply == null || lworld != ply.getWorld()) {
+                continue;
+            }
+            if (location.distanceSquared(ply.getLocation()) > radius) {
+                continue;
+            }
+            ((CraftPlayer) ply).getHandle().playerConnection.sendPacket(packet);
+        }
+                
+        
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
             motX = motY = motZ = 0;
         }
@@ -114,15 +135,16 @@ public class EntityPlayerNPC extends EntityPlayer {
     private void moveOnCurrentHeading() {
         //NMS.updateAI(this);
         //updateSenses(entity);
-        if (Math.abs(motX) > 0.1f || Math.abs(motY) > 0.1f || Math.abs(motZ) > 0.1f ) {
-            Framework.plugin.getLogger().info("motX = " + motX + " motY = " + motY + " motZ = " + motZ);
-        }
+        //if (Math.abs(motX) > 0.1f || Math.abs(motY) > 0.1f || Math.abs(motZ) > 0.1f ) {
+        //    Framework.plugin.getLogger().info("motX = " + motX + " motY = " + motY + " motZ = " + motZ);
+        //}
         this.aA().a();
         this.getNavigation().e();
         this.getControllerMove().c();
         this.getControllerLook().a();
         this.getControllerJump().b();
         // taken from EntityLiving update method
+        /*
         if (be()) {
             boolean inLiquid = H() || J();
             if (inLiquid) {
@@ -146,6 +168,29 @@ public class EntityPlayerNPC extends EntityPlayer {
         }
         e(bB, bC); // movement method
         aM = prev;
+        */
+        
+        if (bF) {
+            /* boolean inLiquid = H() || J();
+             if (inLiquid) {
+                 motY += 0.04;
+             } else //(handled elsewhere)*/
+            if (onGround && bV == 0) {
+                bi();
+                bV = 10;
+            }
+        } else
+            bV = 0;
+
+        bC *= 0.98F;
+        bD *= 0.98F;
+        bE *= 0.9F;
+
+        float prev = aN;
+        aN *= bB();
+        e(bC, bD); // movement method
+        aN = prev;
+        
         //NMS.setHeadYaw(this, yaw);
         this.ay = yaw;
     }

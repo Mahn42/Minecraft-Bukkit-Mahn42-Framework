@@ -743,6 +743,8 @@ public class Framework extends JavaPlugin {
             case GOLD_PICKAXE:
             case GOLD_SPADE:
             case GOLD_SWORD:
+            case FISHING_ROD:
+            case SHEARS:
                 return ItemType.Tool;
             case LEATHER_HELMET:
             case IRON_HELMET:
