@@ -88,5 +88,10 @@ public class NPCEntityPlayer extends CraftPlayer {
             EntityPlayer humanHandle = getHandle();
             PlayerAnimation.STOP_SLEEPING.play(humanHandle.getBukkitEntity());
         }
+        
+        public void jump() {
+            EntityPlayerNPC lNPC = (EntityPlayerNPC)getHandle();
+            lNPC.motY = 1.5;
+        }
     
 }
