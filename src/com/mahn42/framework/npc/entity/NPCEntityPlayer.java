@@ -91,7 +91,12 @@ public class NPCEntityPlayer extends CraftPlayer {
         
         public void jump() {
             EntityPlayerNPC lNPC = (EntityPlayerNPC)getHandle();
-            lNPC.motY = 1.5;
+            lNPC.motY += 0.3;
+        }
+    
+        public void swim() {
+            EntityPlayerNPC lNPC = (EntityPlayerNPC)getHandle();
+            lNPC.motY += 0.6;
         }
     
 }

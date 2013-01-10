@@ -233,4 +233,8 @@ public class Building extends DBRecordWorld {
             Framework.plugin.getLogger().info(aText);
         }
     }
+
+    public String getIconName() {
+        return description.iconName;
+    }
 }

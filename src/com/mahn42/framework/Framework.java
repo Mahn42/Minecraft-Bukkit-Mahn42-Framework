@@ -32,9 +32,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -58,6 +60,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -485,6 +489,34 @@ public class Framework extends JavaPlugin {
     public void runSave() {
         fSaverTask.run();
     }
+    
+    public static class BuildingPermission {
+        public String pattern;
+        public ArrayList<String> permissions = new ArrayList<String>();
+        
+        public BuildingPermission(String aPattern, Collection<String> aPerms) {
+            pattern = aPattern;
+            permissions.addAll(aPerms);
+        }
+    }
+    
+    protected ArrayList<BuildingPermission> fBuildingPermissions = new ArrayList<BuildingPermission>();
+    
+    public boolean checkBuildingPermission(Player aPlayer, Building aBuilding) {
+        boolean lRes = true;
+        for(BuildingPermission aPerm : fBuildingPermissions) {
+            Framework.plugin.log("fw","check perm " + aBuilding.description.name + " " + aPerm.pattern + " " + aPerm.permissions);
+            if (aBuilding.description.name.matches(aPerm.pattern)) {
+                for(String lP : aPerm.permissions) {
+                    lRes = aPlayer.hasPermission(lP);
+                    if (lRes) {
+                        return lRes;
+                    }
+                }
+            }
+        }
+        return lRes;
+    }
 
     private void readFrameworkConfig() {
         FileConfiguration lConfig = getConfig();
@@ -499,6 +531,29 @@ public class Framework extends JavaPlugin {
             WorldClassification lWC = new WorldClassification();
             lWC.fromSectionValue(lItem);
             registerWorldClassification(lWC);
+        }
+        List<Map<?, ?>> lMapList = lConfig.getMapList("BuildingPermissions");
+        for(Map<?, ?> lMap : lMapList) {
+            Object lValue = lMap.get("name");
+            if (lValue != null) {
+                String aPattern = lValue.toString();
+                lValue = lMap.get("permissions");
+                if (lValue instanceof ArrayList) {
+                    ArrayList<String> lPerms = new ArrayList<String>();
+                    for(Object lItem : (ArrayList)lValue) {
+                        String lPermname = lItem.toString();
+                        lPerms.add(lPermname);
+                        if (getServer().getPluginManager().getPermission(lPermname) == null) {
+                            getServer().getPluginManager().addPermission(new Permission(lPermname, "for " + aPattern + "buildings", PermissionDefault.OP));
+                        }
+                    }
+                    fBuildingPermissions.add(new BuildingPermission(aPattern, lPerms));
+                } else if (lValue instanceof String) {
+                    ArrayList<String> lPerms = new ArrayList<String>();
+                    lPerms.add(lValue.toString());
+                    fBuildingPermissions.add(new BuildingPermission(aPattern, lPerms));
+                }
+            }
         }
     }
     

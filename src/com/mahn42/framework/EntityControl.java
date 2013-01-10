@@ -51,7 +51,7 @@ public class EntityControl {
         if (pathItem != null) {
             BlockPosition lDest = pathItem.getDestination(entity);
             BlockPosition lEntityPos = new BlockPosition(entity.getLocation());
-            while (pathItem != null && lDest != null && lDest.nearly(lEntityPos)) {
+            while (pathItem != null && lDest != null && lDest.distance(entity.getLocation()) < 1.5d) {
                 EntityReachedPathItemEvent lEvent = new EntityReachedPathItemEvent(entity, this, pathItem);
                 lEvent.raise();
                 if (pathItem.shouldStay(entity)) {
@@ -110,7 +110,7 @@ public class EntityControl {
                     */
                     
                     EntityPlayer lPlayer = (EntityPlayer)lMCEntitiy;
-                    PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lPlayer, lDest.x, lDest.y, lDest.z, 100.0f, true, false, true, true);
+                    PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lPlayer, lDest.x, lDest.y, lDest.z, 100.0f, true, true, true, true);
                     //lCreature.setPathEntity(lPE);
                     Navigation lNavigation = lPlayer.getNavigation();
                     lNavigation.a(lPE, pathItem.getSpeed(entity));
@@ -143,7 +143,7 @@ public class EntityControl {
         net.minecraft.server.v1_4_6.Entity lMCEntitiy = ((CraftEntity)entity).getHandle();
         if (lMCEntitiy instanceof EntityPlayerNPC) {
             EntityPlayerNPC lNPC = (EntityPlayerNPC) lMCEntitiy;
-            PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lNPC, aDest.x, aDest.y, aDest.z, 100.0f, true, false, true, true);
+            PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lNPC, aDest.x, aDest.y, aDest.z, 100.0f, true, true, true, true);
             for(int i = 0; i<lPE.d(); i++) {
                 PathPoint lpp = lPE.a(i);
                 EntityControlPathItem lItem = new EntityControlPathItemDestination(new BlockPosition(lpp.a, lpp.b, lpp.c));
@@ -156,7 +156,7 @@ public class EntityControl {
         net.minecraft.server.v1_4_6.Entity lMCEntitiy = ((CraftEntity)entity).getHandle();
         if (lMCEntitiy instanceof EntityPlayerNPC) {
             EntityPlayerNPC lNPC = (EntityPlayerNPC) lMCEntitiy;
-            PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lNPC, aDest.x, aDest.y, aDest.z, 100.0f, true, false, true, true);
+            PathEntity lPE = ((CraftWorld)entity.getWorld()).getHandle().a(lNPC, aDest.x, aDest.y, aDest.z, 100.0f, true, true, true, true);
             if (lPE != null) {
                 for(int i = 0; i<lPE.d(); i++) {
                     PathPoint lpp = lPE.a(i);
@@ -170,7 +170,16 @@ public class EntityControl {
     
     public static boolean existsPath(Entity aEntity, BlockPosition aDest) {
         net.minecraft.server.v1_4_6.Entity lMCEntitiy = ((CraftEntity)aEntity).getHandle();
-        PathEntity lPE = ((CraftWorld)aEntity.getWorld()).getHandle().a(lMCEntitiy, aDest.x, aDest.y, aDest.z, 100.0f, true, false, true, true);
-        return lPE != null && lPE.d() > 0;
+        PathEntity lPE = ((CraftWorld)aEntity.getWorld()).getHandle().a(lMCEntitiy, aDest.x, aDest.y, aDest.z, 100.0f, true, true, true, true);
+        if (lPE != null && lPE.d() > 0) {
+            PathPoint pp = lPE.a(lPE.d() - 1);
+            boolean lR = pp.a == aDest.x && pp.b == aDest.y && pp.c == aDest.z;
+            if (!lR) {
+                Framework.plugin.log("fw", "EP: " + aDest + " != " + pp.a + "," + pp.b + "," + pp.c);
+            }
+            return lR;
+        } else {
+            return false;
+        }
     }
 }

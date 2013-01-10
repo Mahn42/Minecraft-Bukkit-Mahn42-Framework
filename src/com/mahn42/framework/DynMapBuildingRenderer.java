@@ -10,6 +10,7 @@ import org.bukkit.plugin.PluginManager;
 import org.dynmap.DynmapAPI;
 import org.dynmap.markers.CircleMarker;
 import org.dynmap.markers.MarkerAPI;
+import org.dynmap.markers.MarkerIcon;
 import org.dynmap.markers.MarkerSet;
 import org.dynmap.markers.PolyLineMarker;
 
@@ -57,11 +58,35 @@ public class DynMapBuildingRenderer implements Runnable {
         for(BuildingDB<Building> lDB : lDBs) {
             for(Building lBuilding : lDB) {
                 if (lBuilding.description.visibleOnMap) {
-                    if (lBuilding.description.iconName != null) {
-                        lMarkerSet.createMarker(lBuilding.key, lBuilding.getName(), lDB.world.getName(), lBuilding.edge1.x, lBuilding.edge1.y, lBuilding.edge1.z, lMarkerAPI.getMarkerIcon(lBuilding.description.iconName), false);
+                    String lIconName = lBuilding.getIconName();
+                    if (lIconName != null && !lIconName.isEmpty()) {
+                        MarkerIcon markerIcon = lMarkerAPI.getMarkerIcon(lIconName);
+                        if (markerIcon == null) {
+                            Framework.plugin.log("fw", "Icon '" + lIconName + "' not found!");
+                            markerIcon = lMarkerAPI.getMarkerIcon("default");
+                        }
+                        lMarkerSet.createMarker(
+                                lBuilding.key,
+                                lBuilding.getName(),
+                                lDB.world.getName(),
+                                lBuilding.edge1.x,
+                                lBuilding.edge1.y,
+                                lBuilding.edge1.z,
+                                markerIcon,
+                                false);
                         lCount++;
                     } else if (lBuilding.description.circleRadius > 0) {
-                        CircleMarker lCircleMarker = lMarkerSet.createCircleMarker(lBuilding.key, lBuilding.getName(), false, lDB.world.getName(), lBuilding.edge1.x, lBuilding.edge1.y, lBuilding.edge1.z, lBuilding.description.circleRadius, lBuilding.description.circleRadius, false);
+                        CircleMarker lCircleMarker = lMarkerSet.createCircleMarker(
+                                lBuilding.key,
+                                lBuilding.getName(),
+                                false,
+                                lDB.world.getName(), 
+                                lBuilding.edge1.x,
+                                lBuilding.edge1.y,
+                                lBuilding.edge1.z,
+                                lBuilding.description.circleRadius,
+                                lBuilding.description.circleRadius,
+                                false);
                         lCircleMarker.setLineStyle(1, 1.0, lBuilding.description.color);
                         lCircleMarker.setFillStyle(0.5, lBuilding.description.color);
                     } else {
@@ -92,7 +117,15 @@ public class DynMapBuildingRenderer implements Runnable {
                         lXs[8] = lBuilding.edge1.x;
                         lYs[8] = lBuilding.edge2.y;
                         lZs[8] = lBuilding.edge1.z;
-                        PolyLineMarker lRect = lMarkerSet.createPolyLineMarker(lBuilding.key, lBuilding.getName(), true, lDB.world.getName(), lXs, lYs, lZs, false);
+                        PolyLineMarker lRect = lMarkerSet.createPolyLineMarker(
+                                lBuilding.key,
+                                lBuilding.getName(),
+                                true,
+                                lDB.world.getName(),
+                                lXs,
+                                lYs,
+                                lZs,
+                                false);
                         if (lRect != null) {
                             lRect.setLineStyle(3, 0.75, 0xF0A0A0);
                             //Framework.plugin.getLogger().info(":" + lBuilding.edge1 + " to " + lBuilding.edge2);

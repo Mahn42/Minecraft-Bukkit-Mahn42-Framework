@@ -47,7 +47,7 @@ public class EntityReachedPathItemEvent extends Event {
     }
     
     public void raise() {
-        Framework.plugin.getLogger().info("ERPI: " + entity.getEntityId() + " " + item.getDestination(entity) + " " + control.path.size());
+        Framework.plugin.log("fw", "ERPI: " + entity.getEntityId() + " " + item.getDestination(entity) + " " + control.path.size());
         Framework.plugin.getServer().getPluginManager().callEvent(this);
     }
 }

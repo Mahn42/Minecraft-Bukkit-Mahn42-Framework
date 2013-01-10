@@ -21,28 +21,32 @@ public class BuildingDetectTask implements Runnable {
     public World world;
     public BlockPosition position;
     public Material inHand;
-    
+
     @Override
     public void run() {
         ArrayList<Building> lBuildings;
         lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithNoneShareableBlock(position);
         if (lBuildings.size() == 1) {
-            if (lBuildings.get(0).description.handler != null) {
-                if (inHand.equals(Material.BOOK)) {
-                    lBuildings.get(0).description.handler.nextConfiguration(lBuildings.get(0), position, player);
-                } else {
-                    lBuildings.get(0).description.handler.playerInteractWith(lBuildings.get(0), position, player, inHand);
+            if (Framework.plugin.checkBuildingPermission(player, lBuildings.get(0))) {
+                if (lBuildings.get(0).description.handler != null) {
+                    if (inHand.equals(Material.BOOK)) {
+                        lBuildings.get(0).description.handler.nextConfiguration(lBuildings.get(0), position, player);
+                    } else {
+                        lBuildings.get(0).description.handler.playerInteractWith(lBuildings.get(0), position, player, inHand);
+                    }
+                    return;
                 }
-                return;
+            } else {
+                player.sendMessage(Framework.plugin.getText(player, "&cYou have no permission for this kind of building!"));
             }
         } else if (lBuildings.size() > 1) {
             if (inHand.equals(Material.BOOK)) {
                 if (player != null) {
-                    for(Building lBuilding : lBuildings) {
+                    for (Building lBuilding : lBuildings) {
                         player.sendMessage(Framework.plugin.getText(player, "Here is always the building %s!", lBuilding.getName()));
                     }
                 } else {
-                    for(Building lBuilding : lBuildings) {
+                    for (Building lBuilding : lBuildings) {
                         Framework.plugin.getLogger().info("Here is always the building " + lBuilding.getName());
                     }
                 }
@@ -52,7 +56,7 @@ public class BuildingDetectTask implements Runnable {
                 && lBuildings.isEmpty()) {
             lBuildings = Framework.plugin.getBuildingDetector().detect(world, position, position);
             boolean lFound = false;
-            for(Building lBuilding : lBuildings) {
+            for (Building lBuilding : lBuildings) {
                 if (player != null) {
                     lBuilding.playerName = player.getName();
                 }
@@ -60,12 +64,16 @@ public class BuildingDetectTask implements Runnable {
                 if (lBuilding.description.handler != null) {
                     //Framework.plugin.getLogger().info("2");
                     boolean lOK = false;
-                    if (event != null) {
-                        //Framework.plugin.getLogger().info("3");
-                        lOK = lBuilding.description.handler.playerInteract(event, lBuilding);
+                    if (Framework.plugin.checkBuildingPermission(player, lBuilding)) {
+                        if (event != null) {
+                            //Framework.plugin.getLogger().info("3");
+                            lOK = lBuilding.description.handler.playerInteract(event, lBuilding);
+                        } else {
+                            //Framework.plugin.getLogger().info("4 " + lBuilding.description.handler.getClass().getName());
+                            lOK = lBuilding.description.handler.insert(lBuilding) != null;
+                        }
                     } else {
-                        //Framework.plugin.getLogger().info("4 " + lBuilding.description.handler.getClass().getName());
-                        lOK = lBuilding.description.handler.insert(lBuilding) != null;
+                        player.sendMessage(Framework.plugin.getText(player, "&cYou have no permission for this kind of building!"));
                     }
                     if (lOK) {
                         //Framework.plugin.getLogger().info("5");
@@ -87,5 +95,4 @@ public class BuildingDetectTask implements Runnable {
             }
         }
     }
-    
 }

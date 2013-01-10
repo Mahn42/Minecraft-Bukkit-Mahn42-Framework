@@ -10,6 +10,10 @@ ProjectionAreas:
   Ticks: 10
 DynMap:
   Ticks: 40
+BuildingPermissions:
+  -
+    name: Settler.*
+    permissions: [settler]
 WorldClassifications:
   -
     name: empty_flat

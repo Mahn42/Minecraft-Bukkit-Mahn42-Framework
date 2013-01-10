@@ -169,6 +169,10 @@ public class BlockPosition {
         return getVector().distance(aPos.getVector());
     }
 
+    public double distance(Location aLoc) {
+        return getVector().add(new Vector(0.5d, 0.5d, 0.5d)).distance(aLoc.toVector());
+    }
+
     public void cloneFrom(BlockPosition aPos) {
         x = aPos.x;
         y = aPos.y;
@@ -181,7 +185,11 @@ public class BlockPosition {
     }
 
     public boolean nearly(BlockPosition aPos) {
-        return (Math.abs(x - aPos.x) + Math.abs(y - aPos.y) + Math.abs(z - aPos.z)) < 2;
+        return nearly(aPos,1);
+    }
+    
+    public boolean nearly(BlockPosition aPos, int aDist) {
+        return (Math.abs(x - aPos.x) + Math.abs(y - aPos.y) + Math.abs(z - aPos.z)) <= aDist;
     }
     
     public boolean isBetween(BlockPosition aEdge1, BlockPosition aEdge2) {
