@@ -8,6 +8,7 @@ import com.mahn42.framework.commands.CommandBD_Create;
 import com.mahn42.framework.commands.CommandBD_CreateFromArea;
 import com.mahn42.framework.commands.CommandBD_Detect;
 import com.mahn42.framework.commands.CommandBD_Dump;
+import com.mahn42.framework.commands.CommandBD_List;
 import com.mahn42.framework.commands.CommandChunkRegenerate;
 import com.mahn42.framework.commands.CommandDebugSet;
 import com.mahn42.framework.commands.CommandMarkerList;
@@ -355,6 +356,7 @@ public class Framework extends JavaPlugin {
         fProjectionRunner = new ProjectionAreasRunner();
         fEntityController = new EntityController();
         
+        getCommand("fw_bd_list").setExecutor(new CommandBD_List());
         getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
         getCommand("fw_bd_create").setExecutor(new CommandBD_Create());
         getCommand("fw_bd_createfromarea").setExecutor(new CommandBD_CreateFromArea());

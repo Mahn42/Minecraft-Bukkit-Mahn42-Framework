@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
@@ -31,6 +30,12 @@ public class BuildingDetector {
             return t1.detectPriority - t.detectPriority;
         }
         
+    }
+    
+    public List<BuildingDescription> getDescriptions() {
+        ArrayList<BuildingDescription> lRes = new ArrayList<BuildingDescription>();
+        lRes.addAll(fDescriptions);
+        return lRes;
     }
     
     public ArrayList<Building> detect(World aWorld, BlockPosition aPos1, BlockPosition aPos2) {

@@ -4,9 +4,16 @@ main: com.mahn42.framework.Framework
 version: 0.54
 softdepend: [dynmap]
 commands:
+   fw_bd_list:
+      description: list all or matching building descriptions.
+      usage: /fw_bd_list <descnamepattern>
+      aliases: bdlist
+      permission: fw.bd_list
+      permission-message: You don't have permission
    fw_bd_dump:
       description: only for testing, dumps building descriptions.
       usage: /fw_bd_dump <descname>
+      aliases: bddump
       permission: fw.bd_dump
       permission-message: You don't have permission
    fw_bd_create:
@@ -104,6 +111,7 @@ permissions:
     fw.*:
         description: Gives access to all framework commands
         children:
+            fw.bd_list: true
             fw.bd_dump: true
             fw.bd_create: true
             fw.bd_createfromarea: true
@@ -128,6 +136,9 @@ permissions:
             fw.tp: true
             fw.chunk_regenerate: true
             fw.test: true
+    fw.bd_list:
+        description: Allows you to list building descriptions
+        default: false
     fw.bd_dump:
         description: Allows you to dump building descriptions
         default: false
