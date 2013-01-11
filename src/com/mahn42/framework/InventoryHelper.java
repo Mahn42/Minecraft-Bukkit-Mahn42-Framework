@@ -49,5 +49,44 @@ public class InventoryHelper {
         }
         return aO - aCount;
     }
+
+    public static int insertItems(Inventory aInv, Material aMat, int aCount) {
+        int aO = aCount;
+        for (ItemStack lItem : aInv) {
+            if (lItem != null && lItem.getType().equals(aMat)) {
+                if (lItem.getAmount() < lItem.getMaxStackSize()) {
+                    int lplace = lItem.getMaxStackSize() - lItem.getAmount();
+                    if (lplace >= aCount) {
+                        lItem.setAmount(lItem.getAmount() + aCount);
+                        aCount = 0;
+                    } else {
+                        lItem.setAmount(lItem.getMaxStackSize());
+                        aCount -= lplace;
+                    }
+                    break;
+                }
+            }
+        }
+        if (aCount > 0) {
+            int i = -1;
+            for (ItemStack lItem : aInv) {
+                i++;
+                if (lItem == null) {
+                    lItem = new ItemStack(aMat);
+                    aInv.setItem(i, lItem);
+                    int lplace = lItem.getMaxStackSize() - lItem.getAmount();
+                    if (lplace >= aCount) {
+                        lItem.setAmount(lItem.getAmount() + aCount);
+                        aCount = 0;
+                    } else {
+                        lItem.setAmount(lItem.getMaxStackSize());
+                        aCount -= lplace;
+                    }
+                    break;
+                }
+            }
+        }
+        return aO - aCount;
+    }
     
 }
