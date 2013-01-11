@@ -26,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 /**
  *
@@ -97,7 +98,6 @@ public class EntityPlayerNPC extends EntityPlayer {
     @Override
     public void j_() {
         super.j_();
-        
         Packet32EntityLook packet = new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper.d(pitch * 256.0F / 360.0F));
         double radius = 64.0d * 64.0d;
         Location location = getBukkitEntity().getLocation();
@@ -144,34 +144,9 @@ public class EntityPlayerNPC extends EntityPlayer {
         this.getControllerLook().a();
         this.getControllerJump().b();
         // taken from EntityLiving update method
-        /*
-        if (be()) {
-            boolean inLiquid = H() || J();
-            if (inLiquid) {
-                motY += 0.04;
-            } else //(handled elsewhere)
-            if (onGround && bU == 0) {
-                bi();
-                bU = 10;
-            }
-        } else
-            bU = 0;
-
-        bB *= 0.98F;
-        bC *= 0.98F;
-        bD *= 0.9F;
-
-        float prev = aM;
-        aM *= bB();
-        if (bB != 0.0f || bC != 0.0f) {
-            Framework.plugin.getLogger().info("e(bB, bC) => " + bB + ", " + bC);
-        }
-        e(bB, bC); // movement method
-        aM = prev;
-        */
         
         if (bF) {
-            /* boolean inLiquid = H() || J();
+             boolean inLiquid = H() || J();
              if (inLiquid) {
                  motY += 0.04;
              } else //(handled elsewhere)*/
@@ -192,7 +167,7 @@ public class EntityPlayerNPC extends EntityPlayer {
         aN = prev;
         
         //NMS.setHeadYaw(this, yaw);
-        this.ay = yaw;
+        this.az = yaw;
     }
 
     private static final float EPSILON = 0.005F;
