@@ -122,7 +122,7 @@ public class PlayerListener implements Listener {
                 lTask.event = aEvent;
                 lTask.inHand = lInHand;
                 lTask.position = new BlockPosition(lBlock.getLocation());
-                Framework.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(Framework.plugin, lTask);
+                Framework.plugin.getServer().getScheduler().runTaskAsynchronously(Framework.plugin, lTask);
             //}
         }
         /*

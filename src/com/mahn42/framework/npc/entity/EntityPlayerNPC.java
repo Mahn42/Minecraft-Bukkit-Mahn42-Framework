@@ -13,10 +13,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.v1_4_6.ChunkCoordinates;
 import net.minecraft.server.v1_4_6.Connection;
+import net.minecraft.server.v1_4_6.DamageSource;
+import net.minecraft.server.v1_4_6.EnchantmentManager;
+import net.minecraft.server.v1_4_6.Entity;
+import net.minecraft.server.v1_4_6.EntityLiving;
+import net.minecraft.server.v1_4_6.EntityMonster;
 import net.minecraft.server.v1_4_6.EntityPlayer;
 import net.minecraft.server.v1_4_6.EnumGamemode;
 import net.minecraft.server.v1_4_6.MathHelper;
 import net.minecraft.server.v1_4_6.MinecraftServer;
+import net.minecraft.server.v1_4_6.MobEffectList;
 import net.minecraft.server.v1_4_6.Navigation;
 import net.minecraft.server.v1_4_6.NetworkManager;
 import net.minecraft.server.v1_4_6.Packet32EntityLook;
@@ -187,4 +193,41 @@ public class EntityPlayerNPC extends EntityPlayer {
         return new ChunkCoordinates(MathHelper.floor(this.locX), MathHelper.floor(this.locY + 0.5D), MathHelper.floor(this.locZ));
     }
 
+    /*
+    public void attack(EntityLiving target) {
+        int damage = 2;
+
+        if (this.hasEffect(MobEffectList.INCREASE_DAMAGE)) {
+            damage += 3 << this.getEffect(MobEffectList.INCREASE_DAMAGE).getAmplifier();
+        }
+
+        if (this.hasEffect(MobEffectList.WEAKNESS)) {
+            damage -= 2 << this.getEffect(MobEffectList.WEAKNESS).getAmplifier();
+        }
+
+        int knockbackLevel = 0;
+
+        if (target instanceof EntityLiving) {
+            damage += EnchantmentManager.a(this, target);
+            knockbackLevel += EnchantmentManager.getKnockbackEnchantmentLevel(this, target);
+        }
+
+        boolean success = target.damageEntity(DamageSource.mobAttack(this), damage);
+
+        if (!success) {
+            return;
+        }
+        if (knockbackLevel > 0) {
+            target.g(-MathHelper.sin((float) (this.yaw * Math.PI / 180.0F)) * knockbackLevel * 0.5F, 0.1D,
+                    MathHelper.cos((float) (this.yaw * Math.PI / 180.0F)) * knockbackLevel * 0.5F);
+            this.motX *= 0.6D;
+            this.motZ *= 0.6D;
+        }
+
+        int fireAspectLevel = EnchantmentManager.getFireAspectEnchantmentLevel(this);
+
+        if (fireAspectLevel > 0) {
+            target.setOnFire(fireAspectLevel * 4);
+        }
+    }*/
 }

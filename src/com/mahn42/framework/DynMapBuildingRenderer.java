@@ -65,13 +65,14 @@ public class DynMapBuildingRenderer implements Runnable {
                             Framework.plugin.log("fw", "Icon '" + lIconName + "' not found!");
                             markerIcon = lMarkerAPI.getMarkerIcon("default");
                         }
+                        BlockPosition lPos = lBuilding.edge1.getMidPoint(lBuilding.edge2);
                         lMarkerSet.createMarker(
                                 lBuilding.key,
                                 lBuilding.getName(),
                                 lDB.world.getName(),
-                                lBuilding.edge1.x,
-                                lBuilding.edge1.y,
-                                lBuilding.edge1.z,
+                                lPos.x,
+                                lPos.y,
+                                lPos.z,
                                 markerIcon,
                                 false);
                         lCount++;

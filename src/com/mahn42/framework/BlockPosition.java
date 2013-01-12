@@ -205,4 +205,8 @@ public class BlockPosition {
         y *= aVector.getBlockY();
         z *= aVector.getBlockZ();
     }
+
+    public BlockPosition getMidPoint(BlockPosition lPos) {
+        return new BlockPosition((x + lPos.x) / 2, (y + lPos.y) / 2, (z + lPos.z) / 2);
+    }
 }

@@ -404,19 +404,11 @@ public class Framework extends JavaPlugin {
             }
         }
         registerSaver(fWorldPlayerSettingsDB);
-        /*
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fSaverTask, 100, configDBSaverTicks);
-        getServer().getScheduler().scheduleSyncRepeatingTask(this, fDynMapTask, 100, configDynMapTicks);
-        getServer().getScheduler().scheduleAsyncRepeatingTask(this, fProjectionRunner, 10, configProjectionTicks);
-        getServer().getScheduler().scheduleAsyncRepeatingTask(this, fEntityController, 10, 10); // TODO config
-        */
-        //getServer().getScheduler().runTaskTimer(this, new Runnable() {  }, 1, 1);
         getServer().getScheduler().runTaskTimer(this, fSyncBlockSetter, 10, configSyncBlockSetterTicks);
         getServer().getScheduler().runTaskTimer(this, fSaverTask, 100, configDBSaverTicks);
         getServer().getScheduler().runTaskTimer(this, fDynMapTask, 100, configDynMapTicks);
         getServer().getScheduler().runTaskTimerAsynchronously(this, fProjectionRunner, 10, configProjectionTicks);
-        getServer().getScheduler().runTaskTimerAsynchronously(this, fEntityController, 10, configEntityControllerTicks);
+        getServer().getScheduler().runTaskTimer(this, fEntityController, 10, configEntityControllerTicks);
     }
 
     @Override
@@ -778,6 +770,49 @@ public class Framework extends JavaPlugin {
         Boots
     }
     
+    public int getItemWeaponLevel(Material aMaterial) {
+        switch(aMaterial) {
+            case WOOD_AXE:
+            case WOOD_HOE:
+            case WOOD_PICKAXE:
+            case WOOD_SPADE:
+                return 2;
+            case WOOD_SWORD:
+                return 4;
+            case STONE_AXE:
+            case STONE_HOE:
+            case STONE_PICKAXE:
+            case STONE_SPADE:
+                return 2;
+            case STONE_SWORD:
+                return 5;
+            case IRON_AXE:
+            case IRON_HOE:
+            case IRON_PICKAXE:
+            case IRON_SPADE:
+            case SHEARS:
+                return 3;
+            case IRON_SWORD:
+                return 6;
+            case DIAMOND_AXE:
+            case DIAMOND_HOE:
+            case DIAMOND_PICKAXE:
+            case DIAMOND_SPADE:
+                return 3;
+            case DIAMOND_SWORD:
+                return 7;
+            case GOLD_AXE:
+            case GOLD_HOE:
+            case GOLD_PICKAXE:
+            case GOLD_SPADE:
+                return 2;
+            case GOLD_SWORD:
+                return 4;
+            default:
+                return 1;
+        }
+    }
+    
     public ItemType getItemType(Material aMaterial) {
         switch(aMaterial) {
             case WOOD_AXE:
@@ -785,6 +820,11 @@ public class Framework extends JavaPlugin {
             case WOOD_PICKAXE:
             case WOOD_SPADE:
             case WOOD_SWORD:
+            case STONE_AXE:
+            case STONE_HOE:
+            case STONE_PICKAXE:
+            case STONE_SPADE:
+            case STONE_SWORD:
             case IRON_AXE:
             case IRON_HOE:
             case IRON_PICKAXE:
