@@ -29,7 +29,7 @@ public class BuildingDetectTask implements Runnable {
         if (lBuildings.size() == 1) {
             if (Framework.plugin.checkBuildingPermission(player, lBuildings.get(0))) {
                 if (lBuildings.get(0).description.handler != null) {
-                    if (inHand.equals(Material.BOOK)) {
+                    if (inHand != null && inHand.equals(Material.BOOK)) {
                         lBuildings.get(0).description.handler.nextConfiguration(lBuildings.get(0), position, player);
                     } else {
                         lBuildings.get(0).description.handler.playerInteractWith(lBuildings.get(0), position, player, inHand);
@@ -40,7 +40,7 @@ public class BuildingDetectTask implements Runnable {
                 player.sendMessage(Framework.plugin.getText(player, "&cYou have no permission for this kind of building!"));
             }
         } else if (lBuildings.size() > 1) {
-            if (inHand.equals(Material.BOOK)) {
+            if (inHand != null && inHand.equals(Material.BOOK)) {
                 if (player != null) {
                     for (Building lBuilding : lBuildings) {
                         player.sendMessage(Framework.plugin.getText(player, "Here is always the building %s!", lBuilding.getName()));
@@ -52,7 +52,7 @@ public class BuildingDetectTask implements Runnable {
                 }
             }
         }
-        if (inHand.equals(Material.BOOK)
+        if (inHand != null && inHand.equals(Material.BOOK)
                 && lBuildings.isEmpty()) {
             lBuildings = Framework.plugin.getBuildingDetector().detect(world, position, position);
             boolean lFound = false;

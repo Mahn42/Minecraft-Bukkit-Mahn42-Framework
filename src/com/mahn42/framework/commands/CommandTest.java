@@ -9,11 +9,14 @@ import com.mahn42.framework.BlockPositionDelta;
 import com.mahn42.framework.EntityControl;
 import com.mahn42.framework.EntityControlPathItemRelative;
 import com.mahn42.framework.Framework;
+import com.mahn42.framework.IMarker;
 import com.mahn42.framework.npc.entity.NPCEntityHuman;
 import com.mahn42.framework.npc.entity.NPCEntityPlayer;
+import java.util.List;
 import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -119,11 +122,56 @@ public class CommandTest implements CommandExecutor {
                         for (int z = -lradius; z <= lradius; z++) {
                             Block highestBlockAt = player.getWorld().getHighestBlockAt(loc.getBlockX() + x, loc.getBlockZ() + z);
                             if (highestBlockAt.getType().equals(Material.AIR)) {
-                                highestBlockAt.setTypeIdAndData(Material.SNOW.getId(), (byte)1, true);
+                                byte h = 1;
+                                h = (byte)(Math.sin(x/4) * Math.sin(z/4) * 7);
+                                highestBlockAt.setTypeIdAndData(Material.SNOW.getId(), (byte)h, true);
                             }
                         }
                     }
+                    player.sendMessage("snowing " + lradius);
                 }
+            } else if (aStrings[0].equalsIgnoreCase("resnow")) {
+                if (aStrings.length > 1) {
+                    int lradius = 0;
+                    if (aStrings.length > 1) {
+                        lradius = Integer.parseInt(aStrings[1]);
+                    }
+                    for (int x = -lradius; x <= lradius; x++) {
+                        for (int z = -lradius; z <= lradius; z++) {
+                            Block highestBlockAt = player.getWorld().getHighestBlockAt(loc.getBlockX() + x, loc.getBlockZ() + z);
+                            while (highestBlockAt.getType().equals(Material.AIR)) {
+                                highestBlockAt = player.getWorld().getBlockAt(highestBlockAt.getLocation().add(0, -1, 0));
+                            }
+                            if (highestBlockAt.getType().equals(Material.SNOW)) {
+                                highestBlockAt.setTypeId(Material.AIR.getId(), true);
+                            }
+                        }
+                    }
+                    player.sendMessage("resnowing " + lradius);
+                }
+            } else if (aStrings[0].equalsIgnoreCase("showpath")) {
+                World lWorld = player.getWorld();
+                List<IMarker> findMarkers = Framework.plugin.findMarkers(lWorld, aStrings[1]);
+                BlockPosition lp1 = findMarkers.get(0).getPosition();
+                boolean f0 = true;
+                boolean f1 = true;
+                boolean f2 = true;
+                boolean f3 = true;
+                if (aStrings.length > 2) {
+                    f0 = aStrings[2].equalsIgnoreCase("x");
+                    if (aStrings.length > 3) {
+                        f1 = aStrings[3].equalsIgnoreCase("x");
+                        if (aStrings.length > 4) {
+                            f2 = aStrings[4].equalsIgnoreCase("x");
+                            if (aStrings.length > 5) {
+                                f3 = aStrings[5].equalsIgnoreCase("x");
+                            } 
+                        } 
+                    } 
+                } 
+                EntityControl lec = new EntityControl(player);
+                lec.showPath(lp1, f0, f1, f2, f3);
+                player.sendMessage("path exists " +f0 + " " + f1 + " " + f2 + " " + f3 + " : " + EntityControl.existsPath(player, lp1, f0, f1, f2, f3));
             } else {
                 player.sendMessage("unkown " + aStrings[0]);
             }

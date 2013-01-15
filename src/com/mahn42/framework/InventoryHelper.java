@@ -4,6 +4,8 @@
  */
 package com.mahn42.framework;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -48,6 +50,63 @@ public class InventoryHelper {
             }
         }
         return aO - aCount;
+    }
+
+    public static int insertItems(ItemStack[] aStack, ItemStack aItem) {
+        int aO = aItem.getAmount();
+        for (ItemStack lItem : aStack) {
+            if (lItem != null && lItem.isSimilar(aItem)) {
+                if (lItem.getAmount() < lItem.getMaxStackSize()) {
+                    int lplace = lItem.getMaxStackSize() - lItem.getAmount();
+                    if (lplace >= aItem.getAmount()) {
+                        lItem.setAmount(lItem.getAmount() + aItem.getAmount());
+                        aItem.setAmount(0);
+                        break;
+                    } else {
+                        lItem.setAmount(lItem.getMaxStackSize());
+                        aItem.setAmount(aItem.getAmount() - lplace);
+                    }
+                }
+            }
+        }
+        if (aItem.getAmount() > 0) {
+            int i = -1;
+            for (ItemStack lItem : aStack) {
+                i++;
+                if (lItem == null) {
+                    lItem = new ItemStack(aItem);
+                    aStack[i] = lItem;
+                    aItem.setAmount(0);
+                    break;
+                }
+            }
+        }
+        return aO - aItem.getAmount();
+    }
+    
+    public static List<ItemStack> removeItemsByMaterial(Inventory aInv, Material aMat, int aCount) {
+        ArrayList<ItemStack> lRes = new ArrayList<ItemStack>();
+        int i = -1;
+        for(ItemStack lItem : aInv) {
+            i++;
+            if (lItem != null && lItem.getType().equals(aMat)) {
+                if (lItem.getAmount() > aCount) {
+                    ItemStack lNew = new ItemStack(lItem);
+                    lItem.setAmount(lItem.getAmount() - aCount);
+                    lItem.setAmount(aCount);
+                    aCount = 0;
+                    lRes.add(lNew);
+                    break;
+                } else {
+                    aCount -= lItem.getAmount();
+                    aInv.setItem(i, null);
+                    if (aCount == 0) {
+                        break;
+                    }
+                }
+            }
+        }
+        return lRes;
     }
 
     public static int insertItems(Inventory aInv, Material aMat, int aCount) {
