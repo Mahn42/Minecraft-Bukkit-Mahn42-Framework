@@ -12,8 +12,10 @@ import com.mahn42.framework.Framework;
 import com.mahn42.framework.IMarker;
 import com.mahn42.framework.npc.entity.NPCEntityHuman;
 import com.mahn42.framework.npc.entity.NPCEntityPlayer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import net.minecraft.server.v1_4_6.EntityItem;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -22,9 +24,12 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_4_6.entity.CraftItem;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.material.MaterialData;
 
 /**
  *
@@ -123,8 +128,8 @@ public class CommandTest implements CommandExecutor {
                             Block highestBlockAt = player.getWorld().getHighestBlockAt(loc.getBlockX() + x, loc.getBlockZ() + z);
                             if (highestBlockAt.getType().equals(Material.AIR)) {
                                 byte h = 1;
-                                h = (byte)(Math.sin(x/4) * Math.sin(z/4) * 7);
-                                highestBlockAt.setTypeIdAndData(Material.SNOW.getId(), (byte)h, true);
+                                h = (byte) (Math.sin(x / 4) * Math.sin(z / 4) * 7);
+                                highestBlockAt.setTypeIdAndData(Material.SNOW.getId(), (byte) h, true);
                             }
                         }
                     }
@@ -165,17 +170,74 @@ public class CommandTest implements CommandExecutor {
                             f2 = aStrings[4].equalsIgnoreCase("x");
                             if (aStrings.length > 5) {
                                 f3 = aStrings[5].equalsIgnoreCase("x");
-                            } 
-                        } 
-                    } 
-                } 
+                            }
+                        }
+                    }
+                }
                 EntityControl lec = new EntityControl(player);
                 lec.showPath(lp1, f0, f1, f2, f3);
-                player.sendMessage("path exists " +f0 + " " + f1 + " " + f2 + " " + f3 + " : " + EntityControl.existsPath(player, lp1, f0, f1, f2, f3));
+                player.sendMessage("path exists " + f0 + " " + f1 + " " + f2 + " " + f3 + " : " + EntityControl.existsPath(player, lp1, f0, f1, f2, f3));
+            } else if (aStrings[0].equalsIgnoreCase("istree")) {
+                Block targetBlock = player.getTargetBlock(null, 30);
+                List<BlockPosition> treePoss = getTreePoss(player.getWorld(), new BlockPosition(targetBlock.getLocation()));
+                aCommandSender.sendMessage("tree poss = " + treePoss.size());
+            } else if (aStrings[0].equalsIgnoreCase("dropwool")) {
+                ItemStack lStack = new ItemStack(Material.WOOL, 2);
+                lStack.setData(new MaterialData(Material.WOOL, (byte)10));
+                Item dropItemNaturally = player.getWorld().dropItemNaturally(loc, lStack);
+                //((EntityItem)((CraftItem)dropItemNaturally).getHandle()).
             } else {
                 player.sendMessage("unkown " + aStrings[0]);
             }
         }
         return true;
+    }
+
+    public List<BlockPosition> getTreePoss(World aWorld, BlockPosition aPos) {
+        ArrayList<BlockPosition> lRes = new ArrayList<BlockPosition>();
+        BlockPosition lPos = aPos.clone();
+        Block lBlock = lPos.getBlock(aWorld);
+        while (lBlock.getType().equals(Material.LOG)) {
+            lRes.add(lPos.clone());
+            lPos.y--;
+            lBlock = lPos.getBlock(aWorld);
+        }
+        lPos = aPos.clone();
+        lPos.y++;
+        lBlock = lPos.getBlock(aWorld);
+        while (lBlock.getType().equals(Material.LOG)) {
+            lRes.add(lPos.clone());
+            lPos.y++;
+            lBlock = lPos.getBlock(aWorld);
+        }
+        int lCountLeaves = 0;
+        ArrayList<BlockPosition> lRes2 = new ArrayList<BlockPosition>();
+        for (int i = 1; i <= 2; i++) {
+            lRes2.clear();
+            for (BlockPosition lP : lRes) {
+                for (int x = -2; x <= 2; x++) {
+                    for (int z = -2; z <= 2; z++) {
+                        BlockPosition lPP = lP.clone();
+                        lPP.add(x, 0, z);
+                        lBlock = lPP.getBlock(aWorld);
+                        if (lBlock.getType().equals(Material.LEAVES)
+                                && (lBlock.getData() & 0x4) == 0) {
+                            lCountLeaves++;
+                        } else if (lBlock.getType().equals(Material.LOG)) {
+                            lRes2.add(lPP);
+                        }
+                    }
+                }
+            }
+            for(BlockPosition lP : lRes2) {
+                if (!lRes.contains(lP)) {
+                    lRes.add(lP);
+                }
+            }
+        }
+        if (lCountLeaves < 3) {
+            lRes.clear();
+        }
+        return lRes;
     }
 }
