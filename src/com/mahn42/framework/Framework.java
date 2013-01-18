@@ -556,7 +556,13 @@ public class Framework extends JavaPlugin {
     }
     
     public String getText(CommandSender aPlayer, String aText, Object... aObjects) {
-        return getText(getPlayerLanguage(aPlayer.getName()), aText, aObjects);
+        String lLanguage;
+        if (aPlayer == null) {
+            lLanguage = configLanguage;
+        } else {
+            lLanguage = getPlayerLanguage(aPlayer.getName());
+        }
+        return getText(lLanguage, aText, aObjects);
     }
     
     public String getText(String aLanguage, String aText, Object... aObjects) {

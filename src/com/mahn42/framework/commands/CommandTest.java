@@ -184,7 +184,8 @@ public class CommandTest implements CommandExecutor {
             } else if (aStrings[0].equalsIgnoreCase("dropwool")) {
                 ItemStack lStack = new ItemStack(Material.WOOL, 2);
                 lStack.setData(new MaterialData(Material.WOOL, (byte)10));
-                Item dropItemNaturally = player.getWorld().dropItemNaturally(loc, lStack);
+                Block targetBlock = player.getTargetBlock(null, 30); 
+                Item dropItemNaturally = player.getWorld().dropItem(targetBlock.getLocation(), lStack);
                 //((EntityItem)((CraftItem)dropItemNaturally).getHandle()).
             } else {
                 player.sendMessage("unkown " + aStrings[0]);

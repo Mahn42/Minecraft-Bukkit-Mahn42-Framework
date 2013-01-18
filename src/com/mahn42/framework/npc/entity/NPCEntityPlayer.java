@@ -4,6 +4,7 @@
  */
 package com.mahn42.framework.npc.entity;
 
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 import java.util.List;
 import net.minecraft.server.v1_4_6.EntityPlayer;
 import net.minecraft.server.v1_4_6.PathEntity;
@@ -111,5 +112,10 @@ public class NPCEntityPlayer extends CraftPlayer {
         EntityPlayerNPC lNPC = (EntityPlayerNPC) getHandle();
         setMot(0, 0, 0);
         lNPC.getNavigation().a((PathEntity)null, 0.0f);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof NPCEntityPlayer) ? getAsPlayer().getEntityId() == ((NPCEntityPlayer)obj).getAsPlayer().getEntityId() : false;
     }
 }
