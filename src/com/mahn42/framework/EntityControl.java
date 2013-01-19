@@ -5,15 +5,15 @@
 package com.mahn42.framework;
 
 import com.mahn42.framework.npc.entity.EntityPlayerNPC;
-import net.minecraft.server.v1_4_6.EntityCreature;
-import net.minecraft.server.v1_4_6.EntityPlayer;
-import net.minecraft.server.v1_4_6.Navigation;
-import net.minecraft.server.v1_4_6.PathEntity;
-import net.minecraft.server.v1_4_6.PathPoint;
+import net.minecraft.server.v1_4_R1.EntityCreature;
+import net.minecraft.server.v1_4_R1.EntityPlayer;
+import net.minecraft.server.v1_4_R1.Navigation;
+import net.minecraft.server.v1_4_R1.PathEntity;
+import net.minecraft.server.v1_4_R1.PathPoint;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_4_6.CraftWorld;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 
 /**
@@ -58,7 +58,7 @@ public class EntityControl {
                 }
             }
             if (pathItem != null && lDest != null) {
-                net.minecraft.server.v1_4_6.Entity lMCEntitiy = ((CraftEntity) entity).getHandle();
+                net.minecraft.server.v1_4_R1.Entity lMCEntitiy = ((CraftEntity) entity).getHandle();
                 if (lMCEntitiy instanceof EntityCreature) {
                     EntityCreature lCreature = (EntityCreature) lMCEntitiy;
                     PathEntity lPE = ((CraftWorld) entity.getWorld()).getHandle().a(lCreature, lDest.x, lDest.y, lDest.z, 100.0f, true, true, true, true);
@@ -115,7 +115,7 @@ public class EntityControl {
                     //todo
                 }
             } else {
-                net.minecraft.server.v1_4_6.Entity lMCEntitiy = ((CraftEntity) entity).getHandle();
+                net.minecraft.server.v1_4_R1.Entity lMCEntitiy = ((CraftEntity) entity).getHandle();
                 if (lMCEntitiy instanceof EntityPlayerNPC) {
                     EntityPlayerNPC lNPC = (EntityPlayerNPC) lMCEntitiy;
                     lNPC.motX = lNPC.motY = lNPC.motZ = 0;
@@ -140,7 +140,7 @@ public class EntityControl {
     protected final static boolean pathentityf3 = true;
 
     public void createPath(BlockPosition aDest) {
-        net.minecraft.server.v1_4_6.Entity lMCEntitiy = ((CraftEntity) entity).getHandle();
+        net.minecraft.server.v1_4_R1.Entity lMCEntitiy = ((CraftEntity) entity).getHandle();
         if (lMCEntitiy instanceof EntityPlayerNPC) {
             EntityPlayerNPC lNPC = (EntityPlayerNPC) lMCEntitiy;
             PathEntity lPE = ((CraftWorld) entity.getWorld()).getHandle().a(lNPC, aDest.x, aDest.y, aDest.z, pathentityarg, pathentityf0, pathentityf1, pathentityf2, pathentityf3);
@@ -157,7 +157,7 @@ public class EntityControl {
     }
 
     public void showPath(BlockPosition aDest, boolean f0, boolean f1, boolean f2, boolean f3) {
-        net.minecraft.server.v1_4_6.Entity lMCEntitiy = ((CraftEntity) entity).getHandle();
+        net.minecraft.server.v1_4_R1.Entity lMCEntitiy = ((CraftEntity) entity).getHandle();
         if (lMCEntitiy instanceof EntityPlayer) {
             EntityPlayer lNPC = (EntityPlayer) lMCEntitiy;
             PathEntity lPE = ((CraftWorld) entity.getWorld()).getHandle().a(lNPC, aDest.x, aDest.y, aDest.z, pathentityarg, f0, f1, f2, f3);
@@ -184,7 +184,7 @@ public class EntityControl {
     }
 
     public static boolean existsPath(Entity aEntity, BlockPosition aDest, boolean f0, boolean f1, boolean f2, boolean f3) {
-        net.minecraft.server.v1_4_6.Entity lMCEntitiy = ((CraftEntity) aEntity).getHandle();
+        net.minecraft.server.v1_4_R1.Entity lMCEntitiy = ((CraftEntity) aEntity).getHandle();
         PathEntity lPE = ((CraftWorld) aEntity.getWorld()).getHandle().a(lMCEntitiy, aDest.x, aDest.y, aDest.z, pathentityarg, f0, f1, f2, f3);
         if (lPE != null && lPE.d() > 0) {
             PathPoint pp = lPE.a(lPE.d() - 1);

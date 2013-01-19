@@ -11,26 +11,26 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_4_6.ChunkCoordinates;
-import net.minecraft.server.v1_4_6.Connection;
-import net.minecraft.server.v1_4_6.DamageSource;
-import net.minecraft.server.v1_4_6.EnchantmentManager;
-import net.minecraft.server.v1_4_6.Entity;
-import net.minecraft.server.v1_4_6.EntityLiving;
-import net.minecraft.server.v1_4_6.EntityMonster;
-import net.minecraft.server.v1_4_6.EntityPlayer;
-import net.minecraft.server.v1_4_6.EnumGamemode;
-import net.minecraft.server.v1_4_6.MathHelper;
-import net.minecraft.server.v1_4_6.MinecraftServer;
-import net.minecraft.server.v1_4_6.MobEffectList;
-import net.minecraft.server.v1_4_6.Navigation;
-import net.minecraft.server.v1_4_6.NetworkManager;
-import net.minecraft.server.v1_4_6.Packet32EntityLook;
-import net.minecraft.server.v1_4_6.PlayerInteractManager;
-import net.minecraft.server.v1_4_6.World;
+import net.minecraft.server.v1_4_R1.ChunkCoordinates;
+import net.minecraft.server.v1_4_R1.Connection;
+import net.minecraft.server.v1_4_R1.DamageSource;
+import net.minecraft.server.v1_4_R1.EnchantmentManager;
+import net.minecraft.server.v1_4_R1.Entity;
+import net.minecraft.server.v1_4_R1.EntityLiving;
+import net.minecraft.server.v1_4_R1.EntityMonster;
+import net.minecraft.server.v1_4_R1.EntityPlayer;
+import net.minecraft.server.v1_4_R1.EnumGamemode;
+import net.minecraft.server.v1_4_R1.MathHelper;
+import net.minecraft.server.v1_4_R1.MinecraftServer;
+import net.minecraft.server.v1_4_R1.MobEffectList;
+import net.minecraft.server.v1_4_R1.Navigation;
+import net.minecraft.server.v1_4_R1.NetworkManager;
+import net.minecraft.server.v1_4_R1.Packet32EntityLook;
+import net.minecraft.server.v1_4_R1.PlayerInteractManager;
+import net.minecraft.server.v1_4_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -54,7 +54,7 @@ public class EntityPlayerNPC extends EntityPlayer {
     }
 
     @Override
-    public void collide(net.minecraft.server.v1_4_6.Entity entity) {
+    public void collide(net.minecraft.server.v1_4_R1.Entity entity) {
         // this method is called by both the entities involved - cancelling
         // it will not stop the NPC from moving.
         super.collide(entity);

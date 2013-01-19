@@ -10,11 +10,14 @@ import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -133,5 +136,9 @@ public class PlayerListener implements Listener {
             //TODO protect building
         }
         */
+    }
+    
+    @EventHandler
+    public void playerInteractEntity(PlayerInteractEntityEvent aEvent) {
     }
 }

@@ -4,10 +4,10 @@
  */
 package com.mahn42.framework.npc.entity;
 
-import net.minecraft.server.v1_4_6.ChunkCoordinates;
-import net.minecraft.server.v1_4_6.EntityHuman;
-import net.minecraft.server.v1_4_6.MathHelper;
-import net.minecraft.server.v1_4_6.World;
+import net.minecraft.server.v1_4_R1.ChunkCoordinates;
+import net.minecraft.server.v1_4_R1.EntityHuman;
+import net.minecraft.server.v1_4_R1.MathHelper;
+import net.minecraft.server.v1_4_R1.World;
 import org.bukkit.entity.HumanEntity;
 
 /**
