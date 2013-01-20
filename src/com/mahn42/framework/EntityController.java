@@ -32,9 +32,9 @@ public class EntityController implements Listener, Runnable  {
 
     @Override
     public void run() {
-        Collection<EntityControl> lControls;
+        Collection<EntityControl> lControls = new ArrayList<EntityControl>();
         synchronized(controlledEntities) {
-            lControls = controlledEntities.values();
+            lControls.addAll(controlledEntities.values());
         }
         ArrayList<EntityControl> lRemoves = new ArrayList<EntityControl>();
         for(EntityControl lControl : lControls) {

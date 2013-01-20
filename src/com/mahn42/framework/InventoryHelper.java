@@ -150,7 +150,7 @@ public class InventoryHelper {
                 if (lItem.getAmount() > aCount) {
                     ItemStack lNew = new ItemStack(lItem);
                     lItem.setAmount(lItem.getAmount() - aCount);
-                    lItem.setAmount(aCount);
+                    lNew.setAmount(aCount);
                     aCount = 0;
                     lRes.add(lNew);
                     break;

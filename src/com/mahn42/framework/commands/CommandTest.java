@@ -10,12 +10,12 @@ import com.mahn42.framework.EntityControl;
 import com.mahn42.framework.EntityControlPathItemRelative;
 import com.mahn42.framework.Framework;
 import com.mahn42.framework.IMarker;
+import com.mahn42.framework.WorldScanner;
 import com.mahn42.framework.npc.entity.NPCEntityHuman;
 import com.mahn42.framework.npc.entity.NPCEntityPlayer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import net.minecraft.server.v1_4_R1.EntityItem;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -24,7 +24,6 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftItem;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -179,7 +178,14 @@ public class CommandTest implements CommandExecutor {
                 player.sendMessage("path exists " + f0 + " " + f1 + " " + f2 + " " + f3 + " : " + EntityControl.existsPath(player, lp1, f0, f1, f2, f3));
             } else if (aStrings[0].equalsIgnoreCase("istree")) {
                 Block targetBlock = player.getTargetBlock(null, 30);
-                List<BlockPosition> treePoss = getTreePoss(player.getWorld(), new BlockPosition(targetBlock.getLocation()));
+                List<BlockPosition> treePoss = WorldScanner.getTreePoss(player.getWorld(), new BlockPosition(targetBlock.getLocation()));
+                aCommandSender.sendMessage("tree poss = " + treePoss.size());
+            } else if (aStrings[0].equalsIgnoreCase("checktree")) {
+                Block targetBlock = player.getTargetBlock(null, 30);
+                List<BlockPosition> treePoss = WorldScanner.getTreePoss(player.getWorld(), new BlockPosition(targetBlock.getLocation()));
+                for(BlockPosition lPos : treePoss) {
+                    lPos.getBlock(player.getWorld()).setType(Material.WOOL);
+                }
                 aCommandSender.sendMessage("tree poss = " + treePoss.size());
             } else if (aStrings[0].equalsIgnoreCase("dropwool")) {
                 ItemStack lStack = new ItemStack(Material.WOOL, 2);
