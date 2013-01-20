@@ -4,9 +4,12 @@
  */
 package com.mahn42.framework.npc.entity;
 
+import com.mahn42.framework.BlockPosition;
+import com.mahn42.framework.Framework;
 import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 import java.util.List;
 import net.minecraft.server.v1_4_R1.EntityPlayer;
+import net.minecraft.server.v1_4_R1.EnumBedResult;
 import net.minecraft.server.v1_4_R1.PathEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
@@ -88,9 +91,24 @@ public class NPCEntityPlayer extends CraftPlayer {
         PlayerAnimation.SLEEP.play(humanHandle.getBukkitEntity());
     }
 
+    public void goSleep(BlockPosition aPos) {
+        EntityPlayer humanHandle = getHandle();
+        EnumBedResult res = humanHandle.a(aPos.x, aPos.y, aPos.z);
+        if (res != EnumBedResult.OK) {
+            Framework.plugin.log("fw", "go Sleep returns " + res);
+        }
+    }
+
+    /*
     public void awake() {
         EntityPlayer humanHandle = getHandle();
         PlayerAnimation.STOP_SLEEPING.play(humanHandle.getBukkitEntity());
+    }
+    */
+
+    public void awake() {
+        EntityPlayer humanHandle = getHandle();
+        humanHandle.a(true, true, true);
     }
 
     public void jump() {
