@@ -95,6 +95,7 @@ public class NPCEntityPlayer extends CraftPlayer {
         EntityPlayer humanHandle = getHandle();
         EnumBedResult res = humanHandle.a(aPos.x, aPos.y, aPos.z);
         if (res != EnumBedResult.OK) {
+            goSleep();
             Framework.plugin.log("fw", "go Sleep returns " + res);
         }
     }
@@ -109,6 +110,7 @@ public class NPCEntityPlayer extends CraftPlayer {
     public void awake() {
         EntityPlayer humanHandle = getHandle();
         humanHandle.a(true, true, true);
+        PlayerAnimation.STOP_SLEEPING.play(humanHandle.getBukkitEntity());
     }
 
     public void jump() {
