@@ -17,18 +17,47 @@ import org.bukkit.block.Block;
 public class WorldScanner {
 
     public static List<BlockPosition> findBlocks(World aWorld, BlockPosition aPos, Material aMaterial, int aRadius) {
-        ArrayList<BlockPosition> lRes = new ArrayList<BlockPosition>();
+        return findBlocks(aWorld, aPos, aMaterial, aRadius, false);
+    }
+
+    public static List<BlockPosition> findBlocks(World aWorld, BlockPosition aPos, Material aMaterial, int aRadius, boolean aSortByDistance) {
+        return findBlocks(aWorld, aPos, aMaterial, (byte) 0, false, aRadius, aSortByDistance);
+    }
+
+    public static List<BlockPosition> findBlocks(World aWorld, BlockPosition aPos, Material aMaterial, byte aData, boolean aCheckData, int aRadius, boolean aSortByDistance) {
+        ArrayList<BlockPosition> lRes;
+        ArrayList<BlockPosition> lFounds = new ArrayList<BlockPosition>();
         BlockPosition lPos = aPos;
         for (int x = -aRadius; x <= aRadius; x++) {
             for (int y = -aRadius; y <= aRadius; y++) {
                 for (int z = -aRadius; z <= aRadius; z++) {
-                    if (lPos.getBlockAt(aWorld, x, y, z).getType().equals(aMaterial)) {
-                        BlockPosition lP = lPos.clone();
-                        lP.add(x, y, z);
-                        lRes.add(lP);
+                    Block blockAt = lPos.getBlockAt(aWorld, x, y, z);
+                    if (blockAt.getType().equals(aMaterial)) {
+                        if (!aCheckData || blockAt.getData() == aData) {
+                            BlockPosition lP = lPos.clone();
+                            lP.add(x, y, z);
+                            lFounds.add(lP);
+                        }
                     }
                 }
             }
+        }
+        if (aSortByDistance) {
+            lRes = new ArrayList<BlockPosition>();
+            while (!lFounds.isEmpty()) {
+                double lDist = Double.MAX_VALUE;
+                BlockPosition lPP = null;
+                for (BlockPosition lP : lFounds) {
+                    double distance = lP.distance(aPos);
+                    if (distance < lDist) {
+                        lPP = lP;
+                    }
+                }
+                lRes.add(lPP);
+                lFounds.remove(lPP);
+            }
+        } else {
+            lRes = lFounds;
         }
         return lRes;
     }

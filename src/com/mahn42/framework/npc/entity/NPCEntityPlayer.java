@@ -6,7 +6,6 @@ package com.mahn42.framework.npc.entity;
 
 import com.mahn42.framework.BlockPosition;
 import com.mahn42.framework.Framework;
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 import java.util.List;
 import net.minecraft.server.v1_4_R1.EntityPlayer;
 import net.minecraft.server.v1_4_R1.EnumBedResult;
@@ -15,8 +14,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_4_R1.entity.CraftSheep;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
@@ -132,6 +133,11 @@ public class NPCEntityPlayer extends CraftPlayer {
         EntityPlayerNPC lNPC = (EntityPlayerNPC) getHandle();
         setMot(0, 0, 0);
         lNPC.getNavigation().a((PathEntity)null, 0.0f);
+    }
+    
+    public void shearSheep(Sheep aSheep) {
+        EntityPlayerNPC lNPC = (EntityPlayerNPC) getHandle();
+        ((CraftSheep)aSheep).getHandle().a(lNPC);
     }
 
     @Override

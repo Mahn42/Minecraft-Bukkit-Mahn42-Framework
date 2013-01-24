@@ -41,7 +41,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_4_R1.NBTTagCompound;
 import net.minecraft.server.v1_4_R1.PlayerInteractManager;
 import net.minecraft.server.v1_4_R1.WorldServer;
 import org.bukkit.ChatColor;
@@ -56,7 +55,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_4_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -70,9 +71,11 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author andre
  */
 public class Framework extends JavaPlugin {
+
     private EntityController fEntityController;
 
     protected class __Messenger implements Messenger {
+
         @Override
         public boolean sendPlayerMessage(String aFromPlayer, String aToPlayerName, String aMessage) {
             return true;
@@ -119,9 +122,7 @@ public class Framework extends JavaPlugin {
         public SocialPoint getSocialPoint(String aPlayerName, String aName) {
             return null;
         }
-        
     }
-    
     public static Framework plugin;
     public int configSyncBlockSetterTicks = 2;
     public int configDynMapTicks = 40;
@@ -129,7 +130,6 @@ public class Framework extends JavaPlugin {
     public String configLanguage = "DE_de";
     public int configProjectionTicks = 10;
     public int configEntityControllerTicks = 10;
-    
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected HashMap<String, Properties> fPluginLangs = new HashMap<String, Properties>();
     protected SyncBlockSetter fSyncBlockSetter;
@@ -147,7 +147,7 @@ public class Framework extends JavaPlugin {
     protected WorldDBList<WorldPlayerSettingsDB> fWorldPlayerSettingsDB;
     protected HashMap<String, WorldClassification> fWorldClassifications = new HashMap<String, WorldClassification>();
     protected ArrayList<IMarkerStorage> fMarkerStorages = new ArrayList<IMarkerStorage>();
-    
+
     /**
      * @param args the command line arguments
      */
@@ -160,26 +160,26 @@ public class Framework extends JavaPlugin {
         lRect.fromCSV("1,2,3", "\\,");
         Logger.getLogger("xxx").info(lRect.toString());
     }
-    
+
     public long getSyncCallCount() {
         return fSyncBlockSetter.calls;
     }
-    
+
     public void registerWorldClassification(WorldClassification aClassification) {
         fWorldClassifications.put(aClassification.name, aClassification);
     }
-    
+
     public void unregisterWorldClassification(String aName) {
         fWorldClassifications.remove(aName);
     }
-    
+
     public WorldClassification getWorldClassification(String aName) {
         return fWorldClassifications.get(aName);
     }
-    
+
     public ArrayList<WorldClassification> getWorldClassifications() {
         ArrayList<WorldClassification> lResult = new ArrayList<WorldClassification>();
-        for(WorldClassification lWC : fWorldClassifications.values()) {
+        for (WorldClassification lWC : fWorldClassifications.values()) {
             lResult.add(lWC);
         }
         return lResult;
@@ -194,7 +194,7 @@ public class Framework extends JavaPlugin {
         }
         return fWorldConfigurationDB;
     }
-    
+
     public void registerMarkerStorage(IMarkerStorage aStorage) {
         fMarkerStorages.add(aStorage);
     }
@@ -202,10 +202,10 @@ public class Framework extends JavaPlugin {
     public void unregisterMarkerStorage(IMarkerStorage aStorage) {
         fMarkerStorages.remove(aStorage);
     }
-    
+
     public List<IMarker> findMarkers(World aWorld, String aName) {
         ArrayList<IMarker> lResult = new ArrayList<IMarker>();
-        for(IMarkerStorage lStore : fMarkerStorages) {
+        for (IMarkerStorage lStore : fMarkerStorages) {
             List<IMarker> lMarkers = lStore.findMarkers(aWorld, aName);
             lResult.addAll(lMarkers);
         }
@@ -214,7 +214,7 @@ public class Framework extends JavaPlugin {
 
     public List<IMarker> findMarkers(World aWorld, BlockRect aArea) {
         ArrayList<IMarker> lResult = new ArrayList<IMarker>();
-        for(IMarkerStorage lStore : fMarkerStorages) {
+        for (IMarkerStorage lStore : fMarkerStorages) {
             List<IMarker> lMarkers = lStore.findMarkers(aWorld, aArea);
             lResult.addAll(lMarkers);
         }
@@ -239,7 +239,7 @@ public class Framework extends JavaPlugin {
         }
         return lResult;
     }
-    
+
     public ProjectionAreas getProjectionAreas(World aWorld, boolean aCreate) {
         ProjectionAreas lResult = fProjectionAreas.get(aWorld);
         if (lResult == null && aCreate) {
@@ -248,16 +248,16 @@ public class Framework extends JavaPlugin {
         }
         return lResult;
     }
-    
+
     public boolean isDebugSet(String aName) {
         Boolean lValue = fDebugSet.get(aName);
         return lValue != null && lValue.booleanValue();
     }
-    
+
     public void setDebugSet(String aName, boolean aValue) {
         fDebugSet.put(aName, new Boolean(aValue));
     }
-    
+
     public Messenger getMessenger() {
         if (fMessenger != null) {
             return fMessenger;
@@ -265,7 +265,7 @@ public class Framework extends JavaPlugin {
             return new __Messenger();
         }
     }
-    
+
     public boolean registerMessenger(Messenger aMessenger) {
         if (fMessenger == null) {
             fMessenger = aMessenger;
@@ -274,7 +274,7 @@ public class Framework extends JavaPlugin {
             return false;
         }
     }
-    
+
     public PlayerManager getPlayerManager() {
         if (fPlayerManager != null) {
             return fPlayerManager;
@@ -282,7 +282,7 @@ public class Framework extends JavaPlugin {
             return new __PlayerManager();
         }
     }
-    
+
     public boolean registerPlayerManager(PlayerManager aPlayerManager) {
         if (fPlayerManager == null) {
             fPlayerManager = aPlayerManager;
@@ -291,13 +291,13 @@ public class Framework extends JavaPlugin {
             return false;
         }
     }
-    
+
     public Properties getLanguage(JavaPlugin aPlugin, String aLanguage) {
         String lName;
         if (aLanguage != null && !aLanguage.isEmpty()) {
-            lName = aPlugin.getName()+"."+aLanguage;
+            lName = aPlugin.getName() + "." + aLanguage;
         } else {
-            lName = aPlugin.getName()+"."+configLanguage;
+            lName = aPlugin.getName() + "." + configLanguage;
         }
         Properties lProps;
         lProps = fPluginLangs.get(lName);
@@ -326,22 +326,24 @@ public class Framework extends JavaPlugin {
         }
         return lProps;
     }
-    
+
     public WorldPlayerSettingsDB getWorldPlayerSettingsDB(String aWorldName) {
         return fWorldPlayerSettingsDB.getDB(aWorldName);
     }
-    
+
     public EntityController getEntityController() {
         return fEntityController;
     }
-    
-    /**********************************************************
-     * 
-     *  STARTUP 
-     * 
-     **********************************************************/
+
+    /**
+     * ********************************************************
+     *
+     * STARTUP
+     *
+     *********************************************************
+     */
     @Override
-    public void onEnable() { 
+    public void onEnable() {
         plugin = this;
         if (!getDataFolder().exists()) {
             getDataFolder().mkdirs();
@@ -355,7 +357,7 @@ public class Framework extends JavaPlugin {
         fDynMapTask = new DynMapBuildingRenderer();
         fProjectionRunner = new ProjectionAreasRunner();
         fEntityController = new EntityController();
-        
+
         getCommand("fw_bd_list").setExecutor(new CommandBD_List());
         getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
         getCommand("fw_bd_create").setExecutor(new CommandBD_Create());
@@ -381,7 +383,7 @@ public class Framework extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WorldListener(), this);
         getServer().getPluginManager().registerEvents(fEntityController, this);
         List<World> lWorlds = getServer().getWorlds();
-        for(World lWorld :  lWorlds) {
+        for (World lWorld : lWorlds) {
             WorldConfiguration lConf = getWorldConfigurationDB().getByName(lWorld.getName());
             if (lConf == null) {
                 lConf = new WorldConfiguration();
@@ -390,13 +392,13 @@ public class Framework extends JavaPlugin {
                 lConf.updateFromWorld();
                 lConf.inventoryName = lConf.name;
                 if (lConf.name.equalsIgnoreCase("world_nether")
-                        ||lConf.name.equalsIgnoreCase("world_the_end")) {
+                        || lConf.name.equalsIgnoreCase("world_the_end")) {
                     lConf.inventoryName = "world";
-                } 
+                }
                 getWorldConfigurationDB().addRecord(lConf);
             }
         }
-        for(WorldConfiguration lConf : getWorldConfigurationDB()) {
+        for (WorldConfiguration lConf : getWorldConfigurationDB()) {
             World lWorld = getServer().getWorld(lConf.name);
             if (lWorld == null) {
                 getLogger().info("reload world " + lConf.name);
@@ -430,34 +432,34 @@ public class Framework extends JavaPlugin {
         }
         return lWorld;
     }
-    
-    public void setTypeAndData(Location aLocation, Material aMaterial, byte aData, boolean  aPhysics) {
+
+    public void setTypeAndData(Location aLocation, Material aMaterial, byte aData, boolean aPhysics) {
         fSyncBlockSetter.setTypeAndData(aLocation, aMaterial, aData, aPhysics);
     }
-    
+
     public BuildingDescription getBuildingDescription(String aName) {
-        for(BuildingDescription lDesc : fBuildingDetector.fDescriptions) {
+        for (BuildingDescription lDesc : fBuildingDetector.fDescriptions) {
             if (aName.equalsIgnoreCase(lDesc.name)) {
                 return lDesc;
             }
         }
         return null;
     }
-    
+
     public List<BuildingDescription> getBuildingDescriptionByMatch(String aNamePattern) {
         ArrayList<BuildingDescription> lResult = new ArrayList<BuildingDescription>();
-        for(BuildingDescription lDesc : fBuildingDetector.fDescriptions) {
+        for (BuildingDescription lDesc : fBuildingDetector.fDescriptions) {
             if (aNamePattern.matches(aNamePattern)) {
                 lResult.add(lDesc);
             }
         }
         return lResult;
     }
-    
+
     public BuildingDetector getBuildingDetector() {
         return fBuildingDetector;
     }
-    
+
     public PlayerBuildings getPlayerBuildings(String aPlayerName) {
         return getPlayerBuildings(getServer().getPlayer(aPlayerName));
     }
@@ -475,33 +477,33 @@ public class Framework extends JavaPlugin {
     public void registerSaver(DBSave aSaver) {
         fSaverTask.registerSaver(aSaver);
     }
-    
+
     public void unregisterSaver(DBSave aSaver) {
         fSaverTask.unregisterSaver(aSaver);
     }
-    
+
     public void runSave() {
         fSaverTask.run();
     }
-    
+
     public static class BuildingPermission {
+
         public String pattern;
         public ArrayList<String> permissions = new ArrayList<String>();
-        
+
         public BuildingPermission(String aPattern, Collection<String> aPerms) {
             pattern = aPattern;
             permissions.addAll(aPerms);
         }
     }
-    
     protected ArrayList<BuildingPermission> fBuildingPermissions = new ArrayList<BuildingPermission>();
-    
+
     public boolean checkBuildingPermission(Player aPlayer, Building aBuilding) {
         boolean lRes = true;
-        for(BuildingPermission aPerm : fBuildingPermissions) {
-            Framework.plugin.log("fw","check perm " + aBuilding.description.name + " " + aPerm.pattern + " " + aPerm.permissions);
+        for (BuildingPermission aPerm : fBuildingPermissions) {
+            Framework.plugin.log("fw", "check perm " + aBuilding.description.name + " " + aPerm.pattern + " " + aPerm.permissions);
             if (aBuilding.description.name.matches(aPerm.pattern)) {
-                for(String lP : aPerm.permissions) {
+                for (String lP : aPerm.permissions) {
                     lRes = aPlayer.hasPermission(lP);
                     if (lRes) {
                         return lRes;
@@ -521,20 +523,20 @@ public class Framework extends JavaPlugin {
         configDBSaverTicks = lConfig.getInt("DBSaver.Ticks", configDBSaverTicks);
         configDynMapTicks = lConfig.getInt("DynMap.Ticks", configDynMapTicks);
         List lWorldClasses = lConfig.getList("WorldClassifications");
-        for(Object lItem : lWorldClasses) {
+        for (Object lItem : lWorldClasses) {
             WorldClassification lWC = new WorldClassification();
             lWC.fromSectionValue(lItem);
             registerWorldClassification(lWC);
         }
         List<Map<?, ?>> lMapList = lConfig.getMapList("BuildingPermissions");
-        for(Map<?, ?> lMap : lMapList) {
+        for (Map<?, ?> lMap : lMapList) {
             Object lValue = lMap.get("name");
             if (lValue != null) {
                 String aPattern = lValue.toString();
                 lValue = lMap.get("permissions");
                 if (lValue instanceof ArrayList) {
                     ArrayList<String> lPerms = new ArrayList<String>();
-                    for(Object lItem : (ArrayList)lValue) {
+                    for (Object lItem : (ArrayList) lValue) {
                         String lPermname = lItem.toString();
                         lPerms.add(lPermname);
                         if (getServer().getPluginManager().getPermission(lPermname) == null) {
@@ -550,11 +552,11 @@ public class Framework extends JavaPlugin {
             }
         }
     }
-    
+
     public String getText(String aText, Object... aObjects) {
         return getText(configLanguage, aText, aObjects);
     }
-    
+
     public String getText(CommandSender aPlayer, String aText, Object... aObjects) {
         String lLanguage;
         if (aPlayer == null) {
@@ -564,28 +566,31 @@ public class Framework extends JavaPlugin {
         }
         return getText(lLanguage, aText, aObjects);
     }
-    
+
     public String getText(String aLanguage, String aText, Object... aObjects) {
         return getText(this, aLanguage, aText, aObjects);
     }
-    
+
     public String getText(JavaPlugin aPlugin, String aLanguage, String aText, Object... aObjects) {
         Properties lProps = getLanguage(aPlugin, aLanguage);
         String lText = ChatColor.translateAlternateColorCodes('&', String.format(lProps.getProperty(aText, aText), aObjects));
         return lText;
     }
-    
+
     public String getPlayerLanguage(String aPlayerName) {
         //TODO
         return configLanguage;
     }
-    
+    public String logFilter = null;
+
     public void log(String aDebugOption, String aText) {
         if (isDebugSet(aDebugOption)) {
-            getLogger().info(aText);
+            if (logFilter == null || aText.contains(logFilter)) {
+                getLogger().info(aText);
+            }
         }
     }
-    
+
     public static boolean isSpade(Material aMaterial) {
         return aMaterial != null
                 && (aMaterial.equals(Material.STONE_SPADE)
@@ -603,23 +608,25 @@ public class Framework extends JavaPlugin {
                 || aMaterial.equals(Material.DIAMOND_AXE)
                 || aMaterial.equals(Material.GOLD_AXE));
     }
-    
+
     public static boolean isSign(Material aMaterial) {
         return aMaterial != null
                 && (aMaterial.equals(Material.SIGN)
                 || aMaterial.equals(Material.SIGN_POST)
                 || aMaterial.equals(Material.WALL_SIGN));
     }
-    
+
     public boolean existsPlayer(String aName) {
         OfflinePlayer[] offPlayers = getServer().getOfflinePlayers();
         for (OfflinePlayer lOffPlayer : offPlayers) {
-            if (lOffPlayer.getName().equals(aName)) return true;
+            if (lOffPlayer.getName().equals(aName)) {
+                return true;
+            }
         }
         return false;
     }
-    
     public static EntityType[] animals;
+
     {
         animals = new EntityType[8];
         animals[0] = EntityType.CHICKEN;
@@ -633,14 +640,14 @@ public class Framework extends JavaPlugin {
     }
 
     public static boolean isAnimal(EntityType aEntityType) {
-        for(EntityType lT : animals) {
+        for (EntityType lT : animals) {
             if (lT.equals(aEntityType)) {
                 return true;
             }
         }
         return false;
     }
-    
+
     public void teleportPlayerToWorld(Player aPlayer, World aWorld, String aMarkname) {
         List<IMarker> lMarkers = findMarkers(aWorld, aMarkname);
         BlockPosition lPos = null;
@@ -649,11 +656,11 @@ public class Framework extends JavaPlugin {
         }
         teleportPlayerToWorld(aPlayer, aWorld, lPos);
     }
-    
+
     public void teleportPlayerToWorld(Player aPlayer, World aWorld) {
-        teleportPlayerToWorld(aPlayer, aWorld, (BlockPosition)null);
+        teleportPlayerToWorld(aPlayer, aWorld, (BlockPosition) null);
     }
-    
+
     public void teleportPlayerToWorld(Player aPlayer, World aWorld, BlockPosition aPos) {
         Location lLocation;
         if (aPos != null) {
@@ -673,37 +680,37 @@ public class Framework extends JavaPlugin {
         }
         aPlayer.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
-    
+
     public ItemStack setItemStackColor(ItemStack aItem, int aColor) {
         LeatherArmorMeta lMeta = (LeatherArmorMeta) aItem.getItemMeta();
         lMeta.setColor(Color.fromRGB(aColor));
         return aItem;
         /*
-        CraftItemStack craftStack = null;
-        net.minecraft.server.v1_4_R1.ItemStack itemStack = null;
-        if (aItem instanceof CraftItemStack) {
-            craftStack = (CraftItemStack) aItem;
-            itemStack = craftStack.getHandle();
-        }
-        else if (aItem instanceof ItemStack) {
-            craftStack = new CraftItemStack(aItem);
-            itemStack = craftStack.getHandle();
-        }
-        NBTTagCompound tag = itemStack.tag;
-        if (tag == null) {
-            tag = new NBTTagCompound();
-            tag.setCompound("display", new NBTTagCompound());
-            itemStack.tag = tag;
-        }
+         CraftItemStack craftStack = null;
+         net.minecraft.server.v1_4_R1.ItemStack itemStack = null;
+         if (aItem instanceof CraftItemStack) {
+         craftStack = (CraftItemStack) aItem;
+         itemStack = craftStack.getHandle();
+         }
+         else if (aItem instanceof ItemStack) {
+         craftStack = new CraftItemStack(aItem);
+         itemStack = craftStack.getHandle();
+         }
+         NBTTagCompound tag = itemStack.tag;
+         if (tag == null) {
+         tag = new NBTTagCompound();
+         tag.setCompound("display", new NBTTagCompound());
+         itemStack.tag = tag;
+         }
  
-        tag = itemStack.tag.getCompound("display");
-        tag.setInt("color", aColor);
-        itemStack.tag.setCompound("display", tag);
-        return craftStack;
-        */
+         tag = itemStack.tag.getCompound("display");
+         tag.setInt("color", aColor);
+         itemStack.tag.setCompound("display", tag);
+         return craftStack;
+         */
     }
-
     public static ArrayList<Material> dependsOnOtherBlock;
+
     {
         dependsOnOtherBlock = new ArrayList<Material>();
         dependsOnOtherBlock.add(Material.PAINTING);
@@ -735,8 +742,8 @@ public class Framework extends JavaPlugin {
         dependsOnOtherBlock.add(Material.BROWN_MUSHROOM);
         dependsOnOtherBlock.add(Material.RED_MUSHROOM);
     }
-    
     public static EnumMap<Material, EntityType> materialToEntity;
+
     {
         materialToEntity = new EnumMap<Material, EntityType>(Material.class);
         materialToEntity.put(Material.PAINTING, EntityType.PAINTING);
@@ -746,7 +753,7 @@ public class Framework extends JavaPlugin {
     public NPCEntityPlayer createPlayerNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
         WorldServer ws = ((CraftWorld) aWorld).getHandle();
         EntityPlayerNPC handle = new EntityPlayerNPC(ws.getServer().getServer(), ws, aName, new PlayerInteractManager(ws));
-        NPCEntityPlayer bukkitEntity = (NPCEntityPlayer)handle.getBukkitEntity();
+        NPCEntityPlayer bukkitEntity = (NPCEntityPlayer) handle.getBukkitEntity();
         bukkitEntity.setDataObject(aDataObject);
         ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
         bukkitEntity.teleport(aPos.getLocation(aWorld));
@@ -754,11 +761,11 @@ public class Framework extends JavaPlugin {
         bukkitEntity.setGameMode(GameMode.SURVIVAL);
         return bukkitEntity;
     }
-    
+
     public NPCEntityHuman createHumanNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
         WorldServer ws = ((CraftWorld) aWorld).getHandle();
         EntityHumanNPC handle = new EntityHumanNPC(ws, aName);
-        NPCEntityHuman bukkitEntity = (NPCEntityHuman)handle.getBukkitEntity();
+        NPCEntityHuman bukkitEntity = (NPCEntityHuman) handle.getBukkitEntity();
         bukkitEntity.setDataObject(aDataObject);
         ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
         ws.players.remove(handle);
@@ -768,6 +775,7 @@ public class Framework extends JavaPlugin {
     }
 
     public enum ItemType {
+
         Block,
         Tool,
         Helmet,
@@ -775,9 +783,9 @@ public class Framework extends JavaPlugin {
         Leggings,
         Boots
     }
-    
+
     public int getItemWeaponLevel(Material aMaterial) {
-        switch(aMaterial) {
+        switch (aMaterial) {
             case WOOD_AXE:
             case WOOD_HOE:
             case WOOD_PICKAXE:
@@ -818,9 +826,9 @@ public class Framework extends JavaPlugin {
                 return 1;
         }
     }
-    
+
     public ItemType getItemType(Material aMaterial) {
-        switch(aMaterial) {
+        switch (aMaterial) {
             case WOOD_AXE:
             case WOOD_HOE:
             case WOOD_PICKAXE:
@@ -872,5 +880,16 @@ public class Framework extends JavaPlugin {
             default:
                 return ItemType.Block;
         }
+    }
+
+    public Item shearSheep(Sheep aSheep) {
+        Item dropItemNaturally = null;
+        if (!aSheep.isSheared()) {
+            net.minecraft.server.v1_4_R1.ItemStack lItem = new net.minecraft.server.v1_4_R1.ItemStack(Material.WOOL.getId(), 1, 10);
+            CraftItemStack lStack = CraftItemStack.asCraftMirror(lItem);
+            dropItemNaturally = aSheep.getWorld().dropItem(aSheep.getLocation(), lStack);
+            aSheep.setSheared(true);
+        }
+        return dropItemNaturally;
     }
 }

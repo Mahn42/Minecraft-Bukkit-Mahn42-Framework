@@ -16,6 +16,7 @@ import com.mahn42.framework.npc.entity.NPCEntityPlayer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -24,11 +25,13 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_4_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.MaterialData;
+import org.bukkit.material.Wool;
 
 /**
  *
@@ -188,11 +191,19 @@ public class CommandTest implements CommandExecutor {
                 }
                 aCommandSender.sendMessage("tree poss = " + treePoss.size());
             } else if (aStrings[0].equalsIgnoreCase("dropwool")) {
-                ItemStack lStack = new ItemStack(Material.WOOL, 2);
-                lStack.setData(new MaterialData(Material.WOOL, (byte)10));
+                //Wool lWool = new Wool(DyeColor.BROWN);
+                //ItemStack lStack = new ItemStack(Material.WOOL, 2, (short)0, (byte)10);
+                //ItemStack lStack = new ItemStack(Material.WOOL, 2);
+                //lStack.setData(lWool);
+                //ItemStack lStack = new ItemStack(Material.WOOL, 2);
+                //lStack.setData(new MaterialData(Material.WOOL, (byte)10));
+                net.minecraft.server.v1_4_R1.ItemStack lItem = new net.minecraft.server.v1_4_R1.ItemStack(Material.WOOL.getId(), 1, 10);
+                CraftItemStack lStack = CraftItemStack.asCraftMirror(lItem);
                 Block targetBlock = player.getTargetBlock(null, 30); 
                 Item dropItemNaturally = player.getWorld().dropItem(targetBlock.getLocation(), lStack);
                 //((EntityItem)((CraftItem)dropItemNaturally).getHandle()).
+            } else if (aStrings[0].equalsIgnoreCase("filter")) {
+                Framework.plugin.logFilter = aStrings[1];
             } else {
                 player.sendMessage("unkown " + aStrings[0]);
             }
