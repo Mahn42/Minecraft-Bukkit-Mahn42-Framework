@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.v1_4_R1.PlayerInteractManager;
@@ -885,7 +886,7 @@ public class Framework extends JavaPlugin {
     public Item shearSheep(Sheep aSheep) {
         Item dropItemNaturally = null;
         if (!aSheep.isSheared()) {
-            net.minecraft.server.v1_4_R1.ItemStack lItem = new net.minecraft.server.v1_4_R1.ItemStack(Material.WOOL.getId(), 1, 10);
+            net.minecraft.server.v1_4_R1.ItemStack lItem = new net.minecraft.server.v1_4_R1.ItemStack(Material.WOOL.getId(), 1 + (new Random()).nextInt(2), aSheep.getColor().getWoolData());
             CraftItemStack lStack = CraftItemStack.asCraftMirror(lItem);
             dropItemNaturally = aSheep.getWorld().dropItem(aSheep.getLocation(), lStack);
             aSheep.setSheared(true);
