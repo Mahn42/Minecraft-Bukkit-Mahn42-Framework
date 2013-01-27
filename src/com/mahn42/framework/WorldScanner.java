@@ -25,6 +25,10 @@ public class WorldScanner {
     }
 
     public static List<BlockPosition> findBlocks(World aWorld, BlockPosition aPos, Material aMaterial, byte aData, boolean aCheckData, int aRadius, boolean aSortByDistance) {
+        return findBlocks(aWorld, aPos, aMaterial, aData, (byte)0xFF, aCheckData, aRadius, aSortByDistance);
+    }
+    
+    public static List<BlockPosition> findBlocks(World aWorld, BlockPosition aPos, Material aMaterial, byte aData, byte aMask, boolean aCheckData, int aRadius, boolean aSortByDistance) {
         ArrayList<BlockPosition> lRes;
         ArrayList<BlockPosition> lFounds = new ArrayList<BlockPosition>();
         BlockPosition lPos = aPos;
@@ -33,7 +37,7 @@ public class WorldScanner {
                 for (int z = -aRadius; z <= aRadius; z++) {
                     Block blockAt = lPos.getBlockAt(aWorld, x, y, z);
                     if (blockAt.getType().equals(aMaterial)) {
-                        if (!aCheckData || blockAt.getData() == aData) {
+                        if (!aCheckData || (blockAt.getData() & aMask) == aData) {
                             BlockPosition lP = lPos.clone();
                             lP.add(x, y, z);
                             lFounds.add(lP);

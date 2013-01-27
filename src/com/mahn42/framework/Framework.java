@@ -883,6 +883,38 @@ public class Framework extends JavaPlugin {
         }
     }
 
+    public int getArmorLevel(Material aMaterial) {
+        switch (aMaterial) {
+            case LEATHER_BOOTS:
+            case LEATHER_LEGGINGS:
+            case LEATHER_CHESTPLATE:
+            case LEATHER_HELMET:
+                return 1;
+            case GOLD_BOOTS:
+            case GOLD_LEGGINGS:
+            case GOLD_CHESTPLATE:
+            case GOLD_HELMET:
+                return 2;
+            case CHAINMAIL_BOOTS:
+            case CHAINMAIL_LEGGINGS:
+            case CHAINMAIL_CHESTPLATE:
+            case CHAINMAIL_HELMET:
+                return 3;
+            case IRON_BOOTS:
+            case IRON_LEGGINGS:
+            case IRON_CHESTPLATE:
+            case IRON_HELMET:
+                return 4;
+            case DIAMOND_BOOTS:
+            case DIAMOND_LEGGINGS:
+            case DIAMOND_CHESTPLATE:
+            case DIAMOND_HELMET:
+                return 5;
+            default:
+                return 0;
+        }
+    }
+    
     public Item shearSheep(Sheep aSheep) {
         Item dropItemNaturally = null;
         if (!aSheep.isSheared()) {
