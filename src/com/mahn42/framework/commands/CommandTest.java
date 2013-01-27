@@ -204,6 +204,8 @@ public class CommandTest implements CommandExecutor {
                 //((EntityItem)((CraftItem)dropItemNaturally).getHandle()).
             } else if (aStrings[0].equalsIgnoreCase("filter")) {
                 Framework.plugin.logFilter = aStrings[1];
+            } else if (aStrings[0].equalsIgnoreCase("profile")) {
+                Framework.plugin.getProfiler().dump(Framework.plugin.getLogger());
             } else {
                 player.sendMessage("unkown " + aStrings[0]);
             }

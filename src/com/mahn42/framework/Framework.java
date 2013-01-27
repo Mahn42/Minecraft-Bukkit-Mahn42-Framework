@@ -131,6 +131,7 @@ public class Framework extends JavaPlugin {
     public String configLanguage = "DE_de";
     public int configProjectionTicks = 10;
     public int configEntityControllerTicks = 10;
+    protected Profiler fProfiler = new Profiler();
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected HashMap<String, Properties> fPluginLangs = new HashMap<String, Properties>();
     protected SyncBlockSetter fSyncBlockSetter;
@@ -164,6 +165,10 @@ public class Framework extends JavaPlugin {
 
     public long getSyncCallCount() {
         return fSyncBlockSetter.calls;
+    }
+    
+    public Profiler getProfiler() {
+        return fProfiler;
     }
 
     public void registerWorldClassification(WorldClassification aClassification) {
