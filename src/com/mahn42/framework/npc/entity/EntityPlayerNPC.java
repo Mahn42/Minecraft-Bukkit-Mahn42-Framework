@@ -4,6 +4,7 @@
  */
 package com.mahn42.framework.npc.entity;
 
+import com.mahn42.framework.Framework;
 import com.mahn42.framework.npc.network.EmptyConnection;
 import com.mahn42.framework.npc.network.EmptyNetworkManager;
 import com.mahn42.framework.npc.network.EmptySocket;
@@ -25,7 +26,9 @@ import net.minecraft.server.v1_4_R1.MinecraftServer;
 import net.minecraft.server.v1_4_R1.MobEffectList;
 import net.minecraft.server.v1_4_R1.Navigation;
 import net.minecraft.server.v1_4_R1.NetworkManager;
+import net.minecraft.server.v1_4_R1.Packet;
 import net.minecraft.server.v1_4_R1.Packet32EntityLook;
+import net.minecraft.server.v1_4_R1.Packet5EntityEquipment;
 import net.minecraft.server.v1_4_R1.PlayerInteractManager;
 import net.minecraft.server.v1_4_R1.World;
 import org.bukkit.Bukkit;
@@ -87,7 +90,7 @@ public class EntityPlayerNPC extends EntityPlayer {
             playerConnection = new EmptyConnection(minecraftServer, netMgr, this);
             netMgr.a(playerConnection);
         } catch (IOException ex) {
-            Logger.getLogger(EntityHumanNPC.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         }
 
         getNavigation().e(true);
@@ -104,6 +107,9 @@ public class EntityPlayerNPC extends EntityPlayer {
     @Override
     public void j_() {
         super.j_();
+        
+        updateEquipment();
+        
         Packet32EntityLook packet = new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper.d(pitch * 256.0F / 360.0F));
         double radius = 64.0d * 64.0d;
         Location location = getBukkitEntity().getLocation();
@@ -193,6 +199,42 @@ public class EntityPlayerNPC extends EntityPlayer {
         return new ChunkCoordinates(MathHelper.floor(this.locX), MathHelper.floor(this.locY + 0.5D), MathHelper.floor(this.locZ));
     }
 
+    net.minecraft.server.v1_4_R1.ItemStack[] previousEquipment = new net.minecraft.server.v1_4_R1.ItemStack[5];
+    
+    private void updateEquipment() {
+        for (int i = 0; i < previousEquipment.length; i++) {
+            net.minecraft.server.v1_4_R1.ItemStack previous = previousEquipment[i];
+            net.minecraft.server.v1_4_R1.ItemStack current = getEquipment(i);
+            if (previous != current) {
+                Framework.plugin.log("npc", "update Equi for entity " + id + " from " + previous + " to " + current);
+                sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i, current));
+                previousEquipment[i] = current;
+            }
+        }
+    }
+
+    public static void sendPacket(Player player, Packet packet) {
+        Framework.plugin.log("npc", "send packet " + packet.getClass().getSimpleName() + " to " + player.getName());
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    public static void sendPacketNearby(Location location, Packet packet) {
+        sendPacketNearby(location, packet, 64);
+    }
+
+    public static void sendPacketNearby(Location location, Packet packet, double radius) {
+        radius *= radius;
+        final org.bukkit.World world = location.getWorld();
+        for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
+            if (ply == null || world != ply.getWorld()) {
+                continue;
+            }
+            if (location.distanceSquared(ply.getLocation()) > radius) {
+                continue;
+            }
+            sendPacket(ply, packet);
+        }
+    }
     /*
     public void attack(EntityLiving target) {
         int damage = 2;

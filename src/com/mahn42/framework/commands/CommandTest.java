@@ -10,13 +10,13 @@ import com.mahn42.framework.EntityControl;
 import com.mahn42.framework.EntityControlPathItemRelative;
 import com.mahn42.framework.Framework;
 import com.mahn42.framework.IMarker;
+import com.mahn42.framework.InventoryHelper;
 import com.mahn42.framework.WorldScanner;
-import com.mahn42.framework.npc.entity.NPCEntityHuman;
 import com.mahn42.framework.npc.entity.NPCEntityPlayer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.bukkit.DyeColor;
+import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -30,8 +30,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Wool;
 
 /**
  *
@@ -94,15 +92,6 @@ public class CommandTest implements CommandExecutor {
                 EntityControl lC = new EntityControl(bukkitEntity);
                 lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(1, 0, 0)));
                 Framework.plugin.getEntityController().add(lC);
-            } else if (aStrings[0].equalsIgnoreCase("human")) {
-                final NPCEntityHuman bukkitEntity = Framework.plugin.createHumanNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
-                bukkitEntity.getAsHuman().setItemInHand(new ItemStack(Material.IRON_PICKAXE));
-                PlayerInventory inventory = bukkitEntity.getInventory();
-                inventory.setLeggings(Framework.plugin.setItemStackColor(new ItemStack(Material.LEATHER_LEGGINGS), 0x8080F0));
-                EntityControl lC = new EntityControl(bukkitEntity);
-                lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(10, 0, 0)));
-                Framework.plugin.getEntityController().add(lC);
-                player.sendMessage("entity " + bukkitEntity);
             } else if (aStrings[0].equalsIgnoreCase("biome")) {
                 Biome biome = player.getWorld().getBiome(loc.getBlockX(), loc.getBlockZ());
                 player.sendMessage("biome was " + biome);
@@ -186,7 +175,7 @@ public class CommandTest implements CommandExecutor {
             } else if (aStrings[0].equalsIgnoreCase("checktree")) {
                 Block targetBlock = player.getTargetBlock(null, 30);
                 List<BlockPosition> treePoss = WorldScanner.getTreePoss(player.getWorld(), new BlockPosition(targetBlock.getLocation()));
-                for(BlockPosition lPos : treePoss) {
+                for (BlockPosition lPos : treePoss) {
                     lPos.getBlock(player.getWorld()).setType(Material.WOOL);
                 }
                 aCommandSender.sendMessage("tree poss = " + treePoss.size());
@@ -199,7 +188,7 @@ public class CommandTest implements CommandExecutor {
                 //lStack.setData(new MaterialData(Material.WOOL, (byte)10));
                 net.minecraft.server.v1_4_R1.ItemStack lItem = new net.minecraft.server.v1_4_R1.ItemStack(Material.WOOL.getId(), 1, 10);
                 CraftItemStack lStack = CraftItemStack.asCraftMirror(lItem);
-                Block targetBlock = player.getTargetBlock(null, 30); 
+                Block targetBlock = player.getTargetBlock(null, 30);
                 Item dropItemNaturally = player.getWorld().dropItem(targetBlock.getLocation(), lStack);
                 //((EntityItem)((CraftItem)dropItemNaturally).getHandle()).
             } else if (aStrings[0].equalsIgnoreCase("filter")) {
@@ -208,6 +197,15 @@ public class CommandTest implements CommandExecutor {
                 Framework.plugin.getProfiler().dump(Framework.plugin.getLogger());
             } else {
                 player.sendMessage("unkown " + aStrings[0]);
+            }
+        } else {
+            if (aStrings[0].equalsIgnoreCase("inv1")) {
+                ItemStack[] lInv = new ItemStack[36];
+                lInv[4] = new ItemStack(Material.SAPLING);
+                int removeItems = InventoryHelper.removeItems(lInv, new ItemStack(Material.SAPLING, (byte) 3));
+                aCommandSender.sendMessage("remitems = " + removeItems);
+            } else {
+                aCommandSender.sendMessage("what?");
             }
         }
         return true;
@@ -249,7 +247,7 @@ public class CommandTest implements CommandExecutor {
                     }
                 }
             }
-            for(BlockPosition lP : lRes2) {
+            for (BlockPosition lP : lRes2) {
                 if (!lRes.contains(lP)) {
                     lRes.add(lP);
                 }

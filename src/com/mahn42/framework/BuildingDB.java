@@ -33,6 +33,18 @@ public class BuildingDB<T extends Building> extends DBSetWorld<T> {
         return lResult;
     }
     
+    public ArrayList<T> getBuildings(String aPrefix, BlockPosition aPos, int aRadius) {
+        ArrayList<T> lResult = new ArrayList<T>();
+        for(Object lObj : this) {
+            T lBuilding = (T)lObj;
+            if (lBuilding.description.name.startsWith(aPrefix)
+                    && lBuilding.edge1.getMidPoint(lBuilding.edge2).nearly(aPos, aRadius)) {
+                lResult.add(lBuilding);
+            }
+        }
+        return lResult;
+    }
+    
     public ArrayList<T> getBuildingsWithBlock(BlockPosition aPos) {
         ArrayList<T> lResult = new ArrayList<T>();
         for(Object lObj : this) {

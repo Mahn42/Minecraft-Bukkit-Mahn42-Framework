@@ -85,8 +85,8 @@ public class WorldScanner {
         }
         int lCountLeaves = 0;
         for (BlockPosition lP : lRes) {
-            for (int x = -3; x <= 3; x++) {
-                for (int z = -3; z <= 3; z++) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
                     if (!(x == 0 && z == 0)) {
                         BlockPosition lPP = lP.clone();
                         lPP.add(x, 0, z);
@@ -115,9 +115,9 @@ public class WorldScanner {
         int lCountLeaves = 0;
         ArrayList<BlockPosition> lRes = new ArrayList<BlockPosition>();
         for (BlockPosition lP : aLogsNew) {
-            for (int x = -3; x <= 3; x++) {
+            for (int x = -2; x <= 2; x++) {
                 for (int y = -1; y <= 1; y++) {
-                    for (int z = -3; z <= 3; z++) {
+                    for (int z = -2; z <= 2; z++) {
                         if (!(x == 0 && y == 0 && z == 0)) {
                             BlockPosition lPP = lP.clone();
                             lPP.add(x, y, z);

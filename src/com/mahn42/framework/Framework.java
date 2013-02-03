@@ -23,9 +23,7 @@ import com.mahn42.framework.commands.CommandWorldPlayerInventory;
 import com.mahn42.framework.commands.CommandWorldRegenerate;
 import com.mahn42.framework.commands.CommandWorldRemove;
 import com.mahn42.framework.commands.CommandWorldSet;
-import com.mahn42.framework.npc.entity.EntityHumanNPC;
 import com.mahn42.framework.npc.entity.EntityPlayerNPC;
-import com.mahn42.framework.npc.entity.NPCEntityHuman;
 import com.mahn42.framework.npc.entity.NPCEntityPlayer;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -154,13 +152,9 @@ public class Framework extends JavaPlugin {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        BlockAreaList lList = new BlockAreaList();
-        lList.load(new File("/Users/andre/craftbukkit/test.frm"));
-        BlockRect lRect = new BlockRect();
-        lRect.fromCSV("1,2,3 - 4,5,6", "\\,");
-        Logger.getLogger("xxx").info(lRect.toString());
-        lRect.fromCSV("1,2,3", "\\,");
-        Logger.getLogger("xxx").info(lRect.toString());
+        ItemStack[] lInv = new ItemStack[36];
+        int removeItems = InventoryHelper.removeItems(lInv, new ItemStack(Material.SAPLING, (byte)3));
+        Logger.getLogger("xxx").info("ri = " + removeItems);
     }
 
     public long getSyncCallCount() {
@@ -768,18 +762,6 @@ public class Framework extends JavaPlugin {
         return bukkitEntity;
     }
 
-    public NPCEntityHuman createHumanNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
-        WorldServer ws = ((CraftWorld) aWorld).getHandle();
-        EntityHumanNPC handle = new EntityHumanNPC(ws, aName);
-        NPCEntityHuman bukkitEntity = (NPCEntityHuman) handle.getBukkitEntity();
-        bukkitEntity.setDataObject(aDataObject);
-        ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
-        ws.players.remove(handle);
-        bukkitEntity.teleport(aPos.getLocation(aWorld));
-        bukkitEntity.setGameMode(GameMode.SURVIVAL);
-        return bukkitEntity;
-    }
-
     public enum ItemType {
 
         Block,
@@ -864,21 +846,25 @@ public class Framework extends JavaPlugin {
             case SHEARS:
                 return ItemType.Tool;
             case LEATHER_HELMET:
+            case CHAINMAIL_HELMET:
             case IRON_HELMET:
             case GOLD_HELMET:
             case DIAMOND_HELMET:
                 return ItemType.Helmet;
             case LEATHER_CHESTPLATE:
+            case CHAINMAIL_CHESTPLATE:
             case IRON_CHESTPLATE:
             case GOLD_CHESTPLATE:
             case DIAMOND_CHESTPLATE:
                 return ItemType.Chestplate;
             case LEATHER_BOOTS:
+            case CHAINMAIL_BOOTS:
             case IRON_BOOTS:
             case GOLD_BOOTS:
             case DIAMOND_BOOTS:
                 return ItemType.Boots;
             case LEATHER_LEGGINGS:
+            case CHAINMAIL_LEGGINGS:
             case IRON_LEGGINGS:
             case GOLD_LEGGINGS:
             case DIAMOND_LEGGINGS:

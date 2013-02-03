@@ -15,9 +15,12 @@ import org.bukkit.craftbukkit.v1_4_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_4_R1.entity.CraftSheep;
+import org.bukkit.craftbukkit.v1_4_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
+import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
@@ -139,7 +142,12 @@ public class NPCEntityPlayer extends CraftPlayer {
         EntityPlayerNPC lNPC = (EntityPlayerNPC) getHandle();
         ((CraftSheep)aSheep).getHandle().a(lNPC);
     }
-
+    
+    public void setEquipment(int i, ItemStack aItem) {
+        EntityPlayerNPC lNPC = (EntityPlayerNPC) getHandle();
+        lNPC.setEquipment(i, CraftItemStack.asNMSCopy(aItem));
+    }
+    
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof NPCEntityPlayer) ? getAsPlayer().getEntityId() == ((NPCEntityPlayer)obj).getAsPlayer().getEntityId() : false;
