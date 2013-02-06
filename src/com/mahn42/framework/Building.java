@@ -5,6 +5,7 @@
 package com.mahn42.framework;
 
 import java.util.ArrayList;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
@@ -232,6 +233,19 @@ public class Building extends DBRecordWorld {
         } else {
             Framework.plugin.getLogger().info(aText);
         }
+    }
+    
+    public ArrayList<BuildingBlock> getBlocks(Material aMaterial) {
+        ArrayList<BuildingBlock> lRes = new ArrayList<BuildingBlock>();
+        for(BuildingBlock lBlock : blocks) {
+            if (lBlock.material == null) {
+                lBlock.material = lBlock.position.getBlockType(world);
+            }
+            if (aMaterial.equals(lBlock.material)) {
+                lRes.add(lBlock);
+            }
+        }
+        return lRes;
     }
 
     public String getIconName() {

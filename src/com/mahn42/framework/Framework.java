@@ -124,11 +124,11 @@ public class Framework extends JavaPlugin {
     }
     public static Framework plugin;
     public int configSyncBlockSetterTicks = 2;
-    public int configDynMapTicks = 40;
+    public int configDynMapTicks = 200;
     public int configDBSaverTicks = 18000;
     public String configLanguage = "DE_de";
     public int configProjectionTicks = 10;
-    public int configEntityControllerTicks = 10;
+    public int configEntityControllerTicks = 20;
     protected Profiler fProfiler = new Profiler();
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected HashMap<String, Properties> fPluginLangs = new HashMap<String, Properties>();
