@@ -13,8 +13,11 @@ import com.mahn42.framework.IMarker;
 import com.mahn42.framework.InventoryHelper;
 import com.mahn42.framework.WorldScanner;
 import com.mahn42.framework.npc.entity.NPCEntityPlayer;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Logger;
 import org.bukkit.Location;
@@ -198,12 +201,25 @@ public class CommandTest implements CommandExecutor {
             } else {
                 player.sendMessage("unkown " + aStrings[0]);
             }
-        } else {
+        }
+        if (aStrings.length > 0 ) {
             if (aStrings[0].equalsIgnoreCase("inv1")) {
                 ItemStack[] lInv = new ItemStack[36];
                 lInv[4] = new ItemStack(Material.SAPLING);
                 int removeItems = InventoryHelper.removeItems(lInv, new ItemStack(Material.SAPLING, (byte) 3));
                 aCommandSender.sendMessage("remitems = " + removeItems);
+            } else if (aStrings[0].equalsIgnoreCase("system")) {
+                Properties properties = System.getProperties();
+                for(String lName : properties.stringPropertyNames()) {
+                    aCommandSender.sendMessage(lName + " = " + properties.getProperty(lName));
+                }
+            } else if (aStrings[0].equalsIgnoreCase("cpu")) {
+                OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+                double systemLoadAverage = operatingSystemMXBean.getSystemLoadAverage();
+                int availableProcessors = operatingSystemMXBean.getAvailableProcessors();
+                aCommandSender.sendMessage("cpu: " + systemLoadAverage + " count: " + availableProcessors);
+            } else if (aStrings[0].equalsIgnoreCase("profile")) {
+                Framework.plugin.getProfiler().dump(Framework.plugin.getLogger());
             } else {
                 aCommandSender.sendMessage("what?");
             }

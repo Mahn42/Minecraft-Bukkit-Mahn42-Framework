@@ -20,10 +20,11 @@ public class Profiler {
         public long min = Long.MAX_VALUE;
         public long max = 0;
         public long count = 0;
+        public long ocount = 0;
         public long sum = 0;
 
         public long start() {
-            fStart = System.currentTimeMillis();
+            fStart = System.nanoTime(); // currentTimeMillis();
             return fStart;
         }
 
@@ -32,7 +33,7 @@ public class Profiler {
         }
 
         public void end(long aStart) {
-            long lEnd = System.currentTimeMillis();
+            long lEnd = System.nanoTime(); // currentTimeMillis();
             long d = lEnd - fStart;
             if (d < min) {
                 min = d;
@@ -41,12 +42,20 @@ public class Profiler {
                 max = d;
             }
             sum += d;
+            if (d > 50000000) {
+                ocount++;
+            }
             count++;
         }
         
         @Override
         public String toString() {
-            return "" + min + " " + ((long)sum/count) + " " + max + " " + sum + " " + count;
+            float lmin = min; lmin /= 1000000.0;
+            float lavg = sum; lavg /= count; lavg /= 1000000.0;
+            float lmax = max; lmax /= 1000000.0;
+            float lsum = sum; lsum /= 1000000000.0;
+            return String.format("%5d %5d %8.2f %8.2f %10.2f %10.2f", count, ocount, lmin, lavg, lmax, lsum);
+            //return "" + min + " " + ((long)sum/count) + " " + max + " " + sum + " " + count;
         }
     }
     protected HashMap<String, ProfileItem> fItems = new HashMap<String, Profiler.ProfileItem>();
@@ -85,8 +94,9 @@ public class Profiler {
     public void dump(Logger aLogger) {
         synchronized(fItems) {
             Set<String> keySet = fItems.keySet();
+            aLogger.info("count  over   min      avg        max        sum     : name");
             for(String lName : keySet) {
-                aLogger.info(lName + ": " + fItems.get(lName));
+                aLogger.info(fItems.get(lName).toString() + "  : " + lName);
             }
         }
     }

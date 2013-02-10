@@ -10,6 +10,7 @@ import net.minecraft.server.v1_4_R1.EntityPlayer;
 import net.minecraft.server.v1_4_R1.Navigation;
 import net.minecraft.server.v1_4_R1.PathEntity;
 import net.minecraft.server.v1_4_R1.PathPoint;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_4_R1.CraftWorld;
@@ -28,6 +29,9 @@ public class EntityControl {
     public boolean remove = false;
     public EntityControlPath path = new EntityControlPath();
     protected EntityControlPathItem pathItem;
+    protected Location currentLocation = null;
+    protected Location lastLocation = null;
+    protected PathPoint lastPathPoint = null;
 
     public EntityControl(Entity aEntity) {
         entity = aEntity;
@@ -40,6 +44,7 @@ public class EntityControl {
             remove = true;
             return;
         }
+        currentLocation = entity.getLocation();
         if (pathItem == null) {
             getNextPathItem();
         }
@@ -103,13 +108,35 @@ public class EntityControl {
                      lNPC.motY = 0.0f;
                      }
                      */
-
                     EntityPlayer lPlayer = (EntityPlayer) lMCEntitiy;
-                    PathEntity lPE = ((CraftWorld) entity.getWorld()).getHandle().a(lPlayer, lDest.x, lDest.y, lDest.z, pathentityarg, pathentityf0, pathentityf1, pathentityf2, pathentityf3);
-                    //lCreature.setPathEntity(lPE);
                     Navigation lNavigation = lPlayer.getNavigation();
-                    lNavigation.a(lPE, pathItem.getSpeed(entity));
-                    //lNavigation.a(lDest.x, lDest.y, lDest.z, pathItem.getSpeed(entity));
+                    boolean lsetPath = true;
+                    if (lastLocation != null && lastPathPoint != null) {
+                        double distanceSquared = lastLocation.distanceSquared(currentLocation);
+                        if (distanceSquared > 0.5) {
+                            PathEntity d = lNavigation.d();
+                            PathPoint c = d.c();
+                            if (c != null) {
+                                lsetPath = !c.equals(lastPathPoint);
+                            }
+                        }
+                    }
+                    if (lsetPath) {
+                        Framework.plugin.getProfiler().beginProfile("FW.EntityControl.findPath");
+                        PathEntity lPE = ((CraftWorld) entity.getWorld()).getHandle().a(lPlayer, lDest.x, lDest.y, lDest.z, pathentityarg, pathentityf0, pathentityf1, pathentityf2, pathentityf3);
+                        Framework.plugin.getProfiler().endProfile("FW.EntityControl.findPath");
+                        //lCreature.setPathEntity(lPE);
+                        lNavigation.a(lPE, pathItem.getSpeed(entity));
+                        if (lPE != null) {
+                            lastPathPoint = lPE.c();
+                        } else {
+                            lastPathPoint = null;
+                        }
+                        //PathEntity d = lNavigation.d();
+                        //lNavigation.a(lDest.x, lDest.y, lDest.z, pathItem.getSpeed(entity));
+                    } else {
+                        Framework.plugin.log("fw", "path not set, is already set");
+                    }
 
                 } else {
                     //todo
@@ -121,6 +148,7 @@ public class EntityControl {
                     lNPC.motX = lNPC.motY = lNPC.motZ = 0;
                 }
             }
+            lastLocation = currentLocation;
         }
     }
 

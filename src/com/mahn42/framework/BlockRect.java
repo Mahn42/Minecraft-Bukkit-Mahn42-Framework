@@ -57,6 +57,12 @@ public class BlockRect {
                 return true;
             }
         }
+        lEdges = aRect.getEdges();
+        for(BlockPosition lEdge : lEdges) {
+            if (isBetween(lEdge)) {
+                return true;
+            }
+        }
         return false;
     }
     

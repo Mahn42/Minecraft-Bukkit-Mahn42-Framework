@@ -32,6 +32,7 @@ public class EntityController implements Listener, Runnable  {
 
     @Override
     public void run() {
+        Framework.plugin.getProfiler().beginProfile("FW.EntityController.run");
         Collection<EntityControl> lControls = new ArrayList<EntityControl>();
         synchronized(controlledEntities) {
             lControls.addAll(controlledEntities.values());
@@ -49,6 +50,7 @@ public class EntityController implements Listener, Runnable  {
                 controlledEntities.remove(lControl.id);
             }
         }
+        Framework.plugin.getProfiler().endProfile("FW.EntityController.run");
     }
     
     public void add(EntityControl aControl) {

@@ -179,7 +179,7 @@ public class BuildingDescription {
         
         @Override
         public String toString() {
-            String lResult = material.toString();
+            String lResult = material == null ? "null" : material.toString();
             if (withData) {
                 lResult += "(" + data + ")";
             }
