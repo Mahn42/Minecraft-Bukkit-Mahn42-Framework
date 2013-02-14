@@ -129,6 +129,7 @@ public class Framework extends JavaPlugin {
     public String configLanguage = "DE_de";
     public int configProjectionTicks = 10;
     public int configEntityControllerTicks = 20;
+    public int configEntityControllerCallsPerRun = 2;
     protected Profiler fProfiler = new Profiler();
     protected HashMap<String, Boolean> fDebugSet = new HashMap<String, Boolean>();
     protected HashMap<String, Properties> fPluginLangs = new HashMap<String, Properties>();
@@ -520,6 +521,7 @@ public class Framework extends JavaPlugin {
         configLanguage = lConfig.getString("Language");
         configProjectionTicks = lConfig.getInt("ProjectionAreas.Ticks", configProjectionTicks);
         configEntityControllerTicks = lConfig.getInt("EnityController.Ticks", configEntityControllerTicks);
+        configEntityControllerCallsPerRun = lConfig.getInt("EnityController.CallsPerRun", configEntityControllerCallsPerRun);
         configDBSaverTicks = lConfig.getInt("DBSaver.Ticks", configDBSaverTicks);
         configDynMapTicks = lConfig.getInt("DynMap.Ticks", configDynMapTicks);
         List lWorldClasses = lConfig.getList("WorldClassifications");
@@ -665,6 +667,9 @@ public class Framework extends JavaPlugin {
         Location lLocation;
         if (aPos != null) {
             lLocation = aPos.getLocation(aWorld);
+            while (!lLocation.getBlock().getType().equals(Material.AIR)) {
+                lLocation = lLocation.add(0, 1, 0);
+            }
         } else {
             WorldPlayerSettingsDB lDB = Framework.plugin.getWorldPlayerSettingsDB(aWorld.getName());
             if (lDB != null) {

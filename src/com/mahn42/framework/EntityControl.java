@@ -29,6 +29,7 @@ public class EntityControl {
     public boolean remove = false;
     public EntityControlPath path = new EntityControlPath();
     protected EntityControlPathItem pathItem;
+    protected BlockPosition lastTarget = null;
     protected Location currentLocation = null;
     protected Location lastLocation = null;
     protected PathPoint lastPathPoint = null;
@@ -111,18 +112,21 @@ public class EntityControl {
                     EntityPlayer lPlayer = (EntityPlayer) lMCEntitiy;
                     Navigation lNavigation = lPlayer.getNavigation();
                     boolean lsetPath = true;
-                    if (lastLocation != null && lastPathPoint != null) {
+                    if (lastLocation != null && lastPathPoint != null && lastTarget != null && lastTarget.equals(lDest)) {
                         double distanceSquared = lastLocation.distanceSquared(currentLocation);
                         if (distanceSquared > 0.5) {
                             PathEntity d = lNavigation.d();
-                            PathPoint c = d.c();
-                            if (c != null) {
-                                lsetPath = !c.equals(lastPathPoint);
+                            if (d != null) {
+                                PathPoint c = d.c();
+                                if (c != null) {
+                                    lsetPath = !c.equals(lastPathPoint);
+                                }
                             }
                         }
                     }
                     if (lsetPath) {
                         Framework.plugin.getProfiler().beginProfile("FW.EntityControl.findPath");
+                        lastTarget = lDest.clone();
                         PathEntity lPE = ((CraftWorld) entity.getWorld()).getHandle().a(lPlayer, lDest.x, lDest.y, lDest.z, pathentityarg, pathentityf0, pathentityf1, pathentityf2, pathentityf3);
                         Framework.plugin.getProfiler().endProfile("FW.EntityControl.findPath");
                         //lCreature.setPathEntity(lPE);
@@ -135,7 +139,9 @@ public class EntityControl {
                         //PathEntity d = lNavigation.d();
                         //lNavigation.a(lDest.x, lDest.y, lDest.z, pathItem.getSpeed(entity));
                     } else {
-                        Framework.plugin.log("fw", "path not set, is already set");
+                        Framework.plugin.getProfiler().beginProfile("FW.EntityControl.findPath.no");
+                        Framework.plugin.getProfiler().endProfile("FW.EntityControl.findPath.no");
+                        //Framework.plugin.log("fw", "path not set, is already set");
                     }
 
                 } else {
@@ -225,4 +231,10 @@ public class EntityControl {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return "EC: " + id;
+    }
+    
 }

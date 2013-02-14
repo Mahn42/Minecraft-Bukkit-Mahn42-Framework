@@ -15,15 +15,17 @@ import org.bukkit.inventory.ItemStack;
  * @author andre
  */
 public class InventoryHelper {
-    
+
     public static boolean hasAtleastItems(Inventory aInv, Material aMat, int aCount) {
         boolean lFound = false;
-        for(ItemStack lItem : aInv) {
-            if (lItem != null && lItem.getType().equals(aMat)) {
-                aCount -= lItem.getAmount();
-                if (aCount <= 0) {
-                    lFound = true;
-                    break;
+        if (aInv != null) {
+            for (ItemStack lItem : aInv) {
+                if (lItem != null && lItem.getType().equals(aMat)) {
+                    aCount -= lItem.getAmount();
+                    if (aCount <= 0) {
+                        lFound = true;
+                        break;
+                    }
                 }
             }
         }
@@ -33,7 +35,7 @@ public class InventoryHelper {
     public static int removeItems(ItemStack[] aStack, ItemStack aItem) {
         return removeItems(aStack, aItem, -1);
     }
-    
+
     public static int removeItems(ItemStack[] aStack, ItemStack aItem, int aExcludeIndex) {
         ItemStack lRemItem = new ItemStack(aItem);
         int aO = lRemItem.getAmount();
@@ -63,7 +65,7 @@ public class InventoryHelper {
     public static int removeItems(Inventory aInv, Material aMat, int aCount) {
         int aO = aCount;
         int i = -1;
-        for(ItemStack lItem : aInv) {
+        for (ItemStack lItem : aInv) {
             i++;
             if (lItem != null && lItem.getType().equals(aMat)) {
                 if (lItem.getAmount() > aCount) {
@@ -85,7 +87,7 @@ public class InventoryHelper {
     public static int insertItems(ItemStack[] aStack, ItemStack aItem) {
         return insertItems(aStack, aItem, -1);
     }
-    
+
     public static int insertItems(ItemStack[] aStack, ItemStack aItem, int aExcludeIndex) {
         ItemStack lNewItem = new ItemStack(aItem);
         int aO = lNewItem.getAmount();
@@ -126,7 +128,7 @@ public class InventoryHelper {
         }
         return aO - lNewItem.getAmount();
     }
-    
+
     public static int canInsertItems(ItemStack[] aStack, ItemStack aItem) {
         ItemStack lNewItem = new ItemStack(aItem);
         int aO = lNewItem.getAmount();
@@ -159,11 +161,11 @@ public class InventoryHelper {
         }
         return aO - lNewItem.getAmount();
     }
-    
+
     public static List<ItemStack> removeItemsByMaterial(Inventory aInv, Material aMat, int aCount) {
         ArrayList<ItemStack> lRes = new ArrayList<ItemStack>();
         int i = -1;
-        for(ItemStack lItem : aInv) {
+        for (ItemStack lItem : aInv) {
             i++;
             if (lItem != null && lItem.getType().equals(aMat)) {
                 if (lItem.getAmount() > aCount) {
@@ -224,7 +226,7 @@ public class InventoryHelper {
         }
         return aO - aCount;
     }
-    
+
     public static int canInsertItems(Inventory aInv, ItemStack aStack) {
         ItemStack lStack = new ItemStack(aStack);
         int aO = lStack.getAmount();
@@ -257,7 +259,7 @@ public class InventoryHelper {
         }
         return aO - lStack.getAmount();
     }
-    
+
     public static int insertItems(Inventory aInv, ItemStack aStack) {
         ItemStack lStack = new ItemStack(aStack);
         int aO = lStack.getAmount();
@@ -285,22 +287,22 @@ public class InventoryHelper {
                     aInv.setItem(i, lItem);
                     lStack.setAmount(0);
                     /*
-                    int lplace = lItem.getMaxStackSize() - lItem.getAmount();
-                    if (lplace >= aCount) {
-                        lItem.setAmount(lItem.getAmount() + aCount);
-                        aCount = 0;
-                    } else {
-                        lItem.setAmount(lItem.getMaxStackSize());
-                        aCount -= lplace;
-                    }
-                    */
+                     int lplace = lItem.getMaxStackSize() - lItem.getAmount();
+                     if (lplace >= aCount) {
+                     lItem.setAmount(lItem.getAmount() + aCount);
+                     aCount = 0;
+                     } else {
+                     lItem.setAmount(lItem.getMaxStackSize());
+                     aCount -= lplace;
+                     }
+                     */
                     break;
                 }
             }
         }
         return aO - lStack.getAmount();
     }
-    
+
     public static boolean isSimilarItem(ItemStack aItem1, ItemStack aItem2) {
         if (aItem1 == null && aItem2 == null) {
             return true;
