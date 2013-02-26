@@ -22,9 +22,13 @@ public class Profiler {
         public long count = 0;
         public long ocount = 0;
         public long sum = 0;
+        public long memory_start = 0;
+        public long memory_used = 0;
 
         public long start() {
             fStart = System.nanoTime(); // currentTimeMillis();
+            Runtime lRuntime = Runtime.getRuntime();
+            memory_start = lRuntime.totalMemory() - lRuntime.freeMemory();
             return fStart;
         }
 
@@ -45,6 +49,8 @@ public class Profiler {
             if (d > 50000000) {
                 ocount++;
             }
+            Runtime lRuntime = Runtime.getRuntime();
+            memory_used = (lRuntime.totalMemory() - lRuntime.freeMemory()) - memory_start;
             count++;
         }
         
@@ -54,7 +60,7 @@ public class Profiler {
             float lavg = sum; lavg /= count; lavg /= 1000000.0;
             float lmax = max; lmax /= 1000000.0;
             float lsum = sum; lsum /= 1000000000.0;
-            return String.format("%5d %5d %8.2f %8.2f %10.2f %10.2f", count, ocount, lmin, lavg, lmax, lsum);
+            return String.format("%5d %5d %8.2f %8.2f %10.2f %10.2f %6d %10d", count, ocount, lmin, lavg, lmax, lsum, memory_used, memory_start);
             //return "" + min + " " + ((long)sum/count) + " " + max + " " + sum + " " + count;
         }
     }

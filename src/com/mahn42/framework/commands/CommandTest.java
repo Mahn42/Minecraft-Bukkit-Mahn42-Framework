@@ -217,7 +217,11 @@ public class CommandTest implements CommandExecutor {
                 OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
                 double systemLoadAverage = operatingSystemMXBean.getSystemLoadAverage();
                 int availableProcessors = operatingSystemMXBean.getAvailableProcessors();
-                aCommandSender.sendMessage("cpu: " + systemLoadAverage + " count: " + availableProcessors);
+                Runtime lRuntime = Runtime.getRuntime();
+                lRuntime.gc();
+                aCommandSender.sendMessage("cpu: " + systemLoadAverage + " count: " + availableProcessors + " (" + lRuntime.availableProcessors() + ")");
+                long lFree = lRuntime.freeMemory() + (lRuntime.maxMemory() - lRuntime.totalMemory());
+                aCommandSender.sendMessage("memory: total: " + lRuntime.totalMemory() + " max: " + lRuntime.maxMemory() + " free: " + lFree + " used: " + (lRuntime.maxMemory() - lFree));
             } else if (aStrings[0].equalsIgnoreCase("profile")) {
                 Framework.plugin.getProfiler().dump(Framework.plugin.getLogger());
             } else {
