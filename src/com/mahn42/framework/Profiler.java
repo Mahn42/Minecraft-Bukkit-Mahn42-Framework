@@ -22,13 +22,14 @@ public class Profiler {
         public long count = 0;
         public long ocount = 0;
         public long sum = 0;
-        public long memory_start = 0;
+        protected long fMemory_start = 0;
         public long memory_used = 0;
+        public long memory_max = 0;
 
         public long start() {
             fStart = System.nanoTime(); // currentTimeMillis();
             Runtime lRuntime = Runtime.getRuntime();
-            memory_start = lRuntime.totalMemory() - lRuntime.freeMemory();
+            fMemory_start = lRuntime.totalMemory() - lRuntime.freeMemory();
             return fStart;
         }
 
@@ -50,7 +51,11 @@ public class Profiler {
                 ocount++;
             }
             Runtime lRuntime = Runtime.getRuntime();
-            memory_used = (lRuntime.totalMemory() - lRuntime.freeMemory()) - memory_start;
+            long lmem = (lRuntime.totalMemory() - lRuntime.freeMemory()) - fMemory_start;
+            memory_used += lmem < 0 ? 0 : lmem;
+            if (lmem > memory_max) {
+                memory_max = lmem;
+            }
             count++;
         }
         
@@ -60,7 +65,8 @@ public class Profiler {
             float lavg = sum; lavg /= count; lavg /= 1000000.0;
             float lmax = max; lmax /= 1000000.0;
             float lsum = sum; lsum /= 1000000000.0;
-            return String.format("%5d %5d %8.2f %8.2f %10.2f %10.2f %6d %10d", count, ocount, lmin, lavg, lmax, lsum, memory_used, memory_start);
+            long lmem = memory_used / count;
+            return String.format("%5d %5d %8.2f %8.2f %10.2f %10.2f %8d %9d", count, ocount, lmin, lavg, lmax, lsum, lmem, memory_max);
             //return "" + min + " " + ((long)sum/count) + " " + max + " " + sum + " " + count;
         }
     }
@@ -100,7 +106,7 @@ public class Profiler {
     public void dump(Logger aLogger) {
         synchronized(fItems) {
             Set<String> keySet = fItems.keySet();
-            aLogger.info("count  over   min      avg        max        sum     : name");
+            aLogger.info("count  over   min      avg        max        sum    memory used  max    : name");
             for(String lName : keySet) {
                 aLogger.info(fItems.get(lName).toString() + "  : " + lName);
             }
