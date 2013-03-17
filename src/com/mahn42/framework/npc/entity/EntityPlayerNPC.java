@@ -12,22 +12,22 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_4_R1.ChunkCoordinates;
-import net.minecraft.server.v1_4_R1.Connection;
-import net.minecraft.server.v1_4_R1.EntityPlayer;
-import net.minecraft.server.v1_4_R1.EnumGamemode;
-import net.minecraft.server.v1_4_R1.MathHelper;
-import net.minecraft.server.v1_4_R1.MinecraftServer;
-import net.minecraft.server.v1_4_R1.Navigation;
-import net.minecraft.server.v1_4_R1.NetworkManager;
-import net.minecraft.server.v1_4_R1.Packet;
-import net.minecraft.server.v1_4_R1.Packet32EntityLook;
-import net.minecraft.server.v1_4_R1.Packet5EntityEquipment;
-import net.minecraft.server.v1_4_R1.PlayerInteractManager;
-import net.minecraft.server.v1_4_R1.World;
+import net.minecraft.server.v1_5_R1.ChunkCoordinates;
+import net.minecraft.server.v1_5_R1.Connection;
+import net.minecraft.server.v1_5_R1.EntityPlayer;
+import net.minecraft.server.v1_5_R1.EnumGamemode;
+import net.minecraft.server.v1_5_R1.MathHelper;
+import net.minecraft.server.v1_5_R1.MinecraftServer;
+import net.minecraft.server.v1_5_R1.Navigation;
+import net.minecraft.server.v1_5_R1.NetworkManager;
+import net.minecraft.server.v1_5_R1.Packet;
+import net.minecraft.server.v1_5_R1.Packet32EntityLook;
+import net.minecraft.server.v1_5_R1.Packet5EntityEquipment;
+import net.minecraft.server.v1_5_R1.PlayerInteractManager;
+import net.minecraft.server.v1_5_R1.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_4_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_5_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
@@ -50,7 +50,7 @@ public class EntityPlayerNPC extends EntityPlayer {
      }
 
      @Override
-     public void collide(net.minecraft.server.v1_4_R1.Entity entity) {
+     public void collide(net.minecraft.server.v1_5_R1.Entity entity) {
      // this method is called by both the entities involved - cancelling
      // it will not stop the NPC from moving.
      super.collide(entity);
@@ -77,7 +77,7 @@ public class EntityPlayerNPC extends EntityPlayer {
             }
         };
         try {
-            netMgr = new EmptyNetworkManager(socket, "npc mgr", lConn, server.F().getPrivate());
+            netMgr = new EmptyNetworkManager(server.getLogger(), socket, "npc mgr", lConn, server.F().getPrivate());
             playerConnection = new EmptyConnection(minecraftServer, netMgr, this);
             netMgr.a(playerConnection);
         } catch (IOException ex) {
@@ -96,16 +96,16 @@ public class EntityPlayerNPC extends EntityPlayer {
     }
 
     @Override
-    public void j_() {
-        super.j_();
+    public void l_() {
+        super.l_();
 
         updateEquipment();
         /*
-        sendPacketNearby(
-                getBukkitEntity().getLocation(),
-                new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper
-                .d(pitch * 256.0F / 360.0F)));
-        */
+         sendPacketNearby(
+         getBukkitEntity().getLocation(),
+         new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper
+         .d(pitch * 256.0F / 360.0F)));
+         */
         /*
          Packet32EntityLook packet = new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper.d(pitch * 256.0F / 360.0F));
          double radius = 64.0d * 64.0d;
@@ -125,7 +125,7 @@ public class EntityPlayerNPC extends EntityPlayer {
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
             motX = motY = motZ = 0;
         }
-        this.aA().a();
+        this.aD().a();
         Navigation navigation = getNavigation();
         if (navigation != null) {
             if (!navigation.f()) {
@@ -142,42 +142,77 @@ public class EntityPlayerNPC extends EntityPlayer {
     }
 
     private void moveOnCurrentHeading() {
-        //NMS.updateAI(this);
-        //updateSenses(entity);
-        //if (Math.abs(motX) > 0.1f || Math.abs(motY) > 0.1f || Math.abs(motZ) > 0.1f ) {
-        //    Framework.plugin.getLogger().info("motX = " + motX + " motY = " + motY + " motZ = " + motZ);
-        //}
-        this.aA().a();
+        /*
+         this.aA().a();
+         this.getNavigation().e();
+         this.getControllerMove().c();
+         this.getControllerLook().a();
+         this.getControllerJump().b();
+         // taken from EntityLiving update method
+
+         if (bF) {
+         boolean inLiquid = H() || J();
+         if (inLiquid) {
+         motY += 0.04;
+         } else //(handled elsewhere)
+         if (onGround && bV == 0) {
+         bi();
+         bV = 10;
+         }
+         } else {
+         bV = 0;
+         }
+
+         bC *= 0.98F;
+         bD *= 0.98F;
+         bE *= 0.9F;
+
+         float prev = aN;
+         aN *= bB();
+         e(bC, bD); // movement method
+         aN = prev;
+
+         //NMS.setHeadYaw(this, yaw);
+         this.az = yaw;
+         */
+        this.aD().a();
         this.getNavigation().e();
         this.getControllerMove().c();
         this.getControllerLook().a();
         this.getControllerJump().b();
         // taken from EntityLiving update method
-
-        if (bF) {
-            boolean inLiquid = H() || J();
-            if (inLiquid) {
-                motY += 0.04;
-            } else //(handled elsewhere)*/
-            if (onGround && bV == 0) {
-                bi();
-                bV = 10;
+        if (bG) {
+            /* boolean inLiquid = G() || I();
+             if (inLiquid) {
+             motY += 0.04;
+             } else //(handled elsewhere)*/
+            if (onGround && bX == 0) {
+                bl();
+                bX = 10;
             }
         } else {
-            bV = 0;
+            bX = 0;
         }
 
-        bC *= 0.98F;
         bD *= 0.98F;
-        bE *= 0.9F;
+        bE *= 0.98F;
+        bF *= 0.9F;
 
-        float prev = aN;
-        aN *= bB();
-        e(bC, bD); // movement method
-        aN = prev;
+        float prev = aO;
+        aO *= bE();
+        e(bD, bE); // movement method
+        aO = prev;
+        while (yaw < -180.0F) {
+            yaw += 360.0F;
+        }
 
-        //NMS.setHeadYaw(this, yaw);
-        this.az = yaw;
+        while (yaw >= 180.0F) {
+            yaw -= 360.0F;
+        }
+        this.aA = yaw;
+        //if (!(this instanceof EntityHuman))
+        //    this.ay = yaw;
+        this.aB = yaw;
     }
     private static final float EPSILON = 0.005F;
 
@@ -195,12 +230,12 @@ public class EntityPlayerNPC extends EntityPlayer {
     public ChunkCoordinates b() {
         return new ChunkCoordinates(MathHelper.floor(this.locX), MathHelper.floor(this.locY + 0.5D), MathHelper.floor(this.locZ));
     }
-    net.minecraft.server.v1_4_R1.ItemStack[] previousEquipment = new net.minecraft.server.v1_4_R1.ItemStack[5];
+    net.minecraft.server.v1_5_R1.ItemStack[] previousEquipment = new net.minecraft.server.v1_5_R1.ItemStack[5];
 
     private void updateEquipment() {
         for (int i = 0; i < previousEquipment.length; i++) {
-            net.minecraft.server.v1_4_R1.ItemStack previous = previousEquipment[i];
-            net.minecraft.server.v1_4_R1.ItemStack current = getEquipment(i);
+            net.minecraft.server.v1_5_R1.ItemStack previous = previousEquipment[i];
+            net.minecraft.server.v1_5_R1.ItemStack current = getEquipment(i);
             if (previous != current) {
                 Framework.plugin.log("npc", "update Equi for entity " + id + " from " + previous + " to " + current);
                 sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i, current));
