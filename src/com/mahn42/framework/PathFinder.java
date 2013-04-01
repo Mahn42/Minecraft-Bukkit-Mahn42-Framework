@@ -3,8 +3,8 @@
  * and open the template in the editor.
  */
 package com.mahn42.framework;
-import net.minecraft.server.v1_5_R1.PathEntity;
-import net.minecraft.server.v1_5_R1.PathPoint;
+import net.minecraft.server.v1_5_R2.PathEntity;
+import net.minecraft.server.v1_5_R2.PathPoint;
 
 /**
  *

@@ -28,7 +28,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_5_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_5_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -189,7 +189,7 @@ public class CommandTest implements CommandExecutor {
                 //lStack.setData(lWool);
                 //ItemStack lStack = new ItemStack(Material.WOOL, 2);
                 //lStack.setData(new MaterialData(Material.WOOL, (byte)10));
-                net.minecraft.server.v1_5_R1.ItemStack lItem = new net.minecraft.server.v1_5_R1.ItemStack(Material.WOOL.getId(), 1, 10);
+                net.minecraft.server.v1_5_R2.ItemStack lItem = new net.minecraft.server.v1_5_R2.ItemStack(Material.WOOL.getId(), 1, 10);
                 CraftItemStack lStack = CraftItemStack.asCraftMirror(lItem);
                 Block targetBlock = player.getTargetBlock(null, 30);
                 Item dropItemNaturally = player.getWorld().dropItem(targetBlock.getLocation(), lStack);
