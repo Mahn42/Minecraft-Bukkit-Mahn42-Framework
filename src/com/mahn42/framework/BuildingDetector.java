@@ -56,7 +56,7 @@ public class BuildingDetector {
                     for(int lY = aPos1.y; lY <= aPos2.y; lY+=dy) {
                         for(int lZ = aPos1.z; lZ <= aPos2.z; lZ+=dz) {
                             //Logger.getLogger("detect").info("teste " + new Integer(lX) + "," + new Integer(lY) + "," + new Integer(lZ));
-                            if (getBuildingsWithNoneShareableBlock(new BlockPosition(lX, lY, lZ)).isEmpty()) {
+                            if (getBuildingsWithNoneShareableBlock(aWorld, new BlockPosition(lX, lY, lZ)).isEmpty()) {
                                 Building aBuilding = matchDescription(lDesc, aWorld, lEntities, lX, lY, lZ);
                                 if (aBuilding != null) {
                                     lResult.add(aBuilding);
@@ -127,9 +127,31 @@ public class BuildingDetector {
         return new ArrayList<BuildingDB>(fDBs);
     }
     
-    public ArrayList<Building> getBuildings(BlockPosition aPos) {
+    public ArrayList<BuildingDB> getDBs(World aWorld) {
+        getHandlers();
+        ArrayList<BuildingDB> lDBs = new ArrayList<BuildingDB>();
+        for(BuildingDB lDB : fDBs) {
+            if (lDB.world.equals(aWorld)) {
+                lDBs.add(lDB);
+            }
+        }
+        return lDBs;
+    }
+    
+    public ArrayList<Building> getBuildings(World aWorld) {
         ArrayList<Building> lResult = new ArrayList<Building>();
-        ArrayList<BuildingDB> lDBs = getDBs();
+        ArrayList<BuildingDB> lDBs = getDBs(aWorld);
+        for(BuildingDB lDB : lDBs) {
+            for(Object lBuilding : lDB) {
+                lResult.add((Building)lBuilding);
+            }
+        }
+        return lResult;
+    }
+
+    public ArrayList<Building> getBuildings(World aWorld, BlockPosition aPos) {
+        ArrayList<Building> lResult = new ArrayList<Building>();
+        ArrayList<BuildingDB> lDBs = getDBs(aWorld);
         for(BuildingDB lDB : lDBs) {
             ArrayList<Building> lBuildings = lDB.getBuildings(aPos);
             if (!lBuildings.isEmpty()) {
@@ -139,9 +161,9 @@ public class BuildingDetector {
         return lResult;
     }
 
-    public ArrayList<Building> getBuildingsWithNoneShareableBlock(BlockPosition aPos) {
+    public ArrayList<Building> getBuildingsWithNoneShareableBlock(World aWorld, BlockPosition aPos) {
         ArrayList<Building> lResult = new ArrayList<Building>();
-        ArrayList<BuildingDB> lDBs = getDBs();
+        ArrayList<BuildingDB> lDBs = getDBs(aWorld);
         for(BuildingDB lDB : lDBs) {
             ArrayList<Building> lBuildings = lDB.getBuildingsWithNoneShareableBlock(aPos);
             if (!lBuildings.isEmpty()) {
@@ -151,12 +173,12 @@ public class BuildingDetector {
         return lResult;
     }
 
-    public ArrayList<Building> getBuildingsWithDetectBlock(BlockPosition aEdge1, BlockPosition aEdge2) {
+    public ArrayList<Building> getBuildingsWithDetectBlock(World aWorld, BlockPosition aEdge1, BlockPosition aEdge2) {
         BlockPosition lEdge1, lEdge2;
         lEdge1 = aEdge1.getMinPos(aEdge2);
         lEdge2 = aEdge1.getMaxPos(aEdge2);
         ArrayList<Building> lResult = new ArrayList<Building>();
-        ArrayList<BuildingDB> lDBs = getDBs();
+        ArrayList<BuildingDB> lDBs = getDBs(aWorld);
         for(BuildingDB lDB : lDBs) {
             ArrayList<Building> lBuildings = lDB.getBuildingsWithDetectBlock(lEdge1, lEdge2);
             if (!lBuildings.isEmpty()) {

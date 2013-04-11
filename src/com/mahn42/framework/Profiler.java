@@ -112,4 +112,10 @@ public class Profiler {
             }
         }
     }
+    
+    public void clear() {
+        synchronized(fItems) {
+            fItems.clear();
+        }
+    }
 }

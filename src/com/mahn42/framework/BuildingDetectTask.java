@@ -25,7 +25,7 @@ public class BuildingDetectTask implements Runnable {
     @Override
     public void run() {
         ArrayList<Building> lBuildings;
-        lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithNoneShareableBlock(position);
+        lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithNoneShareableBlock(world, position);
         if (lBuildings.size() == 1) {
             if (Framework.plugin.checkBuildingPermission(player, lBuildings.get(0))) {
                 if (lBuildings.get(0).description.handler != null) {

@@ -42,11 +42,15 @@ public class PlayerListener implements Listener {
             if (lInvDB != null) {
                 WorldPlayerInventory lInv = lInvDB.getOrCreate(lConfFrom.inventoryName, lPlayer.getName());
                 lInv.setFromInventory(lPlayer.getInventory());
+                lInv.exp = lPlayer.getExp();
+                lInv.level = lPlayer.getLevel();
                 //Logger.getLogger("xx").info("set inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConfFrom.name);
             }
             if (!lConf.noInventory && !lConf.inventoryName.equalsIgnoreCase(lConfFrom.inventoryName)) {
                 WorldPlayerInventory lInv = lInvDB.getOrCreate(lConf.inventoryName, lPlayer.getName());
                 lInv.setToInventory(lPlayer.getInventory());
+                lPlayer.setLevel(lInv.level);
+                lPlayer.setExp(lInv.exp);
                 //Logger.getLogger("xx").info("get inventory for player " + lInv.playerName + " inv items " + lPlayer.getInventory().getSize() + " in world " + lConf.name);
             }
         }
@@ -86,7 +90,7 @@ public class PlayerListener implements Listener {
         if (!aEvent.getTo().equals(lPBuilds.playerPos)) {
             lPBuilds.playerPos = aEvent.getTo();
             ArrayList<Building> lBuildings;
-            lBuildings = Framework.plugin.getBuildingDetector().getBuildings(lPBuilds.playerPos);
+            lBuildings = Framework.plugin.getBuildingDetector().getBuildings(lPlayer.getWorld(), lPBuilds.playerPos);
             for(Building lBuilding : lBuildings) {
                 if (!lPBuilds.inBuildings.contains(lBuilding)) {
                     lPBuilds.inBuildings.add(lBuilding);

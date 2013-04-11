@@ -19,43 +19,56 @@ import org.bukkit.inventory.ItemStack;
  * @author andre
  */
 public class WorldPlayerInventory extends DBRecord {
+
     public String inventoryName;
     public String playerName;
     public String inventory;
-    
+    public float exp = 0.0f;
+    public int level = 0;
+
     @Override
     protected void toCSVInternal(ArrayList aCols) {
         super.toCSVInternal(aCols);
         aCols.add(inventoryName);
         aCols.add(playerName);
         aCols.add(inventory);
+        aCols.add(exp);
+        aCols.add(level);
     }
-    
+
     @Override
     protected void fromCSVInternal(DBRecordCSVArray aCols) {
         super.fromCSVInternal(aCols);
         inventoryName = aCols.pop();
         playerName = aCols.pop();
         inventory = aCols.pop();
+        try {
+            exp = Float.parseFloat(aCols.pop());
+        } catch (Exception e) {
+        }
+        try {
+            level = aCols.popInt();
+        } catch (Exception e) {
+        }
     }
-    
+
     public void setFromInventory(Inventory aInv) {
-            YamlConfiguration lYaml = new YamlConfiguration();
-            ItemStack[] lContents = aInv.getContents();
-            ArrayList<Map> lItems = new ArrayList<Map>();
-            for(ItemStack lItem : lContents) {
-                if (lItem != null) {
-                    Map<String, Object> lMap = lItem.serialize();
-                    lItems.add(lMap);
-                } else {
-                    lItems.add(null);
-                }
+        YamlConfiguration lYaml = new YamlConfiguration();
+        ItemStack[] lContents = aInv.getContents();
+        ArrayList<Map> lItems = new ArrayList<Map>();
+        for (ItemStack lItem : lContents) {
+            if (lItem != null) {
+                Map<String, Object> lMap = lItem.serialize();
+                lItems.add(lMap);
+            } else {
+                lItems.add(null);
             }
-            lYaml.set("Inventory", lItems);
-            String lInvStr = lYaml.saveToString();
-            inventory = Base64.encodeBytes(lInvStr.getBytes());
+        }
+        lYaml.set("Inventory", lItems);
+        String lInvStr = lYaml.saveToString();
+        inventory = Base64.encodeBytes(lInvStr.getBytes());
     }
-    
+
     public void setToInventory(Inventory aInv) {
         aInv.clear();
         if (inventory != null && !inventory.isEmpty()) {
@@ -71,15 +84,15 @@ public class WorldPlayerInventory extends DBRecord {
                 Object lObj = lYaml.get("Inventory");
                 if (lObj instanceof ArrayList) {
                     int lIndex = 0;
-                    for(Object lItem : (ArrayList)lObj) {
+                    for (Object lItem : (ArrayList) lObj) {
                         if (lItem == null || lItem.toString().equals("null")) {
                             //aInv.addItem((ItemStack)null);
                         } else {
-                            ItemStack lIStack = ItemStack.deserialize((Map)lItem);
+                            ItemStack lIStack = ItemStack.deserialize((Map) lItem);
                             aInv.setItem(lIndex, lIStack);
                         }
                         lIndex++;
-                    } 
+                    }
                 }
             } catch (InvalidConfigurationException ex) {
                 Logger.getLogger(WorldPlayerSettings.class.getName()).log(Level.SEVERE, null, ex);
@@ -102,16 +115,16 @@ public class WorldPlayerInventory extends DBRecord {
                 Object lObj = lYaml.get("Inventory");
                 if (lObj instanceof ArrayList) {
                     int lIndex = 0;
-                    for(Object lItem : (ArrayList)lObj) {
+                    for (Object lItem : (ArrayList) lObj) {
                         if (lItem == null || lItem.toString().equals("null")) {
                             //aInv.addItem((ItemStack)null);
                             lResult.add(null);
                         } else {
-                            ItemStack lIStack = ItemStack.deserialize((Map)lItem);
+                            ItemStack lIStack = ItemStack.deserialize((Map) lItem);
                             lResult.add(lIStack);
                         }
                         lIndex++;
-                    } 
+                    }
                 }
             } catch (InvalidConfigurationException ex) {
                 Logger.getLogger(WorldPlayerSettings.class.getName()).log(Level.SEVERE, null, ex);

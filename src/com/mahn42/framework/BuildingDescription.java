@@ -357,7 +357,7 @@ public class BuildingDescription {
     
     public String typeName;
     public String name;
-    public Position position = Position.onGround;
+    public Position position = Position.everywhere;
     public ArrayList<BlockDescription> blocks = new ArrayList<BlockDescription>();
     public boolean active;
     public double influenceRadiusFactor = 0;

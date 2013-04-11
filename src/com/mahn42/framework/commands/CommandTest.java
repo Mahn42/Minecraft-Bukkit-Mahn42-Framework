@@ -6,6 +6,7 @@ package com.mahn42.framework.commands;
 
 import com.mahn42.framework.BlockPosition;
 import com.mahn42.framework.BlockPositionDelta;
+import com.mahn42.framework.Building;
 import com.mahn42.framework.EntityControl;
 import com.mahn42.framework.EntityControlPathItemRelative;
 import com.mahn42.framework.Framework;
@@ -198,6 +199,13 @@ public class CommandTest implements CommandExecutor {
                 Framework.plugin.logFilter = aStrings[1];
             } else if (aStrings[0].equalsIgnoreCase("profile")) {
                 Framework.plugin.getProfiler().dump(Framework.plugin.getLogger());
+            } else if (aStrings[0].equalsIgnoreCase("profile_clear")) {
+                Framework.plugin.getProfiler().clear();
+            } else if (aStrings[0].equalsIgnoreCase("update_buildings")) {
+                ArrayList<Building> lBuildings = Framework.plugin.getBuildingDetector().getBuildings(player.getWorld());
+                for(Building lBuilding : lBuildings) {
+                    lBuilding.update();
+                }
             } else {
                 player.sendMessage("unkown " + aStrings[0]);
             }
@@ -224,6 +232,13 @@ public class CommandTest implements CommandExecutor {
                 aCommandSender.sendMessage("memory: total: " + lRuntime.totalMemory() + " max: " + lRuntime.maxMemory() + " free: " + lFree + " used: " + (lRuntime.maxMemory() - lFree));
             } else if (aStrings[0].equalsIgnoreCase("profile")) {
                 Framework.plugin.getProfiler().dump(Framework.plugin.getLogger());
+            } else if (aStrings[0].equalsIgnoreCase("profile_clear")) {
+                Framework.plugin.getProfiler().clear();
+            } else if (aStrings[0].equalsIgnoreCase("update_buildings")) {
+                ArrayList<Building> lBuildings = Framework.plugin.getBuildingDetector().getBuildings(Framework.plugin.getServer().getWorld(aStrings[1]));
+                for(Building lBuilding : lBuildings) {
+                    lBuilding.update();
+                }
             } else {
                 aCommandSender.sendMessage("what?");
             }

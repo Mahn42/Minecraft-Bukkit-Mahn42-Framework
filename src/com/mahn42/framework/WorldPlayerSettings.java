@@ -23,7 +23,7 @@ public class WorldPlayerSettings extends DBRecordWorld {
     public String playerName;
     public String inventory;
     public BlockPosition position = new BlockPosition();
-    
+
     @Override
     protected void toCSVInternal(ArrayList aCols) {
         super.toCSVInternal(aCols);
@@ -31,7 +31,7 @@ public class WorldPlayerSettings extends DBRecordWorld {
         aCols.add(inventory);
         aCols.add(position.toCSV(","));
     }
-    
+
     @Override
     protected void fromCSVInternal(DBRecordCSVArray aCols) {
         super.fromCSVInternal(aCols);
@@ -39,24 +39,24 @@ public class WorldPlayerSettings extends DBRecordWorld {
         inventory = aCols.pop();
         position.fromCSV(aCols.pop(), "\\,");
     }
-    
+
     public void setFromInventory(Inventory aInv) {
-            YamlConfiguration lYaml = new YamlConfiguration();
-            ItemStack[] lContents = aInv.getContents();
-            ArrayList<Map> lItems = new ArrayList<Map>();
-            for(ItemStack lItem : lContents) {
-                if (lItem != null) {
-                    Map<String, Object> lMap = lItem.serialize();
-                    lItems.add(lMap);
-                } else {
-                    lItems.add(null);
-                }
+        YamlConfiguration lYaml = new YamlConfiguration();
+        ItemStack[] lContents = aInv.getContents();
+        ArrayList<Map> lItems = new ArrayList<Map>();
+        for (ItemStack lItem : lContents) {
+            if (lItem != null) {
+                Map<String, Object> lMap = lItem.serialize();
+                lItems.add(lMap);
+            } else {
+                lItems.add(null);
             }
-            lYaml.set("Inventory", lItems);
-            String lInvStr = lYaml.saveToString();
-            inventory = Base64.encodeBytes(lInvStr.getBytes());
+        }
+        lYaml.set("Inventory", lItems);
+        String lInvStr = lYaml.saveToString();
+        inventory = Base64.encodeBytes(lInvStr.getBytes());
     }
-    
+
     public void setToInventory(Inventory aInv) {
         aInv.clear();
         if (inventory != null && !inventory.isEmpty()) {
@@ -72,15 +72,15 @@ public class WorldPlayerSettings extends DBRecordWorld {
                 Object lObj = lYaml.get("Inventory");
                 if (lObj instanceof ArrayList) {
                     int lIndex = 0;
-                    for(Object lItem : (ArrayList)lObj) {
+                    for (Object lItem : (ArrayList) lObj) {
                         if (lItem == null || lItem.toString().equals("null")) {
                             //aInv.addItem((ItemStack)null);
                         } else {
-                            ItemStack lIStack = ItemStack.deserialize((Map)lItem);
+                            ItemStack lIStack = ItemStack.deserialize((Map) lItem);
                             aInv.setItem(lIndex, lIStack);
                         }
                         lIndex++;
-                    } 
+                    }
                 }
             } catch (InvalidConfigurationException ex) {
                 Logger.getLogger(WorldPlayerSettings.class.getName()).log(Level.SEVERE, null, ex);

@@ -476,7 +476,7 @@ public class BlockArea {
         }
         buildings.clear();
         if (aWithBuildings) {
-            ArrayList<Building> lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithDetectBlock(aEdge1, lEdge2);
+            ArrayList<Building> lBuildings = Framework.plugin.getBuildingDetector().getBuildingsWithDetectBlock(aWorld, aEdge1, lEdge2);
             for(Building lBuilding : lBuildings) {
                 BlockPosition lPos = lBuilding.getDetectBlock().position.clone();
                 lPos.subtract(aEdge1);
