@@ -4,22 +4,22 @@
  */
 package com.mahn42.framework.npc.network;
 /*
-import net.minecraft.server.v1_5_R2.EntityPlayer;
-import net.minecraft.server.v1_5_R2.MinecraftServer;
-import net.minecraft.server.v1_5_R2.NetServerHandler;
-import net.minecraft.server.v1_5_R2.NetworkManager;
-import net.minecraft.server.v1_5_R2.Packet;
-import net.minecraft.server.v1_5_R2.Packet102WindowClick;
-import net.minecraft.server.v1_5_R2.Packet106Transaction;
-import net.minecraft.server.v1_5_R2.Packet10Flying;
-import net.minecraft.server.v1_5_R2.Packet130UpdateSign;
-import net.minecraft.server.v1_5_R2.Packet14BlockDig;
-import net.minecraft.server.v1_5_R2.Packet15Place;
-import net.minecraft.server.v1_5_R2.Packet16BlockItemSwitch;
-import net.minecraft.server.v1_5_R2.Packet255KickDisconnect;
-import net.minecraft.server.v1_5_R2.Packet28EntityVelocity;
-import net.minecraft.server.v1_5_R2.Packet3Chat;
-import net.minecraft.server.v1_5_R2.Packet51MapChunk;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.MinecraftServer;
+import net.minecraft.server.v1_6_R2.NetServerHandler;
+import net.minecraft.server.v1_6_R2.NetworkManager;
+import net.minecraft.server.v1_6_R2.Packet;
+import net.minecraft.server.v1_6_R2.Packet102WindowClick;
+import net.minecraft.server.v1_6_R2.Packet106Transaction;
+import net.minecraft.server.v1_6_R2.Packet10Flying;
+import net.minecraft.server.v1_6_R2.Packet130UpdateSign;
+import net.minecraft.server.v1_6_R2.Packet14BlockDig;
+import net.minecraft.server.v1_6_R2.Packet15Place;
+import net.minecraft.server.v1_6_R2.Packet16BlockItemSwitch;
+import net.minecraft.server.v1_6_R2.Packet255KickDisconnect;
+import net.minecraft.server.v1_6_R2.Packet28EntityVelocity;
+import net.minecraft.server.v1_6_R2.Packet3Chat;
+import net.minecraft.server.v1_6_R2.Packet51MapChunk;
 
 public class EmptyNetHandler extends NetServerHandler {
     public EmptyNetHandler(MinecraftServer minecraftServer, NetworkManager networkManager,

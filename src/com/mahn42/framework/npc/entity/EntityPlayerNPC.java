@@ -12,22 +12,27 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_5_R2.ChunkCoordinates;
-import net.minecraft.server.v1_5_R2.Connection;
-import net.minecraft.server.v1_5_R2.EntityPlayer;
-import net.minecraft.server.v1_5_R2.EnumGamemode;
-import net.minecraft.server.v1_5_R2.MathHelper;
-import net.minecraft.server.v1_5_R2.MinecraftServer;
-import net.minecraft.server.v1_5_R2.Navigation;
-import net.minecraft.server.v1_5_R2.NetworkManager;
-import net.minecraft.server.v1_5_R2.Packet;
-import net.minecraft.server.v1_5_R2.Packet32EntityLook;
-import net.minecraft.server.v1_5_R2.Packet5EntityEquipment;
-import net.minecraft.server.v1_5_R2.PlayerInteractManager;
-import net.minecraft.server.v1_5_R2.World;
+import net.minecraft.server.v1_6_R2.AttributeInstance;
+import net.minecraft.server.v1_6_R2.ChunkCoordinates;
+import net.minecraft.server.v1_6_R2.Connection;
+import net.minecraft.server.v1_6_R2.Entity;
+import net.minecraft.server.v1_6_R2.EntityHuman;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+import net.minecraft.server.v1_6_R2.EnumGamemode;
+import net.minecraft.server.v1_6_R2.GenericAttributes;
+import net.minecraft.server.v1_6_R2.MathHelper;
+import net.minecraft.server.v1_6_R2.MinecraftServer;
+import net.minecraft.server.v1_6_R2.Navigation;
+import net.minecraft.server.v1_6_R2.NetworkManager;
+import net.minecraft.server.v1_6_R2.Packet;
+import net.minecraft.server.v1_6_R2.Packet32EntityLook;
+import net.minecraft.server.v1_6_R2.Packet35EntityHeadRotation;
+import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
+import net.minecraft.server.v1_6_R2.PlayerInteractManager;
+import net.minecraft.server.v1_6_R2.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_5_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
@@ -36,10 +41,18 @@ import org.bukkit.entity.Player;
  */
 public class EntityPlayerNPC extends EntityPlayer {
 
+    protected PlayerControllerJump controllerJump;
+    protected PlayerControllerLook controllerLook;
+    protected PlayerControllerMove controllerMove;
+    protected PlayerNavigation navigation;
+    protected PlayerEntitySenses entitySenses;
+    
+    private int jumpTicks = 0;
+    
     public EntityPlayerNPC(MinecraftServer minecraftServer, World world, String string, PlayerInteractManager manager) {
         super(minecraftServer, world, string, manager);
         manager.setGameMode(EnumGamemode.SURVIVAL);
-        this.canPickUpLoot = true;
+        //this.canPickUpLoot = true;
         initialize(minecraftServer);
     }
 
@@ -50,7 +63,7 @@ public class EntityPlayerNPC extends EntityPlayer {
      }
 
      @Override
-     public void collide(net.minecraft.server.v1_5_R2.Entity entity) {
+     public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
      // this method is called by both the entities involved - cancelling
      // it will not stop the NPC from moving.
      super.collide(entity);
@@ -58,6 +71,15 @@ public class EntityPlayerNPC extends EntityPlayer {
      //    Util.callCollisionEvent(npc, entity);
      }
      */
+    
+    public Navigation getNavigation() {
+        return navigation;
+    }
+    
+    public boolean isNavigating() {
+        return true;
+    }
+
     @Override
     public CraftPlayer getBukkitEntity() {
         if (bukkitEntity == null) {
@@ -77,13 +99,17 @@ public class EntityPlayerNPC extends EntityPlayer {
             }
         };
         try {
-            netMgr = new EmptyNetworkManager(server.getLogger(), socket, "npc mgr", lConn, server.F().getPrivate());
+            netMgr = new EmptyNetworkManager(server.getLogger(), socket, "npc mgr", lConn, server.H().getPrivate());
             playerConnection = new EmptyConnection(minecraftServer, netMgr, this);
             netMgr.a(playerConnection);
         } catch (IOException ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         }
-
+        controllerJump = new PlayerControllerJump(this);
+        controllerLook = new PlayerControllerLook(this);
+        controllerMove = new PlayerControllerMove(this);
+        entitySenses = new PlayerEntitySenses(this);
+        navigation = new PlayerNavigation(this, world);
         getNavigation().e(true);
         X = 1; //0.5F; // stepHeight - must not stay as the default 0 (breaks steps).
         // Check the EntityPlayer constructor for the new name.
@@ -93,6 +119,11 @@ public class EntityPlayerNPC extends EntityPlayer {
         } catch (IOException ex) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "initialize", ex);
         }
+        AttributeInstance range = this.getAttributeInstance(GenericAttributes.b);
+        if (range == null) {
+            range = this.aW().b(GenericAttributes.b);
+        }
+        //range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
     }
 
     @Override
@@ -100,38 +131,18 @@ public class EntityPlayerNPC extends EntityPlayer {
         super.l_();
 
         updateEquipment();
-        /*
-         sendPacketNearby(
-         getBukkitEntity().getLocation(),
-         new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper
-         .d(pitch * 256.0F / 360.0F)));
-         */
-        /*
-         Packet32EntityLook packet = new Packet32EntityLook(id, (byte) MathHelper.d(yaw * 256.0F / 360.0F), (byte) MathHelper.d(pitch * 256.0F / 360.0F));
-         double radius = 64.0d * 64.0d;
-         Location location = getBukkitEntity().getLocation();
-         final org.bukkit.World lworld = location.getWorld();
-         for (Player ply : Bukkit.getServer().getOnlinePlayers()) {
-         if (ply == null || lworld != ply.getWorld()) {
-         continue;
-         }
-         if (location.distanceSquared(ply.getLocation()) > radius) {
-         continue;
-         }
-         ((CraftPlayer) ply).getHandle().playerConnection.sendPacket(packet);
-         }
-         */
-
         if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
             motX = motY = motZ = 0;
         }
-        this.aD().a();
+        this.getEntitySenses().a();
+        /*
         Navigation navigation = getNavigation();
         if (navigation != null) {
             if (!navigation.f()) {
                 navigation.e();
             }
         }
+        */
         moveOnCurrentHeading();
         if (motX != 0 || motZ != 0 || motY != 0) {
             e(0, 0);
@@ -140,86 +151,43 @@ public class EntityPlayerNPC extends EntityPlayer {
             --noDamageTicks;
         }
     }
+    
+    public PlayerControllerJump getControllerJump() {
+        return controllerJump;
+    }
+
 
     private void moveOnCurrentHeading() {
-        /*
-         this.aA().a();
-         this.getNavigation().e();
-         this.getControllerMove().c();
-         this.getControllerLook().a();
-         this.getControllerJump().b();
-         // taken from EntityLiving update method
-
-         if (bF) {
-         boolean inLiquid = H() || J();
-         if (inLiquid) {
-         motY += 0.04;
-         } else //(handled elsewhere)
-         if (onGround && bV == 0) {
-         bi();
-         bV = 10;
-         }
-         } else {
-         bV = 0;
-         }
-
-         bC *= 0.98F;
-         bD *= 0.98F;
-         bE *= 0.9F;
-
-         float prev = aN;
-         aN *= bB();
-         e(bC, bD); // movement method
-         aN = prev;
-
-         //NMS.setHeadYaw(this, yaw);
-         this.az = yaw;
-         */
-        this.aD().a();
-        this.getNavigation().e();
-        this.getControllerMove().c();
-        this.getControllerLook().a();
-        this.getControllerJump().b();
-        // taken from EntityLiving update method
-        if (bG) {
+        updateAI();
+        if (bd) {
             /* boolean inLiquid = G() || I();
              if (inLiquid) {
-             motY += 0.04;
+                 motY += 0.04;
              } else //(handled elsewhere)*/
-            if (onGround && bX == 0) {
-                bl();
-                bX = 10;
+            if (onGround && jumpTicks == 0) {
+                ba();
+                jumpTicks = 10;
             }
         } else {
-            bX = 0;
+            jumpTicks = 0;
         }
+        be *= 0.98F;
+        bf *= 0.98F;
+        bg *= 0.9F;
 
-        bD *= 0.98F;
-        bE *= 0.98F;
-        bF *= 0.9F;
-
-        float prev = aO;
-        aO *= bE();
-        e(bD, bE); // movement method
-        aO = prev;
+        e(be, bf); // movement method
         while (yaw < -180.0F) {
             yaw += 360.0F;
         }
-
         while (yaw >= 180.0F) {
             yaw -= 360.0F;
         }
-        this.aA = yaw;
-        //if (!(this instanceof EntityHuman))
-        //    this.ay = yaw;
-        this.aB = yaw;
+        this.aP = yaw;
+        if (!(this instanceof EntityHuman))
+            this.aN = yaw;
+        this.aQ = yaw;
     }
     private static final float EPSILON = 0.005F;
-
-    @Override
-    public void sendMessage(String string) {
-        //TODO send message to owner player?
-    }
 
     @Override
     public boolean a(int i, String string) {
@@ -230,12 +198,12 @@ public class EntityPlayerNPC extends EntityPlayer {
     public ChunkCoordinates b() {
         return new ChunkCoordinates(MathHelper.floor(this.locX), MathHelper.floor(this.locY + 0.5D), MathHelper.floor(this.locZ));
     }
-    net.minecraft.server.v1_5_R2.ItemStack[] previousEquipment = new net.minecraft.server.v1_5_R2.ItemStack[5];
+    net.minecraft.server.v1_6_R2.ItemStack[] previousEquipment = new net.minecraft.server.v1_6_R2.ItemStack[5];
 
     private void updateEquipment() {
         for (int i = 0; i < previousEquipment.length; i++) {
-            net.minecraft.server.v1_5_R2.ItemStack previous = previousEquipment[i];
-            net.minecraft.server.v1_5_R2.ItemStack current = getEquipment(i);
+            net.minecraft.server.v1_6_R2.ItemStack previous = previousEquipment[i];
+            net.minecraft.server.v1_6_R2.ItemStack current = getEquipment(i);
             if (previous != current) {
                 Framework.plugin.log("npc", "update Equi for entity " + id + " from " + previous + " to " + current);
                 sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i, current));
@@ -244,6 +212,24 @@ public class EntityPlayerNPC extends EntityPlayer {
         }
     }
 
+    public void setMoveDestination(double x, double y, double z, float speed) {
+        controllerMove.a(x, y, z, speed);
+    }
+
+    public void setShouldJump() {
+        controllerJump.a();
+    }
+
+    public void setTargetLook(Entity target, float yawOffset, float renderOffset) {
+        controllerLook.a(target, yawOffset, renderOffset);
+    }
+
+    public void updateAI() {
+        entitySenses.a();
+        controllerMove.c();
+        controllerLook.a();
+        controllerJump.b();
+    }
     public static void sendPacket(Player player, Packet packet) {
         Framework.plugin.log("npc", "send packet " + packet.getClass().getSimpleName() + " to " + player.getName());
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
@@ -266,7 +252,8 @@ public class EntityPlayerNPC extends EntityPlayer {
             sendPacket(ply, packet);
         }
     }
-    /*
+    
+   /*
      public void attack(EntityLiving target) {
      int damage = 2;
 
@@ -303,4 +290,16 @@ public class EntityPlayerNPC extends EntityPlayer {
      target.setOnFire(fireAspectLevel * 4);
      }
      }*/
+
+    private PlayerControllerLook getControllerLook() {
+        return controllerLook;
+   }
+
+    private PlayerControllerMove getControllerMove() {
+        return controllerMove;
+    }
+
+    private PlayerEntitySenses getEntitySenses() {
+        return entitySenses;
+    }
 }
