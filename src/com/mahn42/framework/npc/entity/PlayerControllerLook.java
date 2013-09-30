@@ -8,9 +8,9 @@ package com.mahn42.framework.npc.entity;
  *
  * @author andre
  */
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityLiving;
-import net.minecraft.server.v1_6_R2.MathHelper;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityLiving;
+import net.minecraft.server.v1_6_R3.MathHelper;
 
 public class PlayerControllerLook {
     private final EntityPlayerNPC a;

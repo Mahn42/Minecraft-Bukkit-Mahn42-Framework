@@ -8,10 +8,10 @@ package com.mahn42.framework.npc.entity;
  *
  * @author andre
  */
-import net.minecraft.server.v1_6_R2.AttributeInstance;
-import net.minecraft.server.v1_6_R2.EntityHuman;
-import net.minecraft.server.v1_6_R2.GenericAttributes;
-import net.minecraft.server.v1_6_R2.MathHelper;
+import net.minecraft.server.v1_6_R3.AttributeInstance;
+import net.minecraft.server.v1_6_R3.EntityHuman;
+import net.minecraft.server.v1_6_R3.GenericAttributes;
+import net.minecraft.server.v1_6_R3.MathHelper;
 
 public class PlayerControllerMove {
     private final EntityPlayerNPC a;

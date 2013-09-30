@@ -11,8 +11,8 @@ package com.mahn42.framework.npc.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityLiving;
 
 public class PlayerEntitySenses {
     EntityLiving entity;

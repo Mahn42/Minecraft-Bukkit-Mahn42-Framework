@@ -12,27 +12,27 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_6_R2.AttributeInstance;
-import net.minecraft.server.v1_6_R2.ChunkCoordinates;
-import net.minecraft.server.v1_6_R2.Connection;
-import net.minecraft.server.v1_6_R2.Entity;
-import net.minecraft.server.v1_6_R2.EntityHuman;
-import net.minecraft.server.v1_6_R2.EntityPlayer;
-import net.minecraft.server.v1_6_R2.EnumGamemode;
-import net.minecraft.server.v1_6_R2.GenericAttributes;
-import net.minecraft.server.v1_6_R2.MathHelper;
-import net.minecraft.server.v1_6_R2.MinecraftServer;
-import net.minecraft.server.v1_6_R2.Navigation;
-import net.minecraft.server.v1_6_R2.NetworkManager;
-import net.minecraft.server.v1_6_R2.Packet;
-import net.minecraft.server.v1_6_R2.Packet32EntityLook;
-import net.minecraft.server.v1_6_R2.Packet35EntityHeadRotation;
-import net.minecraft.server.v1_6_R2.Packet5EntityEquipment;
-import net.minecraft.server.v1_6_R2.PlayerInteractManager;
-import net.minecraft.server.v1_6_R2.World;
+import net.minecraft.server.v1_6_R3.AttributeInstance;
+import net.minecraft.server.v1_6_R3.ChunkCoordinates;
+import net.minecraft.server.v1_6_R3.Connection;
+import net.minecraft.server.v1_6_R3.Entity;
+import net.minecraft.server.v1_6_R3.EntityHuman;
+import net.minecraft.server.v1_6_R3.EntityPlayer;
+import net.minecraft.server.v1_6_R3.EnumGamemode;
+import net.minecraft.server.v1_6_R3.GenericAttributes;
+import net.minecraft.server.v1_6_R3.MathHelper;
+import net.minecraft.server.v1_6_R3.MinecraftServer;
+import net.minecraft.server.v1_6_R3.Navigation;
+import net.minecraft.server.v1_6_R3.NetworkManager;
+import net.minecraft.server.v1_6_R3.Packet;
+import net.minecraft.server.v1_6_R3.Packet32EntityLook;
+import net.minecraft.server.v1_6_R3.Packet35EntityHeadRotation;
+import net.minecraft.server.v1_6_R3.Packet5EntityEquipment;
+import net.minecraft.server.v1_6_R3.PlayerInteractManager;
+import net.minecraft.server.v1_6_R3.World;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_6_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
@@ -63,7 +63,7 @@ public class EntityPlayerNPC extends EntityPlayer {
      }
 
      @Override
-     public void collide(net.minecraft.server.v1_6_R2.Entity entity) {
+     public void collide(net.minecraft.server.v1_6_R3.Entity entity) {
      // this method is called by both the entities involved - cancelling
      // it will not stop the NPC from moving.
      super.collide(entity);
@@ -121,7 +121,7 @@ public class EntityPlayerNPC extends EntityPlayer {
         }
         AttributeInstance range = this.getAttributeInstance(GenericAttributes.b);
         if (range == null) {
-            range = this.aW().b(GenericAttributes.b);
+            range = this.aX().b(GenericAttributes.b);
         }
         //range.setValue(Setting.DEFAULT_PATHFINDING_RANGE.asDouble());
     }
@@ -160,12 +160,12 @@ public class EntityPlayerNPC extends EntityPlayer {
     private void moveOnCurrentHeading() {
         updateAI();
         if (bd) {
-            /* boolean inLiquid = G() || I();
+            /* boolean inLiquid = H() || J();
              if (inLiquid) {
                  motY += 0.04;
              } else //(handled elsewhere)*/
             if (onGround && jumpTicks == 0) {
-                ba();
+                be();
                 jumpTicks = 10;
             }
         } else {
@@ -198,12 +198,12 @@ public class EntityPlayerNPC extends EntityPlayer {
     public ChunkCoordinates b() {
         return new ChunkCoordinates(MathHelper.floor(this.locX), MathHelper.floor(this.locY + 0.5D), MathHelper.floor(this.locZ));
     }
-    net.minecraft.server.v1_6_R2.ItemStack[] previousEquipment = new net.minecraft.server.v1_6_R2.ItemStack[5];
+    net.minecraft.server.v1_6_R3.ItemStack[] previousEquipment = new net.minecraft.server.v1_6_R3.ItemStack[5];
 
     private void updateEquipment() {
         for (int i = 0; i < previousEquipment.length; i++) {
-            net.minecraft.server.v1_6_R2.ItemStack previous = previousEquipment[i];
-            net.minecraft.server.v1_6_R2.ItemStack current = getEquipment(i);
+            net.minecraft.server.v1_6_R3.ItemStack previous = previousEquipment[i];
+            net.minecraft.server.v1_6_R3.ItemStack current = getEquipment(i);
             if (previous != current) {
                 Framework.plugin.log("npc", "update Equi for entity " + id + " from " + previous + " to " + current);
                 sendPacketNearby(getBukkitEntity().getLocation(), new Packet5EntityEquipment(id, i, current));

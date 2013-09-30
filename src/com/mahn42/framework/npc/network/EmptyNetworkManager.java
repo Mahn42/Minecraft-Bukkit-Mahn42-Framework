@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.Socket;
 import java.security.PrivateKey;
-import net.minecraft.server.v1_6_R2.Connection;
-import net.minecraft.server.v1_6_R2.IConsoleLogManager;
-import net.minecraft.server.v1_6_R2.NetworkManager;
-import net.minecraft.server.v1_6_R2.Packet;
+import net.minecraft.server.v1_6_R3.Connection;
+import net.minecraft.server.v1_6_R3.IConsoleLogManager;
+import net.minecraft.server.v1_6_R3.NetworkManager;
+import net.minecraft.server.v1_6_R3.Packet;
 
 /**
  *
