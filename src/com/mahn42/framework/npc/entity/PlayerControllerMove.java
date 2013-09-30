@@ -15,7 +15,7 @@ import net.minecraft.server.v1_6_R3.MathHelper;
 
 public class PlayerControllerMove {
     private final EntityPlayerNPC a;
-    private double b;
+private double b;
     private double c;
     private double d;
     private double e;
@@ -94,4 +94,4 @@ public class PlayerControllerMove {
             }
         }
     }
-}
+}    

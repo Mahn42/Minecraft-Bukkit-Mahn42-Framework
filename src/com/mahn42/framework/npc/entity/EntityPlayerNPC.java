@@ -25,7 +25,7 @@ import net.minecraft.server.v1_6_R3.MinecraftServer;
 import net.minecraft.server.v1_6_R3.Navigation;
 import net.minecraft.server.v1_6_R3.NetworkManager;
 import net.minecraft.server.v1_6_R3.Packet;
-import net.minecraft.server.v1_6_R3.Packet32EntityLook;
+import net.minecraft.server.v1_6_R3.Packet34EntityTeleport;
 import net.minecraft.server.v1_6_R3.Packet35EntityHeadRotation;
 import net.minecraft.server.v1_6_R3.Packet5EntityEquipment;
 import net.minecraft.server.v1_6_R3.PlayerInteractManager;
@@ -45,9 +45,11 @@ public class EntityPlayerNPC extends EntityPlayer {
     protected PlayerControllerLook controllerLook;
     protected PlayerControllerMove controllerMove;
     protected PlayerNavigation navigation;
-    protected PlayerEntitySenses entitySenses;
+    //protected PlayerEntitySenses entitySenses;
     
     private int jumpTicks = 0;
+    private int packetUpdateCount;
+    private final Location packetLocationCache = new Location(null, 0, 0, 0);
     
     public EntityPlayerNPC(MinecraftServer minecraftServer, World world, String string, PlayerInteractManager manager) {
         super(minecraftServer, world, string, manager);
@@ -108,10 +110,10 @@ public class EntityPlayerNPC extends EntityPlayer {
         controllerJump = new PlayerControllerJump(this);
         controllerLook = new PlayerControllerLook(this);
         controllerMove = new PlayerControllerMove(this);
-        entitySenses = new PlayerEntitySenses(this);
+        //entitySenses = new PlayerEntitySenses(this);
         navigation = new PlayerNavigation(this, world);
         getNavigation().e(true);
-        X = 1; //0.5F; // stepHeight - must not stay as the default 0 (breaks steps).
+        Y = 1; //0.5F; // stepHeight - must not stay as the default 0 (breaks steps).
         // Check the EntityPlayer constructor for the new name.
 
         try {
@@ -130,23 +132,22 @@ public class EntityPlayerNPC extends EntityPlayer {
     public void l_() {
         super.l_();
 
-        updateEquipment();
-        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON) {
+        boolean navigating = isNavigating();
+        //updateEquipment(navigating);
+        updatePackets(navigating);
+        if (Math.abs(motX) < EPSILON && Math.abs(motY) < EPSILON && Math.abs(motZ) < EPSILON)
             motX = motY = motZ = 0;
-        }
-        this.getEntitySenses().a();
-        /*
-        Navigation navigation = getNavigation();
-        if (navigation != null) {
-            if (!navigation.f()) {
-                navigation.e();
+
+        if (navigating) {
+            if (!navigation.g()) {
+                navigation.f();
             }
+            moveOnCurrentHeading();
+        } else if (motX != 0 || motZ != 0 || motY != 0) {
+            e(0, 0); // is this necessary? it does controllable but sometimes
+                     // players sink into the ground
         }
-        */
-        moveOnCurrentHeading();
-        if (motX != 0 || motZ != 0 || motY != 0) {
-            e(0, 0);
-        } // is this necessary? it does controllable but sometimes
+
         if (noDamageTicks > 0) {
             --noDamageTicks;
         }
@@ -186,6 +187,9 @@ public class EntityPlayerNPC extends EntityPlayer {
         if (!(this instanceof EntityHuman))
             this.aN = yaw;
         this.aQ = yaw;
+        if (jumpTicks > 0) {
+            jumpTicks--;
+        }
     }
     private static final float EPSILON = 0.005F;
 
@@ -199,6 +203,26 @@ public class EntityPlayerNPC extends EntityPlayer {
         return new ChunkCoordinates(MathHelper.floor(this.locX), MathHelper.floor(this.locY + 0.5D), MathHelper.floor(this.locZ));
     }
     net.minecraft.server.v1_6_R3.ItemStack[] previousEquipment = new net.minecraft.server.v1_6_R3.ItemStack[5];
+
+    private void updatePackets(boolean navigating) {
+        if (++packetUpdateCount >= 30) {
+            Location current = getBukkitEntity().getLocation(packetLocationCache);
+            Packet[] packets = new Packet[navigating ? 6 : 8];
+            if (!navigating) {
+                packets[6] = new Packet35EntityHeadRotation(id,
+                        (byte) MathHelper.d(aP * 256.0F / 360.0F));
+                packets[7] = new Packet34EntityTeleport(this);
+            }
+            for (int i = 0; i < 5; i++) {
+                packets[i] = new Packet5EntityEquipment(id, i, getEquipment(i));
+            }
+            for(Packet packet : packets) {
+                if (packet != null) 
+                    sendPacketNearby(current, packet);
+            }
+            packetUpdateCount = 0;
+        }
+    }
 
     private void updateEquipment() {
         for (int i = 0; i < previousEquipment.length; i++) {
@@ -225,7 +249,6 @@ public class EntityPlayerNPC extends EntityPlayer {
     }
 
     public void updateAI() {
-        entitySenses.a();
         controllerMove.c();
         controllerLook.a();
         controllerJump.b();
@@ -299,7 +322,7 @@ public class EntityPlayerNPC extends EntityPlayer {
         return controllerMove;
     }
 
-    private PlayerEntitySenses getEntitySenses() {
+    /*private PlayerEntitySenses getEntitySenses() {
         return entitySenses;
-    }
+    }*/
 }
