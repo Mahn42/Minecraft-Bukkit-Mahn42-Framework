@@ -5,22 +5,16 @@
 package com.mahn42.framework.commands;
 
 import com.mahn42.framework.BlockPosition;
-import com.mahn42.framework.BlockPositionDelta;
 import com.mahn42.framework.Building;
-import com.mahn42.framework.EntityControl;
-import com.mahn42.framework.EntityControlPathItemRelative;
 import com.mahn42.framework.Framework;
 import com.mahn42.framework.IMarker;
 import com.mahn42.framework.InventoryHelper;
 import com.mahn42.framework.WorldScanner;
-import com.mahn42.framework.npc.entity.NPCEntityPlayer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Random;
-import java.util.logging.Logger;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -29,11 +23,8 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 /**
  *
@@ -48,6 +39,7 @@ public class CommandTest implements CommandExecutor {
             Player player = (Player) aCommandSender;
             Location loc = player.getLocation();
             if (aStrings[0].equalsIgnoreCase("playerspawn")) {
+                /*
                 final NPCEntityPlayer bukkitEntity = Framework.plugin.createPlayerNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
                 bukkitEntity.setItemInHand(new ItemStack(Material.IRON_PICKAXE));
                 PlayerInventory inventory = bukkitEntity.getInventory();
@@ -56,6 +48,7 @@ public class CommandTest implements CommandExecutor {
                 inventory.setChestplate(Framework.plugin.setItemStackColor(new ItemStack(Material.LEATHER_CHESTPLATE), r.nextInt()));
                 inventory.setBoots(Framework.plugin.setItemStackColor(new ItemStack(Material.LEATHER_BOOTS), r.nextInt()));
                 inventory.setHelmet(Framework.plugin.setItemStackColor(new ItemStack(Material.LEATHER_HELMET), r.nextInt()));
+                */
                 /*
                  Framework.plugin.getServer().getScheduler().scheduleSyncDelayedTask(Framework.plugin, new Runnable() {
                  @Override
@@ -77,6 +70,7 @@ public class CommandTest implements CommandExecutor {
                  }
                  }, 1);
                  */
+                /*
                 EntityControl lC = new EntityControl(bukkitEntity);
                 lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(10, 0, 0)));
                 lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(0, 0, 10)));
@@ -88,14 +82,16 @@ public class CommandTest implements CommandExecutor {
                 lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(-5, 0, -5)));
                 Framework.plugin.getEntityController().add(lC);
                 player.sendMessage("entity " + bukkitEntity);
+                */
             } else if (aStrings[0].equalsIgnoreCase("fisher")) {
-                final NPCEntityPlayer bukkitEntity = Framework.plugin.createPlayerNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
+                /*final NPCEntityPlayer bukkitEntity = Framework.plugin.createPlayerNPC(player.getWorld(), new BlockPosition(loc), aStrings[1], player);
                 bukkitEntity.setItemInHand(new ItemStack(Material.FISHING_ROD));
                 PlayerInventory inventory = bukkitEntity.getInventory();
                 inventory.setLeggings(Framework.plugin.setItemStackColor(new ItemStack(Material.LEATHER_LEGGINGS), 0x8080F0));
                 EntityControl lC = new EntityControl(bukkitEntity);
                 lC.path.add(new EntityControlPathItemRelative(new BlockPositionDelta(1, 0, 0)));
                 Framework.plugin.getEntityController().add(lC);
+                */
             } else if (aStrings[0].equalsIgnoreCase("biome")) {
                 Biome biome = player.getWorld().getBiome(loc.getBlockX(), loc.getBlockZ());
                 player.sendMessage("biome was " + biome);
@@ -150,6 +146,7 @@ public class CommandTest implements CommandExecutor {
                     player.sendMessage("resnowing " + lradius);
                 }
             } else if (aStrings[0].equalsIgnoreCase("showpath")) {
+                /*
                 World lWorld = player.getWorld();
                 List<IMarker> findMarkers = Framework.plugin.findMarkers(lWorld, aStrings[1]);
                 BlockPosition lp1 = findMarkers.get(0).getPosition();
@@ -172,6 +169,7 @@ public class CommandTest implements CommandExecutor {
                 EntityControl lec = new EntityControl(player);
                 lec.showPath(lp1, f0, f1, f2, f3);
                 player.sendMessage("path exists " + f0 + " " + f1 + " " + f2 + " " + f3 + " : " + EntityControl.existsPath(player, lp1, f0, f1, f2, f3));
+                */
             } else if (aStrings[0].equalsIgnoreCase("istree")) {
                 Block targetBlock = player.getTargetBlock(null, 30);
                 List<BlockPosition> treePoss = WorldScanner.getTreePoss(player.getWorld(), new BlockPosition(targetBlock.getLocation()));
@@ -190,10 +188,12 @@ public class CommandTest implements CommandExecutor {
                 //lStack.setData(lWool);
                 //ItemStack lStack = new ItemStack(Material.WOOL, 2);
                 //lStack.setData(new MaterialData(Material.WOOL, (byte)10));
-                net.minecraft.server.v1_6_R3.ItemStack lItem = new net.minecraft.server.v1_6_R3.ItemStack(Material.WOOL.getId(), 1, 10);
+                /*
+                net.minecraft.server.v1_7_R3.ItemStack lItem = new net.minecraft.server.v1_7_R3.ItemStack(Material.WOOL, 1, 10);
                 CraftItemStack lStack = CraftItemStack.asCraftMirror(lItem);
                 Block targetBlock = player.getTargetBlock(null, 30);
                 Item dropItemNaturally = player.getWorld().dropItem(targetBlock.getLocation(), lStack);
+                */
                 //((EntityItem)((CraftItem)dropItemNaturally).getHandle()).
             } else if (aStrings[0].equalsIgnoreCase("filter")) {
                 Framework.plugin.logFilter = aStrings[1];

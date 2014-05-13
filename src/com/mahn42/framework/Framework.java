@@ -23,8 +23,6 @@ import com.mahn42.framework.commands.CommandWorldPlayerInventory;
 import com.mahn42.framework.commands.CommandWorldRegenerate;
 import com.mahn42.framework.commands.CommandWorldRemove;
 import com.mahn42.framework.commands.CommandWorldSet;
-import com.mahn42.framework.npc.entity.EntityPlayerNPC;
-import com.mahn42.framework.npc.entity.NPCEntityPlayer;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,8 +38,9 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_6_R3.PlayerInteractManager;
-import net.minecraft.server.v1_6_R3.WorldServer;
+import net.minecraft.server.v1_7_R3.PlayerInteractManager;
+import net.minecraft.server.v1_7_R3.WorldServer;
+import net.minecraft.util.com.mojang.authlib.GameProfile;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
@@ -51,8 +50,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_6_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -70,8 +69,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author andre
  */
 public class Framework extends JavaPlugin {
-
-    private EntityController fEntityController;
 
     protected class __Messenger implements Messenger {
 
@@ -332,10 +329,6 @@ public class Framework extends JavaPlugin {
         return fWorldPlayerSettingsDB.getDB(aWorldName);
     }
 
-    public EntityController getEntityController() {
-        return fEntityController;
-    }
-
     /**
      * ********************************************************
      *
@@ -357,7 +350,6 @@ public class Framework extends JavaPlugin {
         fSaverTask = new DBSaverTask();
         fDynMapTask = new DynMapBuildingRenderer();
         fProjectionRunner = new ProjectionAreasRunner();
-        fEntityController = new EntityController();
 
         getCommand("fw_bd_list").setExecutor(new CommandBD_List());
         getCommand("fw_bd_dump").setExecutor(new CommandBD_Dump());
@@ -382,7 +374,6 @@ public class Framework extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         getServer().getPluginManager().registerEvents(new BlockListener(), this);
         getServer().getPluginManager().registerEvents(new WorldListener(), this);
-        getServer().getPluginManager().registerEvents(fEntityController, this);
         List<World> lWorlds = getServer().getWorlds();
         for (World lWorld : lWorlds) {
             WorldConfiguration lConf = getWorldConfigurationDB().getByName(lWorld.getName());
@@ -411,7 +402,6 @@ public class Framework extends JavaPlugin {
         getServer().getScheduler().runTaskTimer(this, fSaverTask, 100, configDBSaverTicks);
         getServer().getScheduler().runTaskTimer(this, fDynMapTask, 100, configDynMapTicks);
         getServer().getScheduler().runTaskTimerAsynchronously(this, fProjectionRunner, 10, configProjectionTicks);
-        getServer().getScheduler().runTaskTimer(this, fEntityController, 10, configEntityControllerTicks);
     }
 
     @Override
@@ -692,7 +682,7 @@ public class Framework extends JavaPlugin {
         return aItem;
         /*
          CraftItemStack craftStack = null;
-         net.minecraft.server.v1_6_R3.ItemStack itemStack = null;
+         net.minecraft.server.v1_7_R3.ItemStack itemStack = null;
          if (aItem instanceof CraftItemStack) {
          craftStack = (CraftItemStack) aItem;
          itemStack = craftStack.getHandle();
@@ -753,18 +743,6 @@ public class Framework extends JavaPlugin {
         materialToEntity = new EnumMap<Material, EntityType>(Material.class);
         materialToEntity.put(Material.PAINTING, EntityType.PAINTING);
         materialToEntity.put(Material.ITEM_FRAME, EntityType.ITEM_FRAME);
-    }
-
-    public NPCEntityPlayer createPlayerNPC(World aWorld, BlockPosition aPos, String aName, Object aDataObject) {
-        WorldServer ws = ((CraftWorld) aWorld).getHandle();
-        EntityPlayerNPC handle = new EntityPlayerNPC(ws.getServer().getServer(), ws, aName, new PlayerInteractManager(ws));
-        NPCEntityPlayer bukkitEntity = (NPCEntityPlayer) handle.getBukkitEntity();
-        bukkitEntity.setDataObject(aDataObject);
-        ws.addEntity(handle, CreatureSpawnEvent.SpawnReason.CUSTOM);
-        bukkitEntity.teleport(aPos.getLocation(aWorld));
-        bukkitEntity.setSleepingIgnored(true);
-        bukkitEntity.setGameMode(GameMode.SURVIVAL);
-        return bukkitEntity;
     }
 
     public enum ItemType {
@@ -914,7 +892,9 @@ public class Framework extends JavaPlugin {
     public Item shearSheep(Sheep aSheep) {
         Item dropItemNaturally = null;
         if (!aSheep.isSheared()) {
-            net.minecraft.server.v1_6_R3.ItemStack lItem = new net.minecraft.server.v1_6_R3.ItemStack(Material.WOOL.getId(), 1 + (new Random()).nextInt(2), aSheep.getColor().getWoolData());
+            net.minecraft.server.v1_7_R3.ItemShears lI = new net.minecraft.server.v1_7_R3.ItemShears ();
+            //net.minecraft.server.v1_7_R3.ItemStack lItem = new net.minecraft.server.v1_7_R3.ItemStack( Material.WOOL.getId(), 1 + (new Random()).nextInt(2), aSheep.getColor().getWoolData());
+            net.minecraft.server.v1_7_R3.ItemStack lItem = new net.minecraft.server.v1_7_R3.ItemStack( lI, 1 + (new Random()).nextInt(2), aSheep.getColor().getWoolData());
             CraftItemStack lStack = CraftItemStack.asCraftMirror(lItem);
             dropItemNaturally = aSheep.getWorld().dropItem(aSheep.getLocation(), lStack);
             aSheep.setSheared(true);
