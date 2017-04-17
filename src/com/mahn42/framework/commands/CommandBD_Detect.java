@@ -8,6 +8,8 @@ import com.mahn42.framework.Building;
 import com.mahn42.framework.BuildingDescription;
 import com.mahn42.framework.Framework;
 import java.util.List;
+import java.util.Set;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
@@ -30,7 +32,7 @@ public class CommandBD_Detect implements CommandExecutor {
                 World lWorld = lPlayer.getWorld();
                 List<BuildingDescription> lDescs = Framework.plugin.getBuildingDescriptionByMatch(lName);
                 for(BuildingDescription lDesc : lDescs) {
-                    Block lBlock = lPlayer.getTargetBlock(null, 100);
+                    Block lBlock = lPlayer.getTargetBlock((Set<Material>) null, 100);
                     Building lBuilding = lDesc.matchDescription(lWorld, null, lBlock.getX(), lBlock.getY(), lBlock.getZ());
                     if (lBuilding != null) {
                         lPlayer.sendMessage("match ok with " + lDesc.name + ".");

@@ -89,7 +89,7 @@ public class DynMapBuildingRenderer implements Runnable {
                                 lBuilding.description.circleRadius,
                                 false);
                         lCircleMarker.setLineStyle(1, 1.0, lBuilding.description.color);
-                        lCircleMarker.setFillStyle(0.1, lBuilding.description.color);
+                        lCircleMarker.setFillStyle(lBuilding.description.fillStyleOpacity, lBuilding.description.color);
                     } else {
                         lXs[0] = lBuilding.edge1.x;
                         lYs[0] = lBuilding.edge2.y;

@@ -6,6 +6,7 @@ package com.mahn42.framework;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.logging.Logger;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -65,7 +66,7 @@ public class PlayerListener implements Listener {
         Player lPlayer = aEvent.getPlayer();
 
         if (Framework.plugin.isDebugSet("targetblock")) {
-            Block lTargetBlock = lPlayer.getTargetBlock(null, 100);
+            Block lTargetBlock = lPlayer.getTargetBlock((Set<Material>) null, 100);
             if (!lTargetBlock.equals(lLastBlock)) {
                     lPlayer.sendMessage("Block " + lTargetBlock);
                 lLastBlock = lTargetBlock;

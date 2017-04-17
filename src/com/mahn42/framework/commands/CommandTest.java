@@ -15,6 +15,7 @@ import java.lang.management.OperatingSystemMXBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -171,11 +172,11 @@ public class CommandTest implements CommandExecutor {
                 player.sendMessage("path exists " + f0 + " " + f1 + " " + f2 + " " + f3 + " : " + EntityControl.existsPath(player, lp1, f0, f1, f2, f3));
                 */
             } else if (aStrings[0].equalsIgnoreCase("istree")) {
-                Block targetBlock = player.getTargetBlock(null, 30);
+                Block targetBlock = player.getTargetBlock((Set<Material>)null, 30);
                 List<BlockPosition> treePoss = WorldScanner.getTreePoss(player.getWorld(), new BlockPosition(targetBlock.getLocation()));
                 aCommandSender.sendMessage("tree poss = " + treePoss.size());
             } else if (aStrings[0].equalsIgnoreCase("checktree")) {
-                Block targetBlock = player.getTargetBlock(null, 30);
+                Block targetBlock = player.getTargetBlock((Set<Material>)null, 30);
                 List<BlockPosition> treePoss = WorldScanner.getTreePoss(player.getWorld(), new BlockPosition(targetBlock.getLocation()));
                 for (BlockPosition lPos : treePoss) {
                     lPos.getBlock(player.getWorld()).setType(Material.WOOL);

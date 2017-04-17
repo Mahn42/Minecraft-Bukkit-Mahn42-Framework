@@ -35,7 +35,7 @@ public class CommandWorldRegenerate implements CommandExecutor{
             }
         } else {
             if (aStrings.length > 3) {
-                lPos = new BlockPosition(Integer.parseInt(aStrings[0]), 64, Integer.parseInt(aStrings[2]));
+                lPos = new BlockPosition(Integer.parseInt(aStrings[0]), 64, Integer.parseInt(aStrings[1]));
                 lRad = Integer.parseInt(aStrings[2]);
                 lWorld = Framework.plugin.getServer().getWorld(aStrings[3]);
             } else {

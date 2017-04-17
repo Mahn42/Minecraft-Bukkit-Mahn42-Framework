@@ -367,6 +367,7 @@ public class BuildingDescription {
     public boolean visibleOnMap = true;
     public int circleRadius = 0;
     public int color = 0x80A000;
+    public double fillStyleOpacity = 0.1;
     
     public BuildingDescription() {
     }

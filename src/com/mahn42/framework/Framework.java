@@ -38,9 +38,6 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.minecraft.server.v1_7_R3.PlayerInteractManager;
-import net.minecraft.server.v1_7_R3.WorldServer;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
@@ -50,16 +47,16 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
+//import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -402,12 +399,25 @@ public class Framework extends JavaPlugin {
         getServer().getScheduler().runTaskTimer(this, fSaverTask, 100, configDBSaverTicks);
         getServer().getScheduler().runTaskTimer(this, fDynMapTask, 100, configDynMapTicks);
         getServer().getScheduler().runTaskTimerAsynchronously(this, fProjectionRunner, 10, configProjectionTicks);
+        registerCraftingRecipes();
     }
 
     @Override
     public void onDisable() {
         fSaverTask.run();
         getServer().getScheduler().cancelTasks(this);
+    }
+
+    private void registerCraftingRecipes() {
+        ItemStack lItemStack = new ItemStack(Material.CLAY_BALL, 4*9);
+        for(int i=0;i<=15;i++) {
+            ShapedRecipe lShapeRecipe = new ShapedRecipe(lItemStack);
+            lShapeRecipe.shape( "AAA",
+                                "AAA",
+                                "AAA");
+            lShapeRecipe.setIngredient('A', Material.STAINED_CLAY, i);
+            getServer().addRecipe(lShapeRecipe);
+        }
     }
 
     public World requireWorld(String aName, WorldClassification aClass) {
@@ -888,7 +898,8 @@ public class Framework extends JavaPlugin {
                 return 0;
         }
     }
-    
+
+    /*
     public Item shearSheep(Sheep aSheep) {
         Item dropItemNaturally = null;
         if (!aSheep.isSheared()) {
@@ -901,4 +912,5 @@ public class Framework extends JavaPlugin {
         }
         return dropItemNaturally;
     }
+    */
 }
