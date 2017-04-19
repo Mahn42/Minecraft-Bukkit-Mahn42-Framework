@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -51,6 +52,7 @@ import org.bukkit.entity.Entity;
 //import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -665,42 +667,84 @@ public class Framework extends JavaPlugin {
     }
 
     public void teleportPlayerToWorld(Player aPlayer, World aWorld, BlockPosition aPos) {
+        BlockPosition lPos = aPos;
+        if (lPos == null) {
+            WorldPlayerSettingsDB lDB = Framework.plugin.getWorldPlayerSettingsDB(aWorld.getName());
+            if (lDB != null) {
+                WorldPlayerSettings lSet = lDB.getByName(aPlayer.getName());
+                if (lSet != null) {
+                    lPos = lSet.position;
+                }
+            }
+        }
+        teleportEntityToWorld(aPlayer, aWorld, lPos);
+    }
+
+    public void teleportEntityToWorld(Entity aEntity, World aWorld, String aMarkname) {
+        List<IMarker> lMarkers = findMarkers(aWorld, aMarkname);
+        BlockPosition lPos = null;
+        if (lMarkers.size() == 1) {
+            lPos = lMarkers.get(0).getPosition();
+        }
+        teleportEntityToWorld(aEntity, aWorld, lPos);
+    }
+
+    public void teleportEntityToWorld(Entity aEntity, World aWorld) {
+        teleportEntityToWorld(aEntity, aWorld, (BlockPosition) null);
+    }
+
+    public void teleportEntityToWorld(Entity aEntity, World aWorld, BlockPosition aPos) {
         Location lLocation;
+        Player lPlayer = null;
+        if (aEntity instanceof Player) {
+            lPlayer = (Player)aEntity;
+        }
         if (aPos != null) {
             lLocation = aPos.getLocation(aWorld);
             while (!lLocation.getBlock().getType().equals(Material.AIR)) {
                 lLocation = lLocation.add(0, 1, 0);
             }
         } else {
-            WorldPlayerSettingsDB lDB = Framework.plugin.getWorldPlayerSettingsDB(aWorld.getName());
-            if (lDB != null) {
-                WorldPlayerSettings lSet = lDB.getByName(aPlayer.getName());
-                if (lSet != null) {
-                    lLocation = lSet.position.getLocation(aWorld);
-                } else {
-                    lLocation = aWorld.getSpawnLocation();
-                }
-            } else {
-                lLocation = aWorld.getSpawnLocation();
-            }
+           lLocation = aWorld.getSpawnLocation();
         }
-        if (aPlayer.isInsideVehicle()) {
-            Entity lVehicle = aPlayer.getVehicle();
-            if (lVehicle.removePassenger(aPlayer)) {
+        List<Entity> lNearbyEntities = aEntity.getNearbyEntities(15, 15, 15);
+        List<LivingEntity> lLeashedEntities = new LinkedList<LivingEntity>();
+        for(Entity lEntity : lNearbyEntities) {
+            if ((lEntity instanceof LivingEntity) && ((LivingEntity)lEntity).isLeashed() && ((LivingEntity)lEntity).getLeashHolder() == aEntity) {
+                ((LivingEntity)lEntity).setLeashHolder(null);
+                lLeashedEntities.add((LivingEntity)lEntity);
+            } 
+        }
+        boolean lTeleported = false;
+        if (aEntity.isInsideVehicle()) {
+            Entity lVehicle = aEntity.getVehicle();
+            List<Entity> lPassengers = lVehicle.getPassengers();
+            if (lVehicle.eject()) {
                 if (lVehicle.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)) {
-                    if (aPlayer.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)) {
-                        lVehicle.addPassenger(aPlayer);
-                    } else {
-                        aPlayer.chat("could not teleport!");
+                    for(Entity lEntity : lPassengers) {
+                        if (lEntity.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                            lVehicle.addPassenger(lEntity);
+                            lTeleported = true;
+                        } else {
+                            if (lPlayer != null) lPlayer.chat("could not teleport!");
+                        }
                     }
                 } else {
-                    aPlayer.chat(lVehicle.getType().toString() + " could not teleported!");
+                    if (lPlayer != null) lPlayer.chat(lVehicle.getType().toString() + " could not teleported!");
                 }
             } else {
-                aPlayer.chat(lVehicle.getType().toString() + " could not go outside!");
+                if (lPlayer != null) lPlayer.chat(lVehicle.getType().toString() + " could not go outside!");
             }
         } else {
-            aPlayer.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            aEntity.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            lTeleported = true;
+        }
+        if (lTeleported) {
+            for(LivingEntity lEntity : lLeashedEntities) {
+                if (lEntity.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                    lEntity.setLeashHolder(aEntity);
+                }
+            }
         }
     }
 
