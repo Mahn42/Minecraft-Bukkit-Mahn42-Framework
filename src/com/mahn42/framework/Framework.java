@@ -47,6 +47,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 //import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -683,7 +684,24 @@ public class Framework extends JavaPlugin {
                 lLocation = aWorld.getSpawnLocation();
             }
         }
-        aPlayer.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        if (aPlayer.isInsideVehicle()) {
+            Entity lVehicle = aPlayer.getVehicle();
+            if (lVehicle.removePassenger(aPlayer)) {
+                if (lVehicle.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                    if (aPlayer.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN)) {
+                        lVehicle.addPassenger(aPlayer);
+                    } else {
+                        aPlayer.chat("could not teleport!");
+                    }
+                } else {
+                    aPlayer.chat(lVehicle.getType().toString() + " could not teleported!");
+                }
+            } else {
+                aPlayer.chat(lVehicle.getType().toString() + " could not go outside!");
+            }
+        } else {
+            aPlayer.teleport(lLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        }
     }
 
     public ItemStack setItemStackColor(ItemStack aItem, int aColor) {
