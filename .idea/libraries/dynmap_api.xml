@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="dynmap-api">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../libs/dynmap-api.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

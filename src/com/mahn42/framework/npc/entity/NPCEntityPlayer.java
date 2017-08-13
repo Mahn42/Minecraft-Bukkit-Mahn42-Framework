@@ -3,14 +3,15 @@
  * and open the template in the editor.
  */
 package com.mahn42.framework.npc.entity;
-import net.citizensnpcs.api.npc.NPC;
+//import net.citizensnpcs.api.npc.NPC;
 
 /**
  *
  * @author andre
  */
 public class NPCEntityPlayer {
-  
+
+  /*
   public NPC fNPC;
   
   public NPCEntityPlayer(NPC aNPC) {
@@ -21,4 +22,5 @@ public class NPCEntityPlayer {
       //fNPC.getEntity().
       //fNPC.getBukkitEntity().
   }
+  */
 }
