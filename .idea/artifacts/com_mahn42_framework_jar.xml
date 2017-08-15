@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="com.mahn42.framework:jar">
+  <artifact type="jar" build-on-make="true" name="com.mahn42.framework:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/com_mahn42_framework_jar</output-path>
     <root id="archive" name="com.mahn42.framework.jar">
       <element id="module-output" name="Minecraft-Bukkit-Mahn42-Framework" />

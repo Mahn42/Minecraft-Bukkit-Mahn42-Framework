@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="bukkit" level="project" />
     <orderEntry type="library" name="dynmap-api" level="project" />
+    <orderEntry type="library" name="bukkit" level="project" />
   </component>
 </module>
