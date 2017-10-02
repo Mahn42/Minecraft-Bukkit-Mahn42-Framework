@@ -35,8 +35,8 @@ public class DBRecord {
 
         public int popInt() {
             String lCol = pop();
-            if (lCol != "") {
-                return new Integer(lCol).intValue();
+            if (!lCol.equals("")) {
+                return Integer.parseInt(lCol);
             }
                 return 0;
         }
