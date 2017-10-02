@@ -35,7 +35,10 @@ public class DBRecord {
 
         public int popInt() {
             String lCol = pop();
-            return new Integer(lCol).intValue();
+            if (lCol != "") {
+                return new Integer(lCol).intValue();
+            }
+                return 0;
         }
         
         public void popKeys(ArrayList<String> aArray) {
