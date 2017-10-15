@@ -24,11 +24,18 @@ public class CommandWorldRemove implements CommandExecutor{
     //fw_world_remove <worldname>
     @Override
     public boolean onCommand(CommandSender aCommandSender, Command aCommand, String aString, String[] aStrings) {
-        if (aStrings.length > 0) {
+        String worldname = "";
+        for (int i = 0; i < aStrings.length; i++) {
+            if (worldname.length() == 0)
+                worldname = aStrings[i];
+            else
+                worldname = String.format("%s %s", worldname, aStrings[i]);
+        }
+        if (worldname.length() > 0) {
             WorldConfigurationDB lDB = Framework.plugin.getWorldConfigurationDB();
-            WorldConfiguration lConf =  lDB.getByName(aStrings[0]);
+            WorldConfiguration lConf =  lDB.getByName(worldname);
             if (lConf == null) {
-                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&cWorld %s not found.", aStrings[0]));
+                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&cWorld \"%s\" not found.", worldname));
                 return true;
             }
             Framework.plugin.getWorldConfigurationDB().remove(lConf);
@@ -43,8 +50,8 @@ public class CommandWorldRemove implements CommandExecutor{
             World lWorld = Framework.plugin.getServer().getWorld(lConf.name);
             if (lWorld != null) {
                 Framework.plugin.getServer().unloadWorld(lWorld, true);
+                aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&aWorld \"%s\" removed.", lConf.name));
             }
-            aCommandSender.sendMessage(Framework.plugin.getText(aCommandSender, "&aWorld %s removed.", lConf.name));
         }
         return true;
     }
